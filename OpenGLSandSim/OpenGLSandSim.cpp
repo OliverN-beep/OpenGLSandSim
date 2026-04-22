@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
+#include <iostream>
 
 int main()
 {
@@ -10,9 +11,23 @@ int main()
 	sf::RenderWindow window(sf::VideoMode({ 800, 600 }), "OpenGL Sand Simulation");
 	window.setVerticalSyncEnabled(true);
 
-	// load resources, initialise the OpenGL states, ...
+	// -------- Load resources, initialize the OpenGL states, ... --------
+	// Set up a circle shape to draw
 	sf::CircleShape shape(100.f);
 	shape.setFillColor(sf::Color::Green);
+
+	// Set up font
+	sf::Font font;
+	if (!font.openFromFile("fonts/monospace_medium.ttf"))
+	{
+		std::cerr << "Could not load font" << std::endl;
+		return -1;
+	}
+	sf::Text text(font);
+	text.setString("Hello, OpenGL with SFML!");
+	text.setCharacterSize(24);
+	text.setStyle(sf::Text::Bold);
+	text.setFillColor(sf::Color::White);
 
 	// Start the game loop
 	bool running = true;
@@ -36,8 +51,14 @@ int main()
 		// Clear the buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		// -------- Draw OpenGL stuff here --------
+
 		// Draw circle using RenderWindow::draw
 		window.draw(shape);
+
+		// Draw text using sf::Text
+		window.draw(text);
+	
 
 		// End the current frame (internally swaps the front and back buffers)
 		window.display();
