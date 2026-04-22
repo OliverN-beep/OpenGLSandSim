@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="OpenGLSandSim/OpenGLSandSim.vcxproj" Id="1fe21a3d-d6b3-4ad2-a571-882829e156d2" />
+</Solution>
