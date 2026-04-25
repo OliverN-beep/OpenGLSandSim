@@ -2,6 +2,7 @@
 
 int main()
 {
+	// Initialise render window width and height
 	const int rwWidth = 1280;
 	const int rwHeight = 720;
 
@@ -10,23 +11,12 @@ int main()
 	window.setVerticalSyncEnabled(true);
 	window.setFramerateLimit(60);
 
-	// -------- Load resources, initialize the OpenGL states, ... --------
-
-	// Set up a rectangle shape to draw
+	// Set up a sand grain to draw
 	sf::RectangleShape sandGrain(sf::Vector2f(10.f, 10.f));
 	sandGrain.setFillColor(sf::Color::Green);
 	sandGrain.setPosition({ 640.0f, 20.0f });
 
-	sf::FloatRect bounds = sandGrain.getGlobalBounds();
-
-	// Visual for bounding box
-	sf::RectangleShape box(sf::Vector2f(20.f, 20.f));
-	box.setFillColor(sf::Color::Transparent);
-	box.setOutlineColor(sf::Color::Red);
-	box.setOutlineThickness(2.0f);
-	box.setPosition({ 640.0f, 20.0f });
-
-	// Set up font
+	// Set up font and text to display
 	sf::Font font;
 	if (!font.openFromFile("fonts/monospace_medium.ttf"))
 	{
@@ -59,25 +49,33 @@ int main()
 			}
 		}
 
-		sf::Vector2f point = box.getPosition();
-		if (bounds.contains(point))
+		// Velocity of the sand grain
+		float speedX = 0.0f;
+		float speedY = 6.5f;
+
+		// Update bounds of the sand grain for collision detection every frame
+		sf::FloatRect sandBounds = sandGrain.getGlobalBounds();
+		
+		// Get current position
+		sf::Vector2f pos = sandGrain.getPosition();
+
+		// Check bottom collision
+		if (sandBounds.position.y + sandBounds.size.y + speedY >= rwHeight)
 		{
-			std::cout << "Collision :)" << std::endl;
+			std::cout << "Bottom collision!" << std::endl;
+
+			// Stop at floor
+			sandGrain.setPosition({ pos.x, rwHeight - sandBounds.size.y });
 		}
 		else
 		{
-			std::cout << "No collision :(" << std::endl;
+			// Continue falling
+			sandGrain.move({ speedX, speedY });
 		}
-
-		// Basic animation: move the circle to the right
-		float sx = 0.0f;
-		float sy = 2.5f;
-		sandGrain.setPosition(sandGrain.getPosition() + sf::Vector2f(sx, sy));
 
 		// -------- Draw OpenGL stuff here --------
 		window.clear();	
 		window.draw(sandGrain);
-		window.draw(box);
 		window.draw(text);
 		window.display();
 	}
