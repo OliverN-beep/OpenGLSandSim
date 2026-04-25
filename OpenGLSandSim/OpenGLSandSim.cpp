@@ -1,20 +1,30 @@
-// OpenGLSandSim.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
-#include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
-#include <iostream>
+#include "config.h"
 
 int main()
 {
+	const int rwWidth = 1280;
+	const int rwHeight = 720;
+
 	// Create the main window
-	sf::RenderWindow window(sf::VideoMode({ 800, 600 }), "OpenGL Sand Simulation");
+	sf::RenderWindow window(sf::VideoMode({ rwWidth, rwHeight }), "OpenGL Sand Simulation");
 	window.setVerticalSyncEnabled(true);
+	window.setFramerateLimit(60);
 
 	// -------- Load resources, initialize the OpenGL states, ... --------
-	// Set up a circle shape to draw
-	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
+
+	// Set up a rectangle shape to draw
+	sf::RectangleShape sandGrain(sf::Vector2f(10.f, 10.f));
+	sandGrain.setFillColor(sf::Color::Green);
+	sandGrain.setPosition({ 640.0f, 20.0f });
+
+	sf::FloatRect bounds = sandGrain.getGlobalBounds();
+
+	// Visual for bounding box
+	sf::RectangleShape box(sf::Vector2f(20.f, 20.f));
+	box.setFillColor(sf::Color::Transparent);
+	box.setOutlineColor(sf::Color::Red);
+	box.setOutlineThickness(2.0f);
+	box.setPosition({ 640.0f, 20.0f });
 
 	// Set up font
 	sf::Font font;
@@ -28,8 +38,9 @@ int main()
 	text.setCharacterSize(24);
 	text.setStyle(sf::Text::Bold);
 	text.setFillColor(sf::Color::White);
+	text.setPosition({ 640.0f, 50.0f });
 
-	// Start the game loop
+	// ----------- Start the game loop -----------
 	bool running = true;
 	while (running)
 	{
@@ -41,39 +52,36 @@ int main()
 				// End program
 				running = false;
 			}
-			else if (const auto* resized = event->getIf<sf::Event::Resized>())
+			if (const auto* resized = event->getIf<sf::Event::Resized>())
 			{
 				// Adjust the viewport when the window is resized
 				glViewport(0, 0, resized->size.x, resized->size.y);
 			}
 		}
 
-		// Clear the buffers
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		sf::Vector2f point = box.getPosition();
+		if (bounds.contains(point))
+		{
+			std::cout << "Collision :)" << std::endl;
+		}
+		else
+		{
+			std::cout << "No collision :(" << std::endl;
+		}
+
+		// Basic animation: move the circle to the right
+		float sx = 0.0f;
+		float sy = 2.5f;
+		sandGrain.setPosition(sandGrain.getPosition() + sf::Vector2f(sx, sy));
 
 		// -------- Draw OpenGL stuff here --------
-
-		// Draw circle using RenderWindow::draw
-		window.draw(shape);
-
-		// Draw text using sf::Text
+		window.clear();	
+		window.draw(sandGrain);
+		window.draw(box);
 		window.draw(text);
-	
-
-		// End the current frame (internally swaps the front and back buffers)
 		window.display();
 	}
 
 	// Release resources...
+	
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
