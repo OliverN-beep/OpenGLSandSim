@@ -7,7 +7,7 @@ int main()
 	const int COLUMNS = 1280 / CELL_SIZE;
 	const int ROWS = 720 / CELL_SIZE;
 
-	const sf::Color BACKGROUND_COLOR = sf::Color(0, 105, 155);
+	const sf::Color BACKGROUND_COLOR = sf::Color(0, 10, 55);
 
 	// Create the main window
 	sf::RenderWindow window(sf::VideoMode({ COLUMNS * CELL_SIZE, ROWS * CELL_SIZE }), "OpenGL Sand Simulation");
@@ -34,16 +34,22 @@ int main()
 			{
 				window.close();
 			}
-			
+
+			auto mousePos = sf::Mouse::getPosition(window);
+
+			int x = mousePos.x / CELL_SIZE;
+			int y = mousePos.y / CELL_SIZE;
+
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 			{
-				auto mousePos = sf::Mouse::getPosition(window);
-
-				int x = mousePos.x / CELL_SIZE;
-				int y = mousePos.y / CELL_SIZE;
-
-				// Set the cell to "MaterialType::XXXX" when the left mouse button is pressed
+				// Draw sand when the left mouse button is pressed
 				world.setCell(x, y, MaterialType::Sand);
+			}
+
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
+			{
+				// Draw water when the right mouse button is pressed
+				world.setCell(x, y, MaterialType::Water);
 			}
 		}
 		

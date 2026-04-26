@@ -64,7 +64,45 @@ void World::updateSand(int x, int y)
 
 void World::updateWater(int x, int y)
 {
-	// Placeholder for water update logic
+	// Check if the current cell is water
+	if (getCell(x, y) == MaterialType::Water)
+	{
+		// Check if the cell below is empty, if so, move the water down
+		if (inBounds(x, y + 1) && getCell(x, y + 1) == MaterialType::Empty)
+		{
+			// Move the water down
+			setCell(x, y + 1, MaterialType::Water);
+			setCell(x, y, MaterialType::Empty);
+		}
+		// If the cell below is not empty, check the diagonal cells
+		else if (inBounds(x - 1, y + 1) && getCell(x - 1, y + 1) == MaterialType::Empty)
+		{
+			// Move the water to the left diagonal cell
+			setCell(x - 1, y + 1, MaterialType::Water);
+			setCell(x, y, MaterialType::Empty);
+		}
+		// If the left diagonal cell is not empty, check the right diagonal cell
+		else if (inBounds(x + 1, y + 1) && getCell(x + 1, y + 1) == MaterialType::Empty)
+		{
+			// Move the water to the right diagonal cell
+			setCell(x + 1, y + 1, MaterialType::Water);
+			setCell(x, y, MaterialType::Empty);
+		}
+		// If none of the below cells are empty, try to move left or right
+		else if (inBounds(x - 1, y) && getCell(x - 1, y) == MaterialType::Empty)
+		{
+			// Move the water to the left cell
+			setCell(x - 1, y, MaterialType::Water);
+			setCell(x, y, MaterialType::Empty);
+		}
+		// If the left cell is not empty, check the right cell
+		else if (inBounds(x + 1, y) && getCell(x + 1, y) == MaterialType::Empty)
+		{
+			// Move the water to the right cell
+			setCell(x + 1, y, MaterialType::Water);
+			setCell(x, y, MaterialType::Empty);
+		}
+	}
 }
 
 void World::updateOil(int x, int y)
@@ -97,7 +135,7 @@ void World::update()
 	}
 }
 
-void World::draw(sf::RenderWindow& window)
+void World::draw(sf::RenderWindow& window) const
 {
 	// Create a rectangle shape to represent each cell
 	sf::RectangleShape rect({ (float)m_cellSize, (float)m_cellSize });
@@ -105,7 +143,7 @@ void World::draw(sf::RenderWindow& window)
 	// Define colors for different materials
 	sf::Color SandYellow(194, 178, 128);
 	sf::Color StoneGrey(128, 128, 128);
-	sf::Color WaterBlue(0, 0, 255);
+	sf::Color WaterBlue(0, 80, 255);
 	sf::Color OilBlack(0, 0, 0);
 	sf::Color FireRed(255, 0, 0);
 	sf::Color SmokeGrey(105, 105, 105);

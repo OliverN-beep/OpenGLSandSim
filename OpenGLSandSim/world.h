@@ -10,7 +10,7 @@ public:
 	World(int width, int height, int cellSize);			// Constructor to initialize the world with given dimensions and cell size
 
 	void update();										// Update the world state (e.g., sand falling)
-	void draw(sf::RenderWindow& window);				// Draw the world to the given SFML window
+	void draw(sf::RenderWindow& window) const;			// Draw the world to the given SFML window
 	void setCell(int x, int y, MaterialType matType);	// Set the material type of a specific cell
 	MaterialType getCell(int x, int y) const;			// Get the material type of a specific cell
 	
