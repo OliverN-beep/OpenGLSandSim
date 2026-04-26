@@ -1,18 +1,11 @@
 #include "config.h"
 
-class SandGrain
-{
-public:
-	sf::RectangleShape sandGrainInstance;
-	float sandGrainSpeedX = 0.0f;
-	float sandGrainSpeedY = 6.0f;
-};
-
 int main()
 {
-	// Initialise render window width and height
 	const int RW_WIDTH = 1280;
 	const int RW_HEIGHT = 720;
+
+	const sf::Color BACKGROUND_COLOR = sf::Color(0, 255, 255);
 
 	// Create the main window
 	sf::RenderWindow window(sf::VideoMode({ RW_WIDTH, RW_HEIGHT }), "OpenGL Sand Simulation");
@@ -21,9 +14,9 @@ int main()
 
 	// Set up a sand grain to draw
 	SandGrain grain;
-	grain.sandGrainInstance.setSize({ 10.0f, 10.0f });
-	grain.sandGrainInstance.setFillColor(sf::Color::Yellow);
-	grain.sandGrainInstance.setPosition({ 640.0f, 360.0f });
+	grain.sandGrainInstance.setSize(grain.sandGrainSize);
+	grain.sandGrainInstance.setFillColor(grain.sandGrainColor);
+	grain.sandGrainInstance.setPosition(grain.sandGrainPosition);
 
 	// Set up font and text to display
 	sf::Font font;
@@ -64,25 +57,25 @@ int main()
 		sf::Vector2f pos = grain.sandGrainInstance.getPosition();
 
 		// Check bottom collision
-		if (sandBounds.position.y + sandBounds.size.y + grain.sandGrainSpeedY >= RW_HEIGHT)
+		if (sandBounds.position.y + sandBounds.size.y + grain.sandGrainVelocity.y >= RW_HEIGHT)
 		{
 			std::cout << "Bottom collision!" << std::endl;
 			grain.sandGrainInstance.setPosition({ pos.x, RW_HEIGHT - sandBounds.size.y });
 		}
 		// Check left collision
-		else if (sandBounds.position.x + grain.sandGrainSpeedX <= 0)
+		else if (sandBounds.position.x + grain.sandGrainVelocity.x <= 0)
 		{
 			std::cout << "Left collision!" << std::endl;
 			grain.sandGrainInstance.setPosition({ 0, pos.y });
 		}
 		// Check right collision
-		else if (sandBounds.position.x + sandBounds.size.x + grain.sandGrainSpeedX >= RW_WIDTH)
+		else if (sandBounds.position.x + sandBounds.size.x + grain.sandGrainVelocity.x >= RW_WIDTH)
 		{
 			std::cout << "Right collision!" << std::endl;
 			grain.sandGrainInstance.setPosition({ RW_WIDTH - sandBounds.size.x, pos.y });
 		}
 		// Check top collision
-		else if (sandBounds.position.y + grain.sandGrainSpeedY <= 0)
+		else if (sandBounds.position.y + grain.sandGrainVelocity.y <= 0)
 		{
 			std::cout << "Top collision!" << std::endl;
 			grain.sandGrainInstance.setPosition({ pos.x, 0 });
@@ -90,11 +83,11 @@ int main()
 		// Continue falling if no collision detected
 		else
 		{
-			grain.sandGrainInstance.move({ grain.sandGrainSpeedX, grain.sandGrainSpeedY });
+			grain.sandGrainInstance.move(grain.sandGrainVelocity);
 		}
 
 		// -------- Draw OpenGL stuff here --------
-		window.clear();	
+		window.clear(BACKGROUND_COLOR);	
 		window.draw(grain.sandGrainInstance);
 		window.draw(text);
 		window.display();
