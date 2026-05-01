@@ -140,6 +140,7 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 		{
 			player.isDashing = false; // End dash when timer runs out
 		}
+		printf("Dashing: %.2f seconds left\n", player.dashTimer); // Debug output for dash timer
 	}
 
 	else

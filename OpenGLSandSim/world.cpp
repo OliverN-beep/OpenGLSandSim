@@ -1,7 +1,13 @@
 #include "world.h"
+#include "tilemap.h"
+
+void World::setTileMap(TileMap* tileMap)
+{
+	m_tileMap = tileMap;
+}
 
 World::World(int width, int height, int cellSize)
-	: m_width(width), m_height(height), m_cellSize(cellSize), cells(width * height, MaterialType::Empty)
+	: m_width(width), m_height(height), m_cellSize(cellSize), cells(width * height, MaterialType::Empty), m_tileMap(nullptr)
 {
 }
 
@@ -32,6 +38,20 @@ void World::setCell(int x, int y, MaterialType matType)
 	}
 }
 
+bool World::isBlocked (int x, int y) const
+{
+	if (!inBounds(x, y))
+		return true;
+
+	if (getCell(x, y) != MaterialType::Empty)
+		return true;
+
+	if (m_tileMap && m_tileMap->isSolidAtParticle(x, y))
+		return true;
+
+	return false;
+}
+
 // Update the state of a sand cell at the given coordinates
 void World::updateSand(int x, int y)
 {
@@ -39,21 +59,21 @@ void World::updateSand(int x, int y)
 	if (getCell(x, y) == MaterialType::Sand)
 	{
 		// Check if the cell below is empty, if so, move the sand down
-		if (inBounds(x, y + 1) && getCell(x, y + 1) == MaterialType::Empty)
+		if (inBounds(x, y + 1) && !isBlocked(x, y + 1))
 		{
 			// Move the sand down
 			setCell(x, y + 1, MaterialType::Sand);
 			setCell(x, y, MaterialType::Empty);
 		}
 		// If the cell below is not empty, check the diagonal cells
-		else if (inBounds(x - 1, y + 1) && getCell(x - 1, y + 1) == MaterialType::Empty)
+		else if (inBounds(x - 1, y + 1) && !isBlocked(x - 1, y + 1))
 		{
 			// Move the sand to the left diagonal cell
 			setCell(x - 1, y + 1, MaterialType::Sand);
 			setCell(x, y, MaterialType::Empty);
 		}
 		// If the left diagonal cell is not empty, check the right diagonal cell
-		else if (inBounds(x + 1, y + 1) && getCell(x + 1, y + 1) == MaterialType::Empty)
+		else if (inBounds(x + 1, y + 1) && !isBlocked(x + 1, y + 1))
 		{
 			// Move the sand to the right diagonal cell
 			setCell(x + 1, y + 1, MaterialType::Sand);
@@ -67,29 +87,29 @@ void World::updateWater(int x, int y)
 {
 	if (getCell(x, y) == MaterialType::Water)
 	{
-		if (inBounds(x, y + 1) && getCell(x, y + 1) == MaterialType::Empty)
+		if (inBounds(x, y + 1) && !isBlocked(x, y + 1))
 		{
 			setCell(x, y + 1, MaterialType::Water);
 			setCell(x, y, MaterialType::Empty);
 		}
-		else if (inBounds(x - 1, y + 1) && getCell(x - 1, y + 1) == MaterialType::Empty)
+		else if (inBounds(x - 1, y + 1) && !isBlocked(x - 1, y + 1))
 		{
 			setCell(x - 1, y + 1, MaterialType::Water);
 			setCell(x, y, MaterialType::Empty);
 		}
-		else if (inBounds(x + 1, y + 1) && getCell(x + 1, y + 1) == MaterialType::Empty)
+		else if (inBounds(x + 1, y + 1) && !isBlocked(x + 1, y + 1))
 		{
 			setCell(x + 1, y + 1, MaterialType::Water);
 			setCell(x, y, MaterialType::Empty);
 		}
 
 		// If the cell below and diagonal cells are not empty, try to move left or right
-		else if (inBounds(x - 1, y) && getCell(x - 1, y) == MaterialType::Empty)
+		else if (inBounds(x - 1, y) && !isBlocked(x - 1, y))
 		{
 			setCell(x - 1, y, MaterialType::Water);
 			setCell(x, y, MaterialType::Empty);
 		}
-		else if (inBounds(x + 1, y) && getCell(x + 1, y) == MaterialType::Empty)
+		else if (inBounds(x + 1, y) && !isBlocked(x + 1, y))
 		{
 			setCell(x + 1, y, MaterialType::Water);
 			setCell(x, y, MaterialType::Empty);
@@ -112,17 +132,17 @@ void World::updateSmoke(int x, int y)
 {
 	if (getCell(x, y) == MaterialType::Smoke)
 	{
-		if (inBounds(x, y - 1) && getCell(x, y - 1) == MaterialType::Empty)
+		if (inBounds(x, y - 1) && !isBlocked(x, y - 1))
 		{
 			setCell(x, y - 1, MaterialType::Smoke);
 			setCell(x, y, MaterialType::Empty);
 		}
-		else if (inBounds(x - 1, y - 1) && getCell(x - 1, y - 1) == MaterialType::Empty)
+		else if (inBounds(x - 1, y - 1) && !isBlocked(x - 1, y - 1))
 		{
 			setCell(x - 1, y - 1, MaterialType::Smoke);
 			setCell(x, y, MaterialType::Empty);
 		}
-		else if (inBounds(x + 1, y - 1) && getCell(x + 1, y - 1) == MaterialType::Empty)
+		else if (inBounds(x + 1, y - 1) && !isBlocked(x + 1, y - 1))
 		{
 			setCell(x + 1, y - 1, MaterialType::Smoke);
 			setCell(x, y, MaterialType::Empty);

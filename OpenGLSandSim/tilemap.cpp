@@ -8,6 +8,17 @@ TileMap::TileMap(int width, int height, int tileSize) :
 {
 }
 
+bool TileMap::isSolidAtParticle(int particleX, int particleY) const
+{
+	float worldX = particleX * 6.f;
+	float worldY = particleY * 6.f;
+
+	int tx = (int)(worldX / m_tileSize);
+	int ty = (int)(worldY / m_tileSize);
+
+	return isSolid(tx, ty);
+}
+
 int TileMap::index(int x, int y) const
 {
 	// Convert (x, y) tile coordinates to a linear index in the tile vector

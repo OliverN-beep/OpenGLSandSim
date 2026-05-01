@@ -27,7 +27,7 @@ int main()
 
 	sf::RenderWindow window(sf::VideoMode({ RW_WIDTH, RW_HEIGHT }), "OpenGL Sand Simulation");
 	window.setVerticalSyncEnabled(true);
-	window.setFramerateLimit(120);
+	window.setFramerateLimit(60);
 
 	// Instantiate the World with the specified number of columns, rows, and cell size
 	World world(COLUMNS, ROWS, CELL_SIZE);
@@ -63,6 +63,8 @@ int main()
 	{
 		tileMap.setTile(x, TILE_ROWS - 1, TileType::Solid); // Set the bottom row as solid tiles
 	}
+
+	world.setTileMap(&tileMap); // Set the tile map for the world to enable particle collision detection
 
 	// ----------- Start the game loop -----------
 	while (window.isOpen())

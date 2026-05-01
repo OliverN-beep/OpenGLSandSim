@@ -27,6 +27,8 @@ public:
 	int getHeight() const { return m_height; }		// Get the height of the tile map in tiles
 	int getTileSize() const { return m_tileSize; }	// Get the size of each tile in pixels
 
+	bool isSolidAtParticle(int x, int y) const;		// Check if the tile at the specified (x, y) position is solid for particle collision detection
+
 private:
 	int index(int x, int y) const;					// Convert (x, y) tile coordinates to a linear index in the tile vector
 	bool inBounds(int x, int y) const;				// Check if the (x, y) tile coordinates are within the bounds of the tile map
