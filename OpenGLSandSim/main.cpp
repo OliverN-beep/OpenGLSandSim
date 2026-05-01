@@ -7,7 +7,7 @@
 
 #include "tilemap.h"
 
-Player player({100.f, 100.f}); // Initialize player at position (100, 100)
+Player player({100.f, 100.f}); // Initialise player at position (100, 100)
 PlayerController playerController; // Create a player controller instance
 
 int main()
