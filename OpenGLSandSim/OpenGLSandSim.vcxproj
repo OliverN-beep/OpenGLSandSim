@@ -127,13 +127,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="sand_test.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="player.cpp" />
+    <ClCompile Include="player_controller.h" />
+    <ClCompile Include="player_controlller.cpp" />
+    <ClCompile Include="tilemap.cpp" />
     <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="materials.h" />
-    <ClInclude Include="sand_test.h" />
+    <ClInclude Include="player.h" />
+    <ClInclude Include="tilemap.h" />
     <ClInclude Include="world.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

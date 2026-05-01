@@ -62,43 +62,35 @@ void World::updateSand(int x, int y)
 	}
 }
 
+// Same logic as sand, but water can also move sideways if blocked
 void World::updateWater(int x, int y)
 {
-	// Check if the current cell is water
 	if (getCell(x, y) == MaterialType::Water)
 	{
-		// Check if the cell below is empty, if so, move the water down
 		if (inBounds(x, y + 1) && getCell(x, y + 1) == MaterialType::Empty)
 		{
-			// Move the water down
 			setCell(x, y + 1, MaterialType::Water);
 			setCell(x, y, MaterialType::Empty);
 		}
-		// If the cell below is not empty, check the diagonal cells
 		else if (inBounds(x - 1, y + 1) && getCell(x - 1, y + 1) == MaterialType::Empty)
 		{
-			// Move the water to the left diagonal cell
 			setCell(x - 1, y + 1, MaterialType::Water);
 			setCell(x, y, MaterialType::Empty);
 		}
-		// If the left diagonal cell is not empty, check the right diagonal cell
 		else if (inBounds(x + 1, y + 1) && getCell(x + 1, y + 1) == MaterialType::Empty)
 		{
-			// Move the water to the right diagonal cell
 			setCell(x + 1, y + 1, MaterialType::Water);
 			setCell(x, y, MaterialType::Empty);
 		}
-		// If none of the below cells are empty, try to move left or right
+
+		// If the cell below and diagonal cells are not empty, try to move left or right
 		else if (inBounds(x - 1, y) && getCell(x - 1, y) == MaterialType::Empty)
 		{
-			// Move the water to the left cell
 			setCell(x - 1, y, MaterialType::Water);
 			setCell(x, y, MaterialType::Empty);
 		}
-		// If the left cell is not empty, check the right cell
 		else if (inBounds(x + 1, y) && getCell(x + 1, y) == MaterialType::Empty)
 		{
-			// Move the water to the right cell
 			setCell(x + 1, y, MaterialType::Water);
 			setCell(x, y, MaterialType::Empty);
 		}
@@ -115,13 +107,42 @@ void World::updateFire(int x, int y)
 	// Placeholder for fire update logic
 }
 
+// Same logic as sand, but smoke rises instead of falling
 void World::updateSmoke(int x, int y)
 {
-	// Placeholder for smoke update logic
+	if (getCell(x, y) == MaterialType::Smoke)
+	{
+		if (inBounds(x, y - 1) && getCell(x, y - 1) == MaterialType::Empty)
+		{
+			setCell(x, y - 1, MaterialType::Smoke);
+			setCell(x, y, MaterialType::Empty);
+		}
+		else if (inBounds(x - 1, y - 1) && getCell(x - 1, y - 1) == MaterialType::Empty)
+		{
+			setCell(x - 1, y - 1, MaterialType::Smoke);
+			setCell(x, y, MaterialType::Empty);
+		}
+		else if (inBounds(x + 1, y - 1) && getCell(x + 1, y - 1) == MaterialType::Empty)
+		{
+			setCell(x + 1, y - 1, MaterialType::Smoke);
+			setCell(x, y, MaterialType::Empty);
+		}
+	}
+}
+
+void World::updateSnow(int x, int y)
+{
+	// Placeholder for snow update logic
+}
+
+void World::updateSalt(int x, int y)
+{
+	// Placeholder for salt update logic
 }
 
 void World::update()
 {
+	// Falling materials
 	for (int y = m_height - 1; y >= 0; --y)
 	{
 		for (int x = 0; x < m_width; ++x)
@@ -129,8 +150,26 @@ void World::update()
 			updateSand(x, y);
 			updateWater(x, y);
 			updateOil(x, y);
-			updateFire(x, y);
+			updateSnow(x, y);
+			updateSalt(x, y);
+		}
+	}
+
+	// Rising materials
+	for (int y = 0; y < m_height; ++y)
+	{
+		for (int x = 0; x < m_width; ++x)
+		{
 			updateSmoke(x, y);
+		}
+	}
+
+	// Update other materials last if needed
+	for (int y = 0; y < m_height; ++y)
+	{
+		for (int x = 0; x < m_width; ++x)
+		{
+			updateFire(x, y);
 		}
 	}
 }
@@ -147,6 +186,9 @@ void World::draw(sf::RenderWindow& window) const
 	sf::Color OilBlack(0, 0, 0);
 	sf::Color FireRed(255, 0, 0);
 	sf::Color SmokeGrey(105, 105, 105);
+	sf::Color SnowWhite(255, 250, 250);
+	sf::Color WoodBrown(139, 69, 19);
+	sf::Color SaltWhite(255, 255, 255);
 
 	// Draw each cell based on its material type
 	for (int y = 0; y < m_height; ++y)
@@ -170,6 +212,12 @@ void World::draw(sf::RenderWindow& window) const
 				rect.setFillColor(FireRed);
 			else if (matType == MaterialType::Smoke)
 				rect.setFillColor(SmokeGrey);
+			else if (matType == MaterialType::Snow)
+				rect.setFillColor(SnowWhite);
+			else if (matType == MaterialType::Wood)
+				rect.setFillColor(WoodBrown);
+			else if (matType == MaterialType::Salt)
+				rect.setFillColor(SaltWhite);
 
 			rect.setPosition({ (float)(x * m_cellSize), (float)(y * m_cellSize) });
 			window.draw(rect);

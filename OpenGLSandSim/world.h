@@ -29,4 +29,7 @@ private:
 	void updateOil(int x, int y);						// Update the state of an oil cell at the given coordinates
 	void updateFire(int x, int y);						// Update the state of a fire cell at the given coordinates
 	void updateSmoke(int x, int y);						// Update the state of a smoke cell at the given coordinates
+	void updateSnow(int x, int y);						// Update the state of a snow cell at the given coordinates
+	void updateWood(int x, int y);						// Update the state of a wood cell at the given coordinates
+	void updateSalt(int x, int y);						// Update the state of a salt cell at the given coordinates
 };

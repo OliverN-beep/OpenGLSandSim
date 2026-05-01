@@ -8,5 +8,8 @@ enum class MaterialType		// Enum representing different types of materials in th
 	Water,				
 	Oil,					
 	Fire,		
-	Smoke
+	Smoke,
+	Snow,
+	Wood,
+	Salt
 };
