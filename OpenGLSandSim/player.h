@@ -10,7 +10,7 @@ struct Player
 
 	sf::Vector2f position;					// Player's position
 	sf::Vector2f velocity;					// Player's velocity
-	sf::Vector2f size = {20.f, 30.f};		// Player's size (width, height)
+	sf::Vector2f size;						// Player's size
 
 	bool grounded = false;					// Is the player on the ground?
 	bool facingRight = true;				// Is the player facing right?

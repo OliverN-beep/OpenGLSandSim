@@ -12,7 +12,7 @@ PlayerController playerController; // Create a player controller instance
 
 int main()
 {
-	const int RW_WIDTH = 1200;
+	const int RW_WIDTH = 1280;
 	const int RW_HEIGHT = 720;
 
 	const int CELL_SIZE = 6;

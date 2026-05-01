@@ -16,8 +16,7 @@ const float JUMP_SPEED = -500.f;				// Initial jump speed
 const float COYOTE_TIME = 0.1f;					// Time allowed to jump after leaving the ground
 const float JUMP_BUFFER_TIME = 0.1f;			// Time allowed to jump after pressing the jump button
 
-const float DASH_SPEED = 600.f;					// Speed during dash
-const float DASH_DURATION = 0.2f;				// Duration of the dash
+const float DASH_SPEED = 800.f;					// Speed during dash
 
 float PlayerController::moveToward(float current, float target, float amount)
 {
@@ -34,20 +33,11 @@ float PlayerController::moveToward(float current, float target, float amount)
 	return current;
 }
 
-//bool PlayerController::isSolidAt(const World& world, float x, float y)
-//{
-	//int cellX = static_cast<int>(x) / CELL_SIZE; // Assuming each cell is 6 pixels wide
-	//int cellY = static_cast<int>(y) / CELL_SIZE; // Assuming each cell is 6 pixels high
-
-	//MaterialType matType = world.getCell(cellX, cellY);
-
-	//return matType != MaterialType::Empty;
-//}
-
+// Collision with tiles
 bool PlayerController::isSolidAt(TileMap& map, float px, float py)
 {
-	int tx = (int)px / map.getTileSize();
-	int ty = (int)py / map.getTileSize();
+	int tx = static_cast<int>(px) / map.getTileSize();
+	int ty = static_cast<int>(py) / map.getTileSize();
 
 	return map.isSolid(tx, ty);
 }
@@ -90,8 +80,8 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 	static bool dashPressedLastFrame = false;
 	bool dashHeld = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift);
 
-	bool dashPressed = dashHeld && !dashPressedLastFrame; // Dash is pressed if held and wasn't pressed last frame
-	dashPressedLastFrame = dashHeld; // Update the dashPressedLastFrame state
+	bool dashPressed = dashHeld && !dashPressedLastFrame;	// Dash is pressed if held and wasn't pressed last frame
+	dashPressedLastFrame = dashHeld;						// Update the dashPressedLastFrame state
 
 	// --------------Logic------------------
 
@@ -125,16 +115,24 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 	// Dash logic
 	if (dashPressed && player.canDash)
 	{
-		player.isDashing = true;											// Start dashing
-		player.canDash = false;												// Disable further dashes until grounded
-		player.dashTimer = DASH_DURATION;									// Reset dash timer
-		player.velocity.x = player.facingRight ? DASH_SPEED : -DASH_SPEED;	// Set dash velocity based on facing direction
-		player.velocity.y = 0.f;											// No vertical movement during dash
-	}
+		player.isDashing = true;			// Start dashing
+		player.canDash = false;				// Disable further dashes until grounded
+		player.dashTimer = 0.f;				// Reset dash timer
+		player.velocity.y = 0.f;			// No vertical movement during dash
 
+		if (player.facingRight)
+		{
+			player.velocity.x = DASH_SPEED;
+		}
+		else
+		{
+			player.velocity.x = -DASH_SPEED;
+		}
+	}
 	if (player.isDashing)
 	{
-		player.dashTimer -= dt; // Decrease dash timer
+		player.dashTimer -= dt;			// Decrease dash timer
+		player.velocity.y = -GRAVITY;	// Apply a slight upward force to counteract gravity during dash
 
 		if (player.dashTimer <= 0.f)
 		{
@@ -163,6 +161,7 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 {
 	// Calculate the new position based on velocity and delta time
 	sf::Vector2f newPosition = player.position + player.velocity * dt;
+
 	// Check for horizontal collisions
 	if (isSolidAt(map, newPosition.x, player.position.y) || isSolidAt(map, newPosition.x + player.size.x, player.position.y))
 	{
@@ -179,6 +178,7 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 		{
 			player.grounded = true; // Player is grounded
 			player.coyoteTimer = COYOTE_TIME; // Reset coyote timer
+			player.canDash = true; // Allow dashing again
 		}
 		player.velocity.y = 0.f; // Stop vertical movement if colliding
 	}
