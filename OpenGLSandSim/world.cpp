@@ -7,7 +7,7 @@ void World::setTileMap(TileMap* tileMap)
 }
 
 World::World(int width, int height, int cellSize)
-	: m_width(width), m_height(height), m_cellSize(cellSize), cells(width * height, MaterialType::Empty), m_tileMap(nullptr)
+	: m_width(width), m_height(height), m_cellSize(cellSize), cells(width * height)
 {
 }
 
@@ -21,183 +21,184 @@ bool World::inBounds(int x, int y) const
 	return x >= 0 && x < m_width && y >= 0 && y < m_height;
 }
 
+Cell& World::getCellRef(int x, int y)
+{
+	return cells[index(x, y)];
+}
+
+const Cell& World::getCellRef(int x, int y) const
+{
+	return cells[index(x, y)];
+}
+
 MaterialType World::getCell(int x, int y) const
 {
-	if (inBounds(x, y))
+	if (!inBounds(x, y))
 	{
-		return cells[index(x, y)];
+		return MaterialType::Stone;
 	}
-	return MaterialType::Empty;
+	return getCellRef(x, y).material;
 }
 
 void World::setCell(int x, int y, MaterialType matType)
 {
 	if (inBounds(x, y))
 	{
-		cells[index(x, y)] = matType;
+		getCellRef(x, y).material = matType;
 	}
 }
 
-bool World::isBlocked (int x, int y) const
+bool World::isEmpty(int x, int y) const
 {
-	if (!inBounds(x, y))
-		return true;
-
-	if (getCell(x, y) != MaterialType::Empty)
-		return true;
-
-	if (m_tileMap && m_tileMap->isSolidAtParticle(x, y))
-		return true;
-
-	return false;
+	return getCell(x, y) == MaterialType::Empty;
 }
 
-// Update the state of a sand cell at the given coordinates
-void World::updateSand(int x, int y)
+bool World::tryMove(int x, int y, int newX, int newY)
 {
-	// Check if the current cell is sand
-	if (getCell(x, y) == MaterialType::Sand)
+	if (!inBounds(newX, newY))
 	{
-		// Check if the cell below is empty, if so, move the sand down
-		if (inBounds(x, y + 1) && !isBlocked(x, y + 1))
-		{
-			// Move the sand down
-			setCell(x, y + 1, MaterialType::Sand);
-			setCell(x, y, MaterialType::Empty);
-		}
-		// If the cell below is not empty, check the diagonal cells
-		else if (inBounds(x - 1, y + 1) && !isBlocked(x - 1, y + 1))
-		{
-			// Move the sand to the left diagonal cell
-			setCell(x - 1, y + 1, MaterialType::Sand);
-			setCell(x, y, MaterialType::Empty);
-		}
-		// If the left diagonal cell is not empty, check the right diagonal cell
-		else if (inBounds(x + 1, y + 1) && !isBlocked(x + 1, y + 1))
-		{
-			// Move the sand to the right diagonal cell
-			setCell(x + 1, y + 1, MaterialType::Sand);
-			setCell(x, y, MaterialType::Empty);
-		}
+		return false;
 	}
-}
 
-// Same logic as sand, but water can also move sideways if blocked
-void World::updateWater(int x, int y)
-{
-	if (getCell(x, y) == MaterialType::Water)
+	if (isTileBlocked(newX, newY))
 	{
-		if (inBounds(x, y + 1) && !isBlocked(x, y + 1))
-		{
-			setCell(x, y + 1, MaterialType::Water);
-			setCell(x, y, MaterialType::Empty);
-		}
-		else if (inBounds(x - 1, y + 1) && !isBlocked(x - 1, y + 1))
-		{
-			setCell(x - 1, y + 1, MaterialType::Water);
-			setCell(x, y, MaterialType::Empty);
-		}
-		else if (inBounds(x + 1, y + 1) && !isBlocked(x + 1, y + 1))
-		{
-			setCell(x + 1, y + 1, MaterialType::Water);
-			setCell(x, y, MaterialType::Empty);
-		}
-
-		// If the cell below and diagonal cells are not empty, try to move left or right
-		else if (inBounds(x - 1, y) && !isBlocked(x - 1, y))
-		{
-			setCell(x - 1, y, MaterialType::Water);
-			setCell(x, y, MaterialType::Empty);
-		}
-		else if (inBounds(x + 1, y) && !isBlocked(x + 1, y))
-		{
-			setCell(x + 1, y, MaterialType::Water);
-			setCell(x, y, MaterialType::Empty);
-		}
+		return false;
 	}
-}
 
-void World::updateOil(int x, int y)
-{
-	// Placeholder for oil update logic
-}
-
-void World::updateFire(int x, int y)
-{
-	// Placeholder for fire update logic
-}
-
-// Same logic as sand, but smoke rises instead of falling
-void World::updateSmoke(int x, int y)
-{
-	if (getCell(x, y) == MaterialType::Smoke)
+	if (!isEmpty(newX, newY))
 	{
-		if (inBounds(x, y - 1) && !isBlocked(x, y - 1))
-		{
-			setCell(x, y - 1, MaterialType::Smoke);
-			setCell(x, y, MaterialType::Empty);
-		}
-		else if (inBounds(x - 1, y - 1) && !isBlocked(x - 1, y - 1))
-		{
-			setCell(x - 1, y - 1, MaterialType::Smoke);
-			setCell(x, y, MaterialType::Empty);
-		}
-		else if (inBounds(x + 1, y - 1) && !isBlocked(x + 1, y - 1))
-		{
-			setCell(x + 1, y - 1, MaterialType::Smoke);
-			setCell(x, y, MaterialType::Empty);
-		}
+		return false;
 	}
+
+	getCellRef(newX, newY) = getCellRef(x, y);
+	getCellRef(newX, newY).updateFrame = m_currentFrame;
+
+	getCellRef(x, y).material = MaterialType::Empty;
+
+	return true;
 }
 
-void World::updateSnow(int x, int y)
+bool World::isTileBlocked (int x, int y) const
 {
-	// Placeholder for snow update logic
-}
+	if (!m_tileMap)
+		return false;
 
-void World::updateSalt(int x, int y)
-{
-	// Placeholder for salt update logic
+	float worldX = static_cast<float>(x * m_cellSize);
+	float worldY = static_cast<float>(y * m_cellSize);
+
+	int tileX = static_cast<int>(worldX / m_tileMap->getTileSize());
+	int tileY = static_cast<int>(worldY / m_tileMap->getTileSize());
+	
+	return m_tileMap->isSolid(tileX, tileY);
 }
 
 void World::update()
 {
+	++m_currentFrame;
+
 	// Falling materials
 	for (int y = m_height - 1; y >= 0; --y)
 	{
 		for (int x = 0; x < m_width; ++x)
 		{
-			updateSand(x, y);
-			updateWater(x, y);
-			updateOil(x, y);
-			updateSnow(x, y);
-			updateSalt(x, y);
+			updateCell(x, y);
 		}
 	}
+}
 
-	// Rising materials
-	for (int y = 0; y < m_height; ++y)
-	{
-		for (int x = 0; x < m_width; ++x)
-		{
-			updateSmoke(x, y);
-		}
-	}
+void::World::updateCell(int x, int y)
+{
+	if (!inBounds(x, y))
+		return;
 
-	// Update other materials last if needed
-	for (int y = 0; y < m_height; ++y)
+	Cell& cell = getCellRef(x, y);
+
+	if (cell.material == MaterialType::Empty)
+		return;
+
+	if (cell.updateFrame == m_currentFrame)
+		return;
+
+	switch (cell.material)
 	{
-		for (int x = 0; x < m_width; ++x)
-		{
-			updateFire(x, y);
-		}
+	case MaterialType::Sand:
+	case MaterialType::Salt:
+		updateSolid(x, y);
+		break;
+
+	case MaterialType::Water:
+	case MaterialType::Oil:
+		updateLiquid(x, y);
+		break;
+
+	case MaterialType::Fire:
+	case MaterialType::Smoke:
+	case MaterialType::Snow:
+		updateGas(x, y);
+		break;
+
+	default:
+		// For other materials, just mark them as updated for this frame
+		cell.updateFrame = m_currentFrame;
+		break;
 	}
+}
+
+void World::updateSolid(int x, int y)
+{
+	// Try to move down
+	if (tryMove(x, y, x, y + 1)) return;
+
+	// Try to move down-left
+	if (tryMove(x, y, x - 1, y + 1)) return;
+
+	// Try to move down-right
+	if (tryMove(x, y, x + 1, y + 1)) return;
+
+	// If none of the moves were possible, mark the cell as updated for this frame
+	getCellRef(x, y).updateFrame = m_currentFrame;
+}
+
+void World::updateLiquid(int x, int y)
+{
+	// Try to move down
+	if (tryMove(x, y, x, y + 1)) return;
+
+	// Try to move down-left
+	if (tryMove(x, y, x - 1, y + 1)) return;
+
+	// Try to move down-right
+	if (tryMove(x, y, x + 1, y + 1)) return;
+
+	// Try to move left
+	if (tryMove(x, y, x - 1, y)) return;
+
+	// Try to move right
+	if (tryMove(x, y, x + 1, y)) return;
+
+	// If none of the moves were possible, mark the cell as updated for this frame
+	getCellRef(x, y).updateFrame = m_currentFrame;
+}
+
+void World::updateGas(int x, int y)
+{
+	// Try to move up
+	if (tryMove(x, y, x, y - 1)) return;
+
+	// Try to move up-left
+	if (tryMove(x, y, x - 1, y - 1)) return;
+
+	// Try to move up-right
+	if (tryMove(x, y, x + 1, y - 1)) return;
+
+	// If none of the moves were possible, mark the cell as updated for this frame
+	getCellRef(x, y).updateFrame = m_currentFrame;
 }
 
 void World::draw(sf::RenderWindow& window) const
 {
 	// Create a rectangle shape to represent each cell
-	sf::RectangleShape rect({ (float)m_cellSize, (float)m_cellSize });
+	sf::RectangleShape rect(sf::Vector2f((float)m_cellSize, (float)m_cellSize));
 
 	// Define colors for different materials
 	sf::Color SandYellow(194, 178, 128);
@@ -239,7 +240,7 @@ void World::draw(sf::RenderWindow& window) const
 			else if (matType == MaterialType::Salt)
 				rect.setFillColor(SaltWhite);
 
-			rect.setPosition({ (float)(x * m_cellSize), (float)(y * m_cellSize) });
+			rect.setPosition(sf::Vector2f((float)(x * m_cellSize), (float)(y * m_cellSize)));
 			window.draw(rect);
 		}
 	}

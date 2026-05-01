@@ -32,6 +32,17 @@ int main()
 	// Instantiate the World with the specified number of columns, rows, and cell size
 	World world(COLUMNS, ROWS, CELL_SIZE);
 
+	// Set up the tile map with the specified number of columns, rows, and tile size
+	TileMap tileMap(TILE_COLUMNS, TILE_ROWS, TILE_SIZE);
+
+	// Build simple test room with tile map floor
+	for (int x = 0; x < TILE_COLUMNS; ++x)
+	{
+		tileMap.setTile(x, TILE_ROWS - 1, TileType::Solid); // Set the bottom row as solid tiles
+	}
+
+	world.setTileMap(&tileMap); // Set the tile map for the world to enable particle collision detection
+
 	// Set up font to display text
 	sf::Font font;
 	if (!font.openFromFile("fonts/monospace_medium.ttf"))
@@ -54,17 +65,6 @@ int main()
 
 	// SFML clock used for frame delta time (declare to shadow the C runtime clock() function)
 	sf::Clock clock;
-
-	// Set up the tile map with the specified number of columns, rows, and tile size
-	TileMap tileMap(TILE_COLUMNS, TILE_ROWS, TILE_SIZE);
-
-	// Build simple test room with tile map floor
-	for (int x = 0; x < TILE_COLUMNS; ++x)
-	{
-		tileMap.setTile(x, TILE_ROWS - 1, TileType::Solid); // Set the bottom row as solid tiles
-	}
-
-	world.setTileMap(&tileMap); // Set the tile map for the world to enable particle collision detection
 
 	// ----------- Start the game loop -----------
 	while (window.isOpen())
