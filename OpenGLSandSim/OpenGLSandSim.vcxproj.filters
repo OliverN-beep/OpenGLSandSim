@@ -42,6 +42,9 @@
     <ClCompile Include="tilemap.cpp">
       <Filter>Source Files\world</Filter>
     </ClCompile>
+    <ClCompile Include="game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="world.h">
@@ -55,6 +58,9 @@
     </ClInclude>
     <ClInclude Include="tilemap.h">
       <Filter>Source Files\world</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

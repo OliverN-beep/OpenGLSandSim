@@ -123,6 +123,8 @@ void::World::updateCell(int x, int y)
 	{
 	case MaterialType::Sand:
 	case MaterialType::Salt:
+	case MaterialType::Fire:
+	case MaterialType::Snow:
 		updateSolid(x, y);
 		break;
 
@@ -131,9 +133,7 @@ void::World::updateCell(int x, int y)
 		updateLiquid(x, y);
 		break;
 
-	case MaterialType::Fire:
 	case MaterialType::Smoke:
-	case MaterialType::Snow:
 		updateGas(x, y);
 		break;
 
@@ -256,7 +256,7 @@ void World::paintCircle(int cx, int cy, int radius, MaterialType type)
 			if (dx * dx + dy * dy > radius * radius)
 				continue;
 
-			if (rand() % 100 < 1) // Randomly skip some cells for a more natural look
+			if (rand() % 100 < 2) // Randomly skip some cells for a more natural look
 			{
 				setCell(cx + dx, cy + dy, type);
 			}
