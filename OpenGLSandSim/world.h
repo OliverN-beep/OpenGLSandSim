@@ -25,6 +25,8 @@ public:
 
 	MaterialType getCell(int x, int y) const;			// Get the material type of a specific cell
 	void setCell(int x, int y, MaterialType matType);	// Set the material type of a specific cell
+
+	void paintCircle(int cx, int cy, int radius, MaterialType type);	// Paint a circle of cells with the given material type
 	
 private:
 	TileMap* m_tileMap = nullptr;						// Pointer to the tile map for particle collision detection

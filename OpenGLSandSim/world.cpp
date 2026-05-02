@@ -245,3 +245,21 @@ void World::draw(sf::RenderWindow& window) const
 		}
 	}
 }
+
+// Helper function for painting cells with a brush of a given size and material type
+void World::paintCircle(int cx, int cy, int radius, MaterialType type)
+{
+	for (int dy = -radius; dy <= radius; ++dy)
+	{
+		for (int dx = -radius; dx <= radius; ++dx)
+		{
+			if (dx * dx + dy * dy > radius * radius)
+				continue;
+
+			if (rand() % 100 < 1) // Randomly skip some cells for a more natural look
+			{
+				setCell(cx + dx, cy + dy, type);
+			}
+		}
+	}
+}

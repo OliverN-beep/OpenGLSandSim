@@ -10,6 +10,27 @@
 Player player({100.f, 100.f}); // Initialise player at position (100, 100)
 PlayerController playerController; // Create a player controller instance
 
+void drawBrush(sf::RenderWindow& window, int brushSize, int cellSize);
+
+void drawBrush(sf::RenderWindow& window, int brushSize, int cellSize)
+{
+	const int CELL_SIZE = 6;
+
+	sf::CircleShape brush;
+	brush.setRadius(brushSize * CELL_SIZE);
+	brush.setOrigin(sf::Vector2f(brush.getRadius(), brush.getRadius()));
+
+	brush.setFillColor(sf::Color(255, 255, 255, 40)); // transparent fill
+	brush.setOutlineColor(sf::Color::White);
+	brush.setOutlineThickness(1.f);
+
+	sf::Vector2i mouse = sf::Mouse::getPosition(window);
+
+	brush.setPosition(sf::Vector2f((float)mouse.x, (float)mouse.y));
+
+	window.draw(brush);
+}
+
 int main()
 {
 	const int RW_WIDTH = 1280;
@@ -24,6 +45,8 @@ int main()
 	const int TILE_ROWS = RW_HEIGHT / TILE_SIZE;
 
 	const sf::Color BACKGROUND_COLOR = sf::Color(0, 10, 55);
+
+	static int brushSize = 4;
 
 	sf::RenderWindow window(sf::VideoMode({ RW_WIDTH, RW_HEIGHT }), "OpenGL Sand Simulation");
 	window.setVerticalSyncEnabled(true);
@@ -77,19 +100,30 @@ int main()
 				window.close();
 			}
 
+			if (event->is<sf::Event::MouseWheelScrolled>())
+			{
+				auto scroll = event->getIf<sf::Event::MouseWheelScrolled>();
+
+				brushSize += (int)scroll->delta;
+
+				if (brushSize < 1) brushSize = 1;
+				if (brushSize > 20) brushSize = 20;
+			}
+
 			auto mousePos = sf::Mouse::getPosition(window);
 
 			int x = mousePos.x / CELL_SIZE;
 			int y = mousePos.y / CELL_SIZE;
 
+			// Draw materials in the world based on mouse input
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 			{
-				world.setCell(x, y, MaterialType::Water);
+				world.paintCircle(x, y, brushSize, MaterialType::Sand);
 			}
 
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
 			{
-				world.setCell(x, y, MaterialType::Sand);
+				world.paintCircle(x, y, brushSize, MaterialType::Water);
 			}
 		}
 
@@ -109,6 +143,7 @@ int main()
 		world.draw(window);
 		player.draw(window);
 		window.draw(fpsText);
+		drawBrush(window, brushSize, CELL_SIZE);
 
 		window.display();
 
