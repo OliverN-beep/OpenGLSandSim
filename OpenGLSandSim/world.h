@@ -48,9 +48,8 @@ private:
 	const Cell& getCellRef(int x, int y) const;			// Get a const reference to the cell at the given coordinates
 
 	void updateCellBehaviour(int x, int y);				// Update the state of a cell at the given coordinates based on its material type
-	void updateCellReaction(int x, int y);				// Update the reaction of a cell at the given coordinates (e.g., fire spreading, wet material)
 
-	void updateSolid(int x, int y);						// Update the state of a solid cell at the given coordinates
+	void updatePowder(int x, int y);					// Update the state of a powder cell at the given coordinates
 	void updateLiquid(int x, int y);					// Update the state of a liquid cell at the given coordinates
 	void updateGas(int x, int y);						// Update the state of a gas cell at the given coordinates
 

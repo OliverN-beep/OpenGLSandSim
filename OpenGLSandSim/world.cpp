@@ -59,22 +59,21 @@ bool World::isEmpty(int x, int y) const
 
 bool World::canMoveInto(int x1, int y1, int x2, int y2)
 {
-	if (!inBounds(x2, y2)) return false;
+	if (!inBounds(x2, y2))
+		return false;
 
 	Cell& cellA = getCellRef(x1, y1);
 	Cell& cellB = getCellRef(x2, y2);
 
-	auto& matA = getMaterialProperties[(int)cellA.material];
-	auto& matB = getMaterialProperties[(int)cellB.material];
+	auto& matA = g_materials[(int)cellA.material];
+	auto& matB = g_materials[(int)cellB.material];
 
 	if (cellB.material == MaterialType::Empty)
-	{
 		return true;
-	}
 
 	// A material can move into another material if it is denser than the other material
-	return matA.density > matB.density;
-}
+	return matA.density > matB.density || (matA.density == matB.density && rand() % 2 == 0);
+}	
 
 bool World::tryMove(int x1, int y1, int x2, int y2)
 {
@@ -84,11 +83,6 @@ bool World::tryMove(int x1, int y1, int x2, int y2)
 	}
 
 	if (isTileBlocked(x2, y2))
-	{
-		return false;
-	}
-
-	if (!isEmpty(x2, y2))
 	{
 		return false;
 	}
@@ -132,41 +126,6 @@ void World::update()
 	}
 }
 
-MaterialProperties getMaterialProperties[(int)MaterialType::COUNT] =
-{
-	// BehaviorType, Density, Flammable, Wettable, Conductive, DefaultLife, Colour
-
-	// Empty
-	{BehaviorType::None, 0, false, false, false, 0, MaterialProperties().emptyColour},
-
-	// Sand
-	{BehaviorType::Powder, 2, false, true, false, 0, MaterialProperties().sandColour},
-
-	// Stone
-	{BehaviorType::Solid, 5, false, false, true, 0, MaterialProperties().stoneColour},
-
-	// Water
-	{BehaviorType::Liquid, 1, false, true, false, 0, MaterialProperties().waterColour},
-
-	// Oil
-	{BehaviorType::Liquid, 1, true, true, false, 0, MaterialProperties().oilColour},
-
-	// Fire
-	{BehaviorType::Gas, 0, false, false, false, 5, MaterialProperties().fireColour},
-
-	// Smoke
-	{BehaviorType::Gas, 0, false, false, false, 10, MaterialProperties().smokeColour},
-
-	// Snow
-	{BehaviorType::Powder, 1, false, true, false, 0, MaterialProperties().snowColour},
-
-	// Wood
-	{BehaviorType::Solid, 3, true, true, true, 0, MaterialProperties().woodColour},
-
-	// Salt
-	{BehaviorType::Powder, 2, false, true, false, 0, MaterialProperties().saltColour}
-};
-
 void World::updateCellBehaviour(int x, int y)
 {
 	if (!inBounds(x, y))
@@ -180,34 +139,30 @@ void World::updateCellBehaviour(int x, int y)
 	if (cell.updateFrame == m_currentFrame)
 		return;
 
-	MaterialProperties properties = getMaterialProperties[(int)cell.material];
+	MaterialProperties properties = g_materials[(int)cell.material];
 
-	switch (properties.behavior)
+	switch (properties.behaviour)
 	{
-		case BehaviorType::Solid:
-			updateSolid(x, y);
+		case BehaviourType::Powder:
+			updatePowder(x, y);
 			break;
 
-		case BehaviorType::Powder:
-			updateSolid(x, y);
-			break;
-
-		case BehaviorType::Liquid:
+		case BehaviourType::Liquid:
 			updateLiquid(x, y);
 			break;
 
-		case BehaviorType::Gas:
+		case BehaviourType::Gas:
 			updateGas(x, y);
 			break;
 
-		case BehaviorType::None:
+		case BehaviourType::None:
 		default:
 			cell.updateFrame = m_currentFrame;
 			break;
 	}
 }
 
-void World::updateSolid(int x, int y)
+void World::updatePowder(int x, int y)
 {
 	// Try to move down
 	if (tryMove(x, y, x, y + 1)) return;
@@ -273,24 +228,8 @@ void World::draw(sf::RenderWindow& window) const
 			if (matType == MaterialType::Empty)
 				continue;
 
-			if (matType == MaterialType::Sand)
-				rect.setFillColor(MaterialProperties().sandColour);
-			else if (matType == MaterialType::Stone)
-				rect.setFillColor(MaterialProperties().stoneColour);
-			else if (matType == MaterialType::Water)
-				rect.setFillColor(MaterialProperties().waterColour);
-			else if (matType == MaterialType::Oil)
-				rect.setFillColor(MaterialProperties().oilColour);
-			else if (matType == MaterialType::Fire)
-				rect.setFillColor(MaterialProperties().fireColour);
-			else if (matType == MaterialType::Smoke)
-				rect.setFillColor(MaterialProperties().smokeColour);
-			else if (matType == MaterialType::Snow)
-				rect.setFillColor(MaterialProperties().snowColour);
-			else if (matType == MaterialType::Wood)
-				rect.setFillColor(MaterialProperties().woodColour);
-			else if (matType == MaterialType::Salt)
-				rect.setFillColor(MaterialProperties().saltColour);
+			auto& mat = g_materials[(int)matType];
+			rect.setFillColor(mat.colour);
 
 			rect.setPosition(sf::Vector2f((float)(x * m_cellSize), (float)(y * m_cellSize)));
 			window.draw(rect);

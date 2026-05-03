@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="materials.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="player_controller.h" />
     <ClCompile Include="player_controlller.cpp" />
