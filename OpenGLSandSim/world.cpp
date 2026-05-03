@@ -101,12 +101,12 @@ void World::update()
 	{
 		for (int x = 0; x < m_width; ++x)
 		{
-			updateCell(x, y);
+			updateCellBehaviour(x, y);
 		}
 	}
 }
 
-void::World::updateCell(int x, int y)
+void::World::updateCellBehaviour(int x, int y)
 {
 	if (!inBounds(x, y))
 		return;
@@ -142,6 +142,13 @@ void::World::updateCell(int x, int y)
 		cell.updateFrame = m_currentFrame;
 		break;
 	}
+}
+
+void World::updateCellReaction(int x, int y)
+{
+	// Placeholder for future implementation of cell reactions
+	// This function can be used to handle interactions between different materials
+	// For example, fire spreading to flammable materials, water extinguishing fire, etc.
 }
 
 void World::updateSolid(int x, int y)
@@ -256,7 +263,7 @@ void World::paintCircle(int cx, int cy, int radius, MaterialType type)
 			if (dx * dx + dy * dy > radius * radius)
 				continue;
 
-			if (rand() % 100 < 2) // Randomly skip some cells for a more natural look
+			if (rand() % 100 < 99) // Randomly skip some cells for a more natural look
 			{
 				setCell(cx + dx, cy + dy, type);
 			}

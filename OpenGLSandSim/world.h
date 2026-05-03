@@ -10,7 +10,9 @@ struct Cell
 {
 	MaterialType material = MaterialType::Empty;		// Material type of the cell
 	unsigned int updateFrame = 0;						// Frame number when the cell was last updated
-	unsigned int lifeTime = 0;							// Lifetime of the cell (used for materials like fire or smoke)
+
+	uint8_t lifeTime = 0;								// Lifetime of the cell (fire, smoke, etc.)
+	uint8_t state = 0;									// Additional state information for the cell (fire spreading, wet material, etc.)
 };
 
 class World												// Class representing the simulation world
@@ -46,7 +48,8 @@ private:
 	Cell& getCellRef(int x, int y);						// Get a reference to the cell at the given coordinates
 	const Cell& getCellRef(int x, int y) const;			// Get a const reference to the cell at the given coordinates
 
-	void updateCell(int x, int y);						// Update the state of a cell at the given coordinates based on its material type
+	void updateCellBehaviour(int x, int y);				// Update the state of a cell at the given coordinates based on its material type
+	void updateCellReaction(int x, int y);				// Update the reaction of a cell at the given coordinates (e.g., fire spreading, wet material)
 
 	void updateSolid(int x, int y);						// Update the state of a solid cell at the given coordinates
 	void updateLiquid(int x, int y);					// Update the state of a liquid cell at the given coordinates
