@@ -20,9 +20,9 @@ private:
 	void render();							// Render the game (world, player, UI, etc.)
 
 	sf::RenderWindow m_window;				// SFML window for rendering
+
 	sf::Font m_font;						// Font for rendering text
 	sf::Text m_fpsText;						// Text object for displaying FPS
-
 	const static int CHARACTER_SIZE = 20;	// Size of the text for displaying FPS
 
 	World m_world;							// The simulation world

@@ -6,8 +6,12 @@ void World::setTileMap(TileMap* tileMap)
 	m_tileMap = tileMap;
 }
 
+// Constructor to initialise the world with given dimensions and cell size
 World::World(int width, int height, int cellSize)
-	: m_width(width), m_height(height), m_cellSize(cellSize), cells(width * height)
+	: m_width(width),
+	m_height(height),
+	m_cellSize(cellSize),
+	cells(width * height)
 {
 }
 
@@ -53,27 +57,49 @@ bool World::isEmpty(int x, int y) const
 	return getCell(x, y) == MaterialType::Empty;
 }
 
-bool World::tryMove(int x, int y, int newX, int newY)
+bool World::canMoveInto(int x1, int y1, int x2, int y2)
 {
-	if (!inBounds(newX, newY))
+	if (!inBounds(x2, y2)) return false;
+
+	Cell& cellA = getCellRef(x1, y1);
+	Cell& cellB = getCellRef(x2, y2);
+
+	auto& matA = getMaterialProperties[(int)cellA.material];
+	auto& matB = getMaterialProperties[(int)cellB.material];
+
+	if (cellB.material == MaterialType::Empty)
+	{
+		return true;
+	}
+
+	// A material can move into another material if it is denser than the other material
+	return matA.density > matB.density;
+}
+
+bool World::tryMove(int x1, int y1, int x2, int y2)
+{
+	if (!canMoveInto(x1, y1, x2, y2))
 	{
 		return false;
 	}
 
-	if (isTileBlocked(newX, newY))
+	if (isTileBlocked(x2, y2))
 	{
 		return false;
 	}
 
-	if (!isEmpty(newX, newY))
+	if (!isEmpty(x2, y2))
 	{
 		return false;
 	}
 
-	getCellRef(newX, newY) = getCellRef(x, y);
-	getCellRef(newX, newY).updateFrame = m_currentFrame;
+	Cell& cellA = getCellRef(x1, y1);
+	Cell& cellB = getCellRef(x2, y2);
 
-	getCellRef(x, y).material = MaterialType::Empty;
+	std::swap(cellA, cellB);
+
+	cellA.updateFrame = m_currentFrame;
+	cellB.updateFrame = m_currentFrame;
 
 	return true;
 }
@@ -106,7 +132,42 @@ void World::update()
 	}
 }
 
-void::World::updateCellBehaviour(int x, int y)
+MaterialProperties getMaterialProperties[(int)MaterialType::COUNT] =
+{
+	// BehaviorType, Density, Flammable, Wettable, Conductive, DefaultLife, Colour
+
+	// Empty
+	{BehaviorType::None, 0, false, false, false, 0, MaterialProperties().emptyColour},
+
+	// Sand
+	{BehaviorType::Powder, 2, false, true, false, 0, MaterialProperties().sandColour},
+
+	// Stone
+	{BehaviorType::Solid, 5, false, false, true, 0, MaterialProperties().stoneColour},
+
+	// Water
+	{BehaviorType::Liquid, 1, false, true, false, 0, MaterialProperties().waterColour},
+
+	// Oil
+	{BehaviorType::Liquid, 1, true, true, false, 0, MaterialProperties().oilColour},
+
+	// Fire
+	{BehaviorType::Gas, 0, false, false, false, 5, MaterialProperties().fireColour},
+
+	// Smoke
+	{BehaviorType::Gas, 0, false, false, false, 10, MaterialProperties().smokeColour},
+
+	// Snow
+	{BehaviorType::Powder, 1, false, true, false, 0, MaterialProperties().snowColour},
+
+	// Wood
+	{BehaviorType::Solid, 3, true, true, true, 0, MaterialProperties().woodColour},
+
+	// Salt
+	{BehaviorType::Powder, 2, false, true, false, 0, MaterialProperties().saltColour}
+};
+
+void World::updateCellBehaviour(int x, int y)
 {
 	if (!inBounds(x, y))
 		return;
@@ -119,36 +180,31 @@ void::World::updateCellBehaviour(int x, int y)
 	if (cell.updateFrame == m_currentFrame)
 		return;
 
-	switch (cell.material)
+	MaterialProperties properties = getMaterialProperties[(int)cell.material];
+
+	switch (properties.behavior)
 	{
-	case MaterialType::Sand:
-	case MaterialType::Salt:
-	case MaterialType::Fire:
-	case MaterialType::Snow:
-		updateSolid(x, y);
-		break;
+		case BehaviorType::Solid:
+			updateSolid(x, y);
+			break;
 
-	case MaterialType::Water:
-	case MaterialType::Oil:
-		updateLiquid(x, y);
-		break;
+		case BehaviorType::Powder:
+			updateSolid(x, y);
+			break;
 
-	case MaterialType::Smoke:
-		updateGas(x, y);
-		break;
+		case BehaviorType::Liquid:
+			updateLiquid(x, y);
+			break;
 
-	default:
-		// For other materials, just mark them as updated for this frame
-		cell.updateFrame = m_currentFrame;
-		break;
+		case BehaviorType::Gas:
+			updateGas(x, y);
+			break;
+
+		case BehaviorType::None:
+		default:
+			cell.updateFrame = m_currentFrame;
+			break;
 	}
-}
-
-void World::updateCellReaction(int x, int y)
-{
-	// Placeholder for future implementation of cell reactions
-	// This function can be used to handle interactions between different materials
-	// For example, fire spreading to flammable materials, water extinguishing fire, etc.
 }
 
 void World::updateSolid(int x, int y)
@@ -207,17 +263,6 @@ void World::draw(sf::RenderWindow& window) const
 	// Create a rectangle shape to represent each cell
 	sf::RectangleShape rect(sf::Vector2f((float)m_cellSize, (float)m_cellSize));
 
-	// Define colors for different materials
-	sf::Color SandYellow(194, 178, 128);
-	sf::Color StoneGrey(128, 128, 128);
-	sf::Color WaterBlue(0, 80, 255);
-	sf::Color OilBlack(0, 0, 0);
-	sf::Color FireRed(255, 0, 0);
-	sf::Color SmokeGrey(105, 105, 105);
-	sf::Color SnowWhite(255, 250, 250);
-	sf::Color WoodBrown(139, 69, 19);
-	sf::Color SaltWhite(255, 255, 255);
-
 	// Draw each cell based on its material type
 	for (int y = 0; y < m_height; ++y)
 	{
@@ -229,23 +274,23 @@ void World::draw(sf::RenderWindow& window) const
 				continue;
 
 			if (matType == MaterialType::Sand)
-				rect.setFillColor(SandYellow);
+				rect.setFillColor(MaterialProperties().sandColour);
 			else if (matType == MaterialType::Stone)
-				rect.setFillColor(StoneGrey);
+				rect.setFillColor(MaterialProperties().stoneColour);
 			else if (matType == MaterialType::Water)
-				rect.setFillColor(WaterBlue);
+				rect.setFillColor(MaterialProperties().waterColour);
 			else if (matType == MaterialType::Oil)
-				rect.setFillColor(OilBlack);
+				rect.setFillColor(MaterialProperties().oilColour);
 			else if (matType == MaterialType::Fire)
-				rect.setFillColor(FireRed);
+				rect.setFillColor(MaterialProperties().fireColour);
 			else if (matType == MaterialType::Smoke)
-				rect.setFillColor(SmokeGrey);
+				rect.setFillColor(MaterialProperties().smokeColour);
 			else if (matType == MaterialType::Snow)
-				rect.setFillColor(SnowWhite);
+				rect.setFillColor(MaterialProperties().snowColour);
 			else if (matType == MaterialType::Wood)
-				rect.setFillColor(WoodBrown);
+				rect.setFillColor(MaterialProperties().woodColour);
 			else if (matType == MaterialType::Salt)
-				rect.setFillColor(SaltWhite);
+				rect.setFillColor(MaterialProperties().saltColour);
 
 			rect.setPosition(sf::Vector2f((float)(x * m_cellSize), (float)(y * m_cellSize)));
 			window.draw(rect);
