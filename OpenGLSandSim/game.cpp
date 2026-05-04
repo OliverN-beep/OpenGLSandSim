@@ -77,12 +77,12 @@ void Game::update(float dt)
 	// Draw materials in the world based on mouse input
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 	{
-		m_world.paintCircle(x, y, m_brushSize, MaterialType::Salt);
+		m_world.paintCircle(x, y, m_brushSize, MaterialType::Fire);
 	}
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
 	{
-		m_world.paintCircle(x, y, m_brushSize, MaterialType::Water);
+		m_world.paintCircle(x, y, m_brushSize, MaterialType::Stone);
 	}
 }
 

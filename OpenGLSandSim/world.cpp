@@ -144,7 +144,13 @@ void World::updateCellBehaviour(int x, int y)
 	switch (properties.behaviour)
 	{
 		case BehaviourType::Powder:
-			updatePowder(x, y);
+			if (cell.material == MaterialType::Fire)
+			{
+				updateFire(x, y);
+			}
+			else
+				updatePowder(x, y);
+
 			break;
 
 		case BehaviourType::Liquid:
@@ -211,6 +217,50 @@ void World::updateGas(int x, int y)
 
 	// If none of the moves were possible, mark the cell as updated for this frame
 	getCellRef(x, y).updateFrame = m_currentFrame;
+}
+
+void World::updateFire(int x, int y)
+{
+	Cell& cell = getCellRef(x, y);
+
+	// Spread fire to adjacent cells
+	for (int dy = -1; dy <= 1; ++dy)
+	{
+		for (int dx = -1; dx <= 1; ++dx)
+		{
+			if (dx == 0 && dy == 0) continue;
+
+			int nx = x + dx;
+			int ny = y + dy;
+
+			if (!inBounds(nx, ny)) continue;
+
+			MaterialType neighborMat = getCell(nx, ny);
+
+			auto& neighborProps = g_materials[(int)neighborMat];
+
+			if (neighborProps.flammable && rand() % 100 < 10) // 10% chance to ignite
+			{
+				setCell(nx, ny, MaterialType::Fire);
+				getCellRef(nx, ny).lifeTime = 5; // Fire lasts for 5 frames
+			}
+		}
+	}
+
+	// Decrease lifetime
+	if (cell.lifeTime > 0)
+	{
+		cell.lifeTime--;
+	}
+
+	// Turn into smoke or empty when lifetime is over
+	if (cell.lifeTime == 0)
+	{
+		setCell(x, y, MaterialType::Smoke);
+		getCellRef(x, y).lifeTime = 10; // Smoke lasts for 10 frames
+	}
+
+	cell.updateFrame = m_currentFrame;
 }
 
 void World::draw(sf::RenderWindow& window) const

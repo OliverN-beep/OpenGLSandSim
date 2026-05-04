@@ -5,11 +5,11 @@ struct DebugInit
 {
 	DebugInit()
 	{
-		std::cout << "MATERIALS INITIALISED\n";
+		std::cout << "MATERIALS INITIALISED\n\n";
 	}
 };
-
 static DebugInit debugInit;
+
 
 MaterialProperties g_materials[(int)MaterialType::COUNT] =
 {
@@ -25,13 +25,13 @@ MaterialProperties g_materials[(int)MaterialType::COUNT] =
 	{BehaviourType::Solid, 5, false, false, true, 0, sf::Color(128, 128, 128)},
 
 	// Water
-	{BehaviourType::Liquid, 1, false, true, false, 0, sf::Color(0, 80, 255)},
+	{BehaviourType::Liquid, 1, false, true, true, 0, sf::Color(0, 80, 255)},
 
 	// Oil
 	{BehaviourType::Liquid, 1, true, true, false, 0, sf::Color(0, 0, 0)},
 
 	// Fire
-	{BehaviourType::Powder, 0, false, false, false, 5, sf::Color(255, 0, 0)},
+	{BehaviourType::Powder, 1, false, false, false, 60, sf::Color(255, 0, 0)},
 
 	// Smoke
 	{BehaviourType::Gas, 0, false, false, false, 10, sf::Color(105, 105, 105)},
