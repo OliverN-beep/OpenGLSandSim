@@ -30,7 +30,7 @@ struct MaterialProperties							// Struct representing properties of a material
 {
 	BehaviourType behaviour;						// The behavior type of the material
 
-	int density = 0;								// Density of the material (used for falling behavior)
+	float density = 0.f;							// Density of the material (g/cm³), used for determining how materials interact with each other (e.g., falling, floating)
 
 	bool flammable = false;							// Indicates if the material is flammable
 	bool wettable = false;							// Indicates if the material can be wetted by liquids

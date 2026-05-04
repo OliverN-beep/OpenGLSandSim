@@ -16,32 +16,32 @@ MaterialProperties g_materials[(int)MaterialType::COUNT] =
 	// BehaviorType, Density, Flammable, Wettable, Conductive, DefaultLife, Colour
 
 	// Empty
-	{BehaviourType::None, 0, false, false, false, 0, sf::Color(0, 0, 0, 0)},
+	{BehaviourType::None, 0.f, false, false, false, 0, sf::Color(0, 0, 0, 0)},
 
 	// Sand
-	{BehaviourType::Powder, 3, false, true, false, 0, sf::Color(194, 178, 128)},
+	{BehaviourType::Powder, 1.5f, false, true, false, 0, sf::Color(194, 178, 128)},
 
 	// Water
-	{BehaviourType::Liquid, 2, false, true, true, 0, sf::Color(0, 80, 255)},
+	{BehaviourType::Liquid, 1.f, false, true, true, 0, sf::Color(0, 80, 255)},
 
 	// Stone
-	{BehaviourType::Solid, 5, false, false, true, 0, sf::Color(128, 128, 128)},
+	{BehaviourType::Solid, 5.f, false, false, true, 0, sf::Color(128, 128, 128)},
 
 	// Oil
-	{BehaviourType::Liquid, 1, true, true, false, 0, sf::Color(0, 0, 0)},
+	{BehaviourType::Liquid, 0.8f, true, true, false, 0, sf::Color(0, 0, 0)},
 
 	// Fire
-	{BehaviourType::Powder, 1, false, false, false, 60, sf::Color(255, 0, 0)},
+	{BehaviourType::Powder, 1.f, false, false, false, 60, sf::Color(255, 0, 0)},
 
 	// Smoke
-	{BehaviourType::Gas, 0, false, false, false, 10, sf::Color(105, 105, 105)},
+	{BehaviourType::Gas, 0.f, false, false, false, 10, sf::Color(105, 105, 105)},
 
 	// Snow
-	{BehaviourType::Powder, 1, false, true, false, 0, sf::Color(255, 250, 250)},
+	{BehaviourType::Powder, 0.1f, false, true, false, 0, sf::Color(255, 250, 250)},
 
 	// Wood
-	{BehaviourType::Solid, 3, true, true, true, 0, sf::Color(139, 69, 19)},
+	{BehaviourType::Solid, 3.f, true, true, true, 0, sf::Color(139, 69, 19)},
 
 	// Salt
-	{BehaviourType::Powder, 4, false, true, false, 0, sf::Color(255, 255, 255)}
+	{BehaviourType::Powder, 2.1f, false, true, false, 0, sf::Color(180, 180, 255)}
 };
