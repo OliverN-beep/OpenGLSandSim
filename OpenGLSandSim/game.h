@@ -44,7 +44,7 @@ private:
 
 	const static int RW_WIDTH = 1280;		// Width of the render window
 	const static int RW_HEIGHT = 720;		// Height of the render window
-	const static int CELL_SIZE = 4;			// Size of each cell in the world
+	const static int CELL_SIZE = 2;			// Size of each cell in the world
 	const static int TILE_SIZE = 32;		// Size of each tile in the tile map
 
 	const sf::Color BACKGROUND_COLOR = sf::Color(0, 10, 55);	// Background color of the window

@@ -25,25 +25,19 @@ bool World::inBounds(int x, int y) const
 	return x >= 0 && x < m_width && y >= 0 && y < m_height;
 }
 
+// Get a reference to the cell at the given coordinates (for read-write access)
 Cell& World::getCellRef(int x, int y)
 {
 	return cells[index(x, y)];
 }
 
+// Get a const reference to the cell at the given coordinates (for read-only access)
 const Cell& World::getCellRef(int x, int y) const
 {
 	return cells[index(x, y)];
 }
 
-MaterialType World::getCell(int x, int y) const
-{
-	if (!inBounds(x, y))
-	{
-		return MaterialType::Stone;
-	}
-	return getCellRef(x, y).material;
-}
-
+// Set the material type of a specific cell at (x, y) to the given material type
 void World::setCell(int x, int y, MaterialType matType)
 {
 	if (inBounds(x, y))
@@ -54,7 +48,7 @@ void World::setCell(int x, int y, MaterialType matType)
 
 bool World::isEmpty(int x, int y) const
 {
-	return getCell(x, y) == MaterialType::Empty;
+	return getCellRef(x, y).material == MaterialType::Empty;
 }
 
 bool World::canMoveInto(int x1, int y1, int x2, int y2)
@@ -171,13 +165,16 @@ void World::updateCellBehaviour(int x, int y)
 void World::updatePowder(int x, int y)
 {
 	// Try to move down
-	if (tryMove(x, y, x, y + 1)) return;
+	if (tryMove(x, y, x, y + 1))
+		return;
 
 	// Try to move down-left
-	if (tryMove(x, y, x - 1, y + 1)) return;
+	if (tryMove(x, y, x - 1, y + 1))
+		return;
 
 	// Try to move down-right
-	if (tryMove(x, y, x + 1, y + 1)) return;
+	if (tryMove(x, y, x + 1, y + 1))
+		return;
 
 	// If none of the moves were possible, mark the cell as updated for this frame
 	getCellRef(x, y).updateFrame = m_currentFrame;
@@ -186,19 +183,24 @@ void World::updatePowder(int x, int y)
 void World::updateLiquid(int x, int y)
 {
 	// Try to move down
-	if (tryMove(x, y, x, y + 1)) return;
+	if (tryMove(x, y, x, y + 1))
+		return;
 
 	// Try to move down-left
-	if (tryMove(x, y, x - 1, y + 1)) return;
+	if (tryMove(x, y, x - 1, y + 1))
+		return;
 
 	// Try to move down-right
-	if (tryMove(x, y, x + 1, y + 1)) return;
+	if (tryMove(x, y, x + 1, y + 1))
+		return;
 
 	// Try to move left
-	if (tryMove(x, y, x - 1, y)) return;
+	if (tryMove(x, y, x - 1, y))
+		return;
 
 	// Try to move right
-	if (tryMove(x, y, x + 1, y)) return;
+	if (tryMove(x, y, x + 1, y))
+		return;
 
 	// If none of the moves were possible, mark the cell as updated for this frame
 	getCellRef(x, y).updateFrame = m_currentFrame;
@@ -207,13 +209,16 @@ void World::updateLiquid(int x, int y)
 void World::updateGas(int x, int y)
 {
 	// Try to move up
-	if (tryMove(x, y, x, y - 1)) return;
+	if (tryMove(x, y, x, y - 1))
+		return;
 
 	// Try to move up-left
-	if (tryMove(x, y, x - 1, y - 1)) return;
+	if (tryMove(x, y, x - 1, y - 1))
+		return;
 
 	// Try to move up-right
-	if (tryMove(x, y, x + 1, y - 1)) return;
+	if (tryMove(x, y, x + 1, y - 1))
+		return;
 
 	// If none of the moves were possible, mark the cell as updated for this frame
 	getCellRef(x, y).updateFrame = m_currentFrame;
@@ -228,18 +233,20 @@ void World::updateFire(int x, int y)
 	{
 		for (int dx = -1; dx <= 1; ++dx)
 		{
-			if (dx == 0 && dy == 0) continue;
+			if (dx == 0 && dy == 0)
+				continue;
 
 			int nx = x + dx;
 			int ny = y + dy;
 
-			if (!inBounds(nx, ny)) continue;
+			if (!inBounds(nx, ny))
+				continue;
 
-			MaterialType neighborMat = getCell(nx, ny);
+			MaterialType neighborMat = getCellRef(nx, ny).material;
 
 			auto& neighborProps = g_materials[(int)neighborMat];
 
-			if (neighborProps.flammable && rand() % 100 < 10) // 10% chance to ignite
+			if (neighborProps.flammable && rand() % 100 < 10) // 10% chance to ignite nearby materials (for natural look)
 			{
 				setCell(nx, ny, MaterialType::Fire);
 				getCellRef(nx, ny).lifeTime = 5; // Fire lasts for 5 frames
@@ -273,7 +280,7 @@ void World::draw(sf::RenderWindow& window) const
 	{
 		for (int x = 0; x < m_width; ++x)
 		{
-			MaterialType matType = getCell(x, y);
+			MaterialType matType = getCellRef(x, y).material;
 
 			if (matType == MaterialType::Empty)
 				continue;
@@ -297,7 +304,7 @@ void World::paintCircle(int cx, int cy, int radius, MaterialType type)
 			if (dx * dx + dy * dy > radius * radius)
 				continue;
 
-			if (rand() % 100 < 99) // Randomly skip some cells for a more natural look
+			if (rand() % 100 < 9) // Randomly skip some cells for a more natural look
 			{
 				setCell(cx + dx, cy + dy, type);
 			}

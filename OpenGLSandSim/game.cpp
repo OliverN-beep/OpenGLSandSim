@@ -8,7 +8,8 @@ Game::Game()
 	  m_tilemap(RW_WIDTH / TILE_SIZE, RW_HEIGHT / TILE_SIZE, TILE_SIZE), // TileMap with tile size of 32 pixels
 	  m_player({100.f, 100.f}) // Initialise player at position (100, 100)
 {
-	m_window.setFramerateLimit(60);
+	// Cap fps
+	//m_window.setFramerateLimit( 240 );
 
 	m_world.setTileMap(&m_tilemap); // Set the tile map for the world to enable particle collision detection
 

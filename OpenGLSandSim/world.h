@@ -20,11 +20,11 @@ public:
 	void setTileMap(TileMap* tileMap);									// Set the tile map for the world (used for particle collision detection)
 		
 	World(int width, int height, int cellSize);							// Constructor to initialize the world with given dimensions and cell size
+	sf::VertexArray getVertexArray() const;								// Get the vertex array for rendering the world
 
 	void update();														// Update the world state (e.g., sand falling)
 	void draw(sf::RenderWindow& window) const;							// Draw the world to the given SFML window
 
-	MaterialType getCell(int x, int y) const;							// Get the material type of a specific cell
 	void setCell(int x, int y, MaterialType matType);					// Set the material type of a specific cell
 
 	void paintCircle(int cx, int cy, int radius, MaterialType type);	// Paint a circle of cells with the given material type

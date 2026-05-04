@@ -19,10 +19,10 @@ MaterialProperties g_materials[(int)MaterialType::COUNT] =
 	{BehaviourType::None, 0, false, false, false, 0, sf::Color(0, 0, 0, 0)},
 
 	// Sand
-	{BehaviourType::Powder, 2, false, true, false, 0, sf::Color(194, 178, 128)},
+	{BehaviourType::Powder, 3, false, true, false, 0, sf::Color(194, 178, 128)},
 
 	// Water
-	{BehaviourType::Liquid, 1, false, true, true, 0, sf::Color(0, 80, 255)},
+	{BehaviourType::Liquid, 2, false, true, true, 0, sf::Color(0, 80, 255)},
 
 	// Stone
 	{BehaviourType::Solid, 5, false, false, true, 0, sf::Color(128, 128, 128)},
@@ -43,5 +43,5 @@ MaterialProperties g_materials[(int)MaterialType::COUNT] =
 	{BehaviourType::Solid, 3, true, true, true, 0, sf::Color(139, 69, 19)},
 
 	// Salt
-	{BehaviourType::Powder, 2, false, true, false, 0, sf::Color(255, 255, 255)}
+	{BehaviourType::Powder, 4, false, true, false, 0, sf::Color(255, 255, 255)}
 };
