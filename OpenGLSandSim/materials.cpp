@@ -21,11 +21,11 @@ MaterialProperties g_materials[(int)MaterialType::COUNT] =
 	// Sand
 	{BehaviourType::Powder, 2, false, true, false, 0, sf::Color(194, 178, 128)},
 
-	// Stone
-	{BehaviourType::Solid, 5, false, false, true, 0, sf::Color(128, 128, 128)},
-
 	// Water
 	{BehaviourType::Liquid, 1, false, true, true, 0, sf::Color(0, 80, 255)},
+
+	// Stone
+	{BehaviourType::Solid, 5, false, false, true, 0, sf::Color(128, 128, 128)},
 
 	// Oil
 	{BehaviourType::Liquid, 1, true, true, false, 0, sf::Color(0, 0, 0)},

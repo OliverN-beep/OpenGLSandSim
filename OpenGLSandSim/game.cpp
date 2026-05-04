@@ -61,6 +61,60 @@ void Game::processEvents()
 			if (m_brushSize < 1) m_brushSize = 1;
 			if (m_brushSize > 20) m_brushSize = 20;
 		}
+
+		// Close the window if the Escape key is pressed
+		if (event->is<sf::Event::KeyPressed>())
+		{
+			auto keyEvent = event->getIf<sf::Event::KeyPressed>();
+			if (keyEvent->code == sf::Keyboard::Key::Escape)
+			{
+				m_window.close();
+			}
+		}
+
+		if (event->is<sf::Event::KeyPressed>())
+		{
+			auto keyEvent = event->getIf<sf::Event::KeyPressed>();
+
+			switch (keyEvent->code)
+			{
+			case sf::Keyboard::Key::Num1:
+				m_selectedMaterial = MaterialType::Sand;
+				break;
+
+			case sf::Keyboard::Key::Num2:
+				m_selectedMaterial = MaterialType::Water;
+				break;
+
+			case sf::Keyboard::Key::Num3:
+				m_selectedMaterial = MaterialType::Stone;
+				break;
+
+			case sf::Keyboard::Key::Num4:
+				m_selectedMaterial = MaterialType::Oil;
+				break;
+
+			case sf::Keyboard::Key::Num5:
+				m_selectedMaterial = MaterialType::Fire;
+				break;
+
+			case sf::Keyboard::Key::Num6:
+				m_selectedMaterial = MaterialType::Smoke;
+				break;
+			
+			case sf::Keyboard::Key::Num7:
+				m_selectedMaterial = MaterialType::Snow;
+				break;
+
+			case sf::Keyboard::Key::Num8:
+				m_selectedMaterial = MaterialType::Wood;
+				break;
+
+			case sf::Keyboard::Key::Num9:
+				m_selectedMaterial = MaterialType::Salt;
+				break;
+			}
+		}
 	}
 }
 
@@ -77,12 +131,7 @@ void Game::update(float dt)
 	// Draw materials in the world based on mouse input
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 	{
-		m_world.paintCircle(x, y, m_brushSize, MaterialType::Fire);
-	}
-
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
-	{
-		m_world.paintCircle(x, y, m_brushSize, MaterialType::Stone);
+		m_world.paintCircle(x, y, m_brushSize, m_selectedMaterial);
 	}
 }
 
@@ -93,6 +142,35 @@ void Game::render()
 	m_world.draw(m_window);
 	m_tilemap.draw(m_window);
 	m_player.draw(m_window);
+
+	void drawUI();
+	{
+		const int size = 20;
+		const int padding = 10;
+
+		for (int i = 0; i < (int)MaterialType::COUNT; ++i)
+		{
+			MaterialType matType = static_cast<MaterialType>(i);
+			auto& mat = g_materials[i];
+
+			sf::RectangleShape rect(sf::Vector2f(size, size));
+			rect.setFillColor(mat.colour);
+
+			rect.setPosition(sf::Vector2f(padding + i * (size + padding), padding));
+
+			if (matType == m_selectedMaterial)
+			{
+				rect.setOutlineColor(sf::Color::White);
+				rect.setOutlineThickness(2.f);
+			}
+			else
+			{
+				rect.setOutlineColor(sf::Color::Transparent);
+				rect.setOutlineThickness(0.f);
+			}
+			m_window.draw(rect);
+		}
+	}
 
 	// Brush
 	sf::CircleShape brush;
