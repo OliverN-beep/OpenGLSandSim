@@ -20,7 +20,6 @@ private:
 	void processEvents();					// Handle user input and window events
 	void update(float dt);					// Update game state (player, world, etc.)
 	void render();							// Render the game (world, player, UI, etc.)
-	void drawUI();							// Draw the user interface (FPS, selected material, etc.)
 
 	sf::RenderWindow m_window;				// SFML window for rendering
 
@@ -44,8 +43,8 @@ private:
 
 	const static int RW_WIDTH = 1280;		// Width of the render window
 	const static int RW_HEIGHT = 720;		// Height of the render window
-	const static int CELL_SIZE = 6;			// Size of each cell in the world
+	const static int CELL_SIZE = 4;			// Size of each cell in the world
 	const static int TILE_SIZE = 32;		// Size of each tile in the tile map
 
-	const sf::Color BACKGROUND_COLOR = sf::Color(0, 10, 55);	// Background color of the window
+	const sf::Color BACKGROUND_COLOR = sf::Color(0, 20, 85);	// Background color of the window
 };

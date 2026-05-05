@@ -9,7 +9,7 @@ Game::Game()
 	  m_player({100.f, 100.f}) // Initialise player at position (100, 100)
 {
 	// Cap fps
-	//m_window.setFramerateLimit( 240 );
+	//m_window.setFramerateLimit( 120 );
 
 	m_world.setTileMap(&m_tilemap); // Set the tile map for the world to enable particle collision detection
 
@@ -188,7 +188,10 @@ void Game::render()
 	// Calculate and display FPS
 	float fps = 1.f / m_fps;
 	m_fpsText.setString("FPS: " + std::to_string(static_cast<int>(fps)));
+
+	// Draw the FPS text on the window
 	m_window.draw(m_fpsText);
 
+	// End the current frame and display its contents on screen
 	m_window.display();
 }

@@ -3,7 +3,8 @@
 #include <vector>
 #include "materials.h"
 
-class TileMap;											// Forward declaration of TileMap class
+// Forward declaration of TileMap class
+class TileMap;
 
 struct Cell
 {
@@ -12,6 +13,10 @@ struct Cell
 
 	uint8_t lifeTime = 0;												// Lifetime of the cell (fire, smoke, etc.)
 	uint8_t state = 0;													// Additional state information for the cell (fire spreading, wet material, etc.)
+
+	bool m_isDirty = true;												// Flag to indicate if the world state has changed and needs to be redrawn
+
+	sf::Vector2f velocity = { 0.f, 0.f };								// Velocity of the cell
 };
 
 class World																// Class representing the simulation world
@@ -20,7 +25,8 @@ public:
 	void setTileMap(TileMap* tileMap);									// Set the tile map for the world (used for particle collision detection)
 		
 	World(int width, int height, int cellSize);							// Constructor to initialize the world with given dimensions and cell size
-	sf::VertexArray getVertexArray() const;								// Get the vertex array for rendering the world
+
+	sf::VertexArray m_vertices;											// Get the vertex array for rendering every cell in the world at once
 
 	void update();														// Update the world state (e.g., sand falling)
 	void draw(sf::RenderWindow& window) const;							// Draw the world to the given SFML window
@@ -28,6 +34,8 @@ public:
 	void setCell(int x, int y, MaterialType matType);					// Set the material type of a specific cell
 
 	void paintCircle(int cx, int cy, int radius, MaterialType type);	// Paint a circle of cells with the given material type
+
+	void updateMesh();													// Update the vertex array for rendering
 	
 private:
 	TileMap* m_tileMap = nullptr;						// Pointer to the tile map for particle collision detection

@@ -13,6 +13,8 @@ World::World(int width, int height, int cellSize)
 	m_cellSize(cellSize),
 	cells(width * height)
 {
+	m_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
+	m_vertices.resize(m_width* m_height * 6);
 }
 
 int World::index(int x, int y) const
@@ -42,7 +44,12 @@ void World::setCell(int x, int y, MaterialType matType)
 {
 	if (inBounds(x, y))
 	{
-		getCellRef(x, y).material = matType;
+		Cell& c = getCellRef(x, y);
+		if (c.material != matType)
+		{
+			c.material = matType;
+			c.m_isDirty = true;
+		}
 	}
 }
 
@@ -86,8 +93,13 @@ bool World::tryMove(int x1, int y1, int x2, int y2)
 
 	std::swap(cellA, cellB);
 
+	// Update the updateFrame for both cells to indicate that they have been updated in the current frame
 	cellA.updateFrame = m_currentFrame;
 	cellB.updateFrame = m_currentFrame;
+
+	// Mark both cells as dirty to indicate that they have changed and need to be redrawn
+	cellA.m_isDirty = true;
+	cellB.m_isDirty = true;
 
 	return true;
 }
@@ -272,26 +284,9 @@ void World::updateFire(int x, int y)
 
 void World::draw(sf::RenderWindow& window) const
 {
-	// Create a rectangle shape to represent each cell
-	sf::RectangleShape rect(sf::Vector2f((float)m_cellSize, (float)m_cellSize));
+	const_cast<World*>(this)->updateMesh();
 
-	// Draw each cell based on its material type
-	for (int y = 0; y < m_height; ++y)
-	{
-		for (int x = 0; x < m_width; ++x)
-		{
-			MaterialType matType = getCellRef(x, y).material;
-
-			if (matType == MaterialType::Empty)
-				continue;
-
-			auto& mat = g_materials[(int)matType];
-			rect.setFillColor(mat.colour);
-
-			rect.setPosition(sf::Vector2f((float)(x * m_cellSize), (float)(y * m_cellSize)));
-			window.draw(rect);
-		}
-	}
+	window.draw(m_vertices);
 }
 
 // Helper function for painting cells with a brush of a given size and material type
@@ -308,6 +303,57 @@ void World::paintCircle(int cx, int cy, int radius, MaterialType type)
 			{
 				setCell(cx + dx, cy + dy, type);
 			}
+		}
+	}
+}
+
+void World::updateMesh()
+{
+	for (int y = 0; y < m_height; ++y)
+	{
+		for (int x = 0; x < m_width; ++x)
+		{
+			Cell& cell = getCellRef(x, y);
+
+			if (!cell.m_isDirty)
+				continue;
+
+			int index = (x + y * m_width) * 6;
+			sf::Vertex* tri = &m_vertices[index];
+
+			// Calculate the pixel position of the cell in the world
+			float px = (float)x * m_cellSize;
+			float py = (float)y * m_cellSize;	
+
+			// Size of the cell in pixels
+			float s = (float)m_cellSize;
+
+			// Set the color of the triangle meshes based on the material type of the cell
+			MaterialType matType = getCellRef(x, y).material;
+
+			sf::Color colour = sf::Color::Transparent;
+
+			if (matType != MaterialType::Empty)
+			{
+				colour = g_materials[(int)matType].colour;
+			}
+
+			// Triangle 1
+			tri[0].position = sf::Vector2f(px, py);
+			tri[1].position = sf::Vector2f(px + s, py);
+			tri[2].position = sf::Vector2f(px + s, py + s);
+
+			// Triangle 2
+			tri[3].position = sf::Vector2f(px, py);
+			tri[4].position = sf::Vector2f(px + s, py + s);
+			tri[5].position = sf::Vector2f(px, py + s);
+
+			for (int i = 0; i < 6; ++i)
+			{
+				tri[i].color = colour;
+			}
+
+			cell.m_isDirty = false; // Mark the mesh as clean after rebuilding
 		}
 	}
 }
