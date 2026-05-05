@@ -9,7 +9,7 @@ Game::Game()
 	  m_player({100.f, 100.f}) // Initialise player at position (100, 100)
 {
 	// Cap fps
-	//m_window.setFramerateLimit( 120 );
+	m_window.setFramerateLimit( 120 );
 
 	m_world.setTileMap(&m_tilemap); // Set the tile map for the world to enable particle collision detection
 

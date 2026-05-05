@@ -147,6 +147,30 @@ void World::updateCellBehaviour(int x, int y)
 
 	MaterialProperties properties = g_materials[(int)cell.material];
 
+	// Apply gravity to the cell's velocity
+	cell.velocity.y += properties.gravity;
+
+	// Clamp the cell's velocity to the maximum allowed velocity for its material
+	if (cell.velocity.y > properties.maxVelocity)
+		cell.velocity.y = properties.maxVelocity;
+
+	int steps = (int)cell.velocity.y;
+
+	for (int i = 0; i < steps; ++i)
+	{
+
+		if (tryMove(x, y, x, y + 1))
+		{
+			y += 1; // Update the y-coordinate to reflect the attempted move down
+		}
+
+		else
+		{
+			cell.velocity.y = 0; // Reset velocity if the cell can't move down
+			break;
+		}
+	}
+
 	switch (properties.behaviour)
 	{
 		case BehaviourType::Powder:
