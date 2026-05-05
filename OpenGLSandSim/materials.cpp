@@ -31,7 +31,7 @@ MaterialProperties g_materials[(int)MaterialType::COUNT] =
 	{BehaviourType::Liquid, 0.8f, true, true, false, 0, sf::Color(0, 0, 0), 1.0f, 1.0f},
 
 	// Fire
-	{BehaviourType::Powder, 1.f, false, false, false, 60, sf::Color(255, 0, 0), 0.0f, 1.0f},
+	{BehaviourType::Fire, 1.f, false, false, false, 60, sf::Color(255, 0, 0), 0.0f, 1.0f},
 
 	// Smoke
 	{BehaviourType::Gas, 0.f, false, false, false, 10, sf::Color(105, 105, 105), 0.0f, 1.0f},

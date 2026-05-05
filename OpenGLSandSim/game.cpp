@@ -116,6 +116,16 @@ void Game::processEvents()
 				break;
 			}
 		}
+
+		if (event->is<sf::Event::KeyPressed>())
+		{
+			auto keyEvent = event->getIf<sf::Event::KeyPressed>();
+			if (keyEvent->code == sf::Keyboard::Key::Tab)
+			{
+				m_editorMode = !m_editorMode;
+				printf("Editor mode: %s\n", m_editorMode ? "ON" : "OFF");
+			}
+		}
 	}
 }
 
@@ -126,13 +136,32 @@ void Game::update(float dt)
 
 	sf::Vector2i mouse = sf::Mouse::getPosition(m_window);
 
-	int x = mouse.x / CELL_SIZE;
-	int y = mouse.y / CELL_SIZE;
+	int xCell = mouse.x / CELL_SIZE;
+	int yCell = mouse.y / CELL_SIZE;
 
-	// Draw materials in the world based on mouse input
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+	int xTile = mouse.x / TILE_SIZE;
+	int yTile = mouse.y / TILE_SIZE;
+
+	// If the editor mode is active, allow editing the tile map with the left and right mouse buttons
+	if (m_editorMode)
 	{
-		m_world.paintCircle(x, y, m_brushSize, m_selectedMaterial);
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+		{
+			m_tilemap.setTile(xTile, yTile, TileType::Solid);
+		}
+		else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
+		{
+			m_tilemap.setTile(xTile, yTile, TileType::Empty);
+		}
+	}
+
+	// If the editor mode is not active, allow painting materials in the world with the left mouse button
+	if (!m_editorMode)
+	{
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+		{
+			m_world.paintCircle(xCell, yCell, m_brushSize, m_selectedMaterial);
+		}
 	}
 }
 

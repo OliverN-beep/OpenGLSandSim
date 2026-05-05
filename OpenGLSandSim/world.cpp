@@ -161,26 +161,25 @@ void World::updateCellBehaviour(int x, int y)
 
 		if (tryMove(x, y, x, y + 1))
 		{
-			y += 1; // Update the y-coordinate to reflect the attempted move down
+			y += 1;					// Update the y-coordinate to reflect the attempted move down
 		}
 
 		else
 		{
-			cell.velocity.y = 0; // Reset velocity if the cell can't move down
+			cell.velocity.y = 0;	// Reset velocity if the cell can't move down
 			break;
 		}
 	}
 
 	switch (properties.behaviour)
 	{
-		case BehaviourType::Powder:
-			if (cell.material == MaterialType::Fire)
-			{
-				updateFire(x, y);
-			}
-			else
-				updatePowder(x, y);
+		// Update fire first
+		case BehaviourType::Fire:
+			updateFire(x, y);
+			break;
 
+		case BehaviourType::Powder:
+			updatePowder(x, y);
 			break;
 
 		case BehaviourType::Liquid:

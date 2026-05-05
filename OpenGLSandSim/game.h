@@ -43,8 +43,10 @@ private:
 
 	const static int RW_WIDTH = 1280;		// Width of the render window
 	const static int RW_HEIGHT = 720;		// Height of the render window
-	const static int CELL_SIZE = 4;			// Size of each cell in the world
+	const static int CELL_SIZE = 3;			// Size of each cell in the world
 	const static int TILE_SIZE = 32;		// Size of each tile in the tile map
 
 	const sf::Color BACKGROUND_COLOR = sf::Color(0, 20, 85);	// Background color of the window
+
+	bool m_editorMode = false;				// Flag to indicate if the editor mode is active
 };

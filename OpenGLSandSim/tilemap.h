@@ -29,6 +29,8 @@ public:
 
 	bool isSolidAtParticle(int x, int y) const;		// Check if the tile at the specified (x, y) position is solid for particle collision detection
 
+	TileType m_selectedTileType = TileType::Solid;	// Currently selected tile type for editing the tile map
+
 private:
 	int index(int x, int y) const;					// Convert (x, y) tile coordinates to a linear index in the tile vector
 	bool inBounds(int x, int y) const;				// Check if the (x, y) tile coordinates are within the bounds of the tile map

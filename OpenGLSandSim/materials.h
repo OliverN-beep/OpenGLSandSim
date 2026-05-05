@@ -23,7 +23,8 @@ enum class BehaviourType							// Enum representing different behavior types for
 	Solid,											// Represents solid behavior (e.g., stone, wood)
 	Powder,											// Represents powder behavior (e.g., sand, salt, snow, gunpowder)
 	Liquid,											// Represents liquid behavior (e.g., water, oil)
-	Gas												// Represents gas behavior (e.g., smoke)
+	Gas,											// Represents gas behavior (e.g., smoke)
+	Fire											// Represents fire behavior
 };
 			
 struct MaterialProperties							// Struct representing properties of a material
