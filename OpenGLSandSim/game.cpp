@@ -132,14 +132,10 @@ void Game::processEvents()
 				switch (keyEvent->code)
 				{
 				case sf::Keyboard::Key::Num1:
-					m_selectedTileType = TileType::Empty;
-					break;
-
-				case sf::Keyboard::Key::Num2:
 					m_selectedTileType = TileType::Solid;
 					break;
 
-				case sf::Keyboard::Key::Num3:
+				case sf::Keyboard::Key::Num2:
 					m_selectedTileType = TileType::Spike;
 					break;
 				}
@@ -165,6 +161,11 @@ void Game::update(float dt)
 	if (m_editorMode && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 	{
 		m_tilemap.setTile(xTile, yTile, m_selectedTileType);
+	}
+
+	if (m_editorMode && sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
+	{
+		m_tilemap.setTile(xTile, yTile, TileType::Empty);
 	}
 
 	// If the editor mode is not active, allow painting materials in the world with the left mouse button
@@ -212,14 +213,16 @@ void Game::render()
 
 	// Brush
 	sf::CircleShape brush;
+
 	brush.setRadius(static_cast<float>(m_brushSize * CELL_SIZE));
 	brush.setFillColor(sf::Color::Transparent);
 	brush.setOutlineColor(sf::Color::White);
 	brush.setOutlineThickness(2.f);
-	brush.setPosition(sf::Vector2f(sf::Mouse::getPosition(m_window)) - sf::Vector2f(static_cast<float>(m_brushSize * CELL_SIZE), static_cast<float>(m_brushSize * CELL_SIZE)));
 
 	auto mousePos = sf::Mouse::getPosition(m_window);
+
 	brush.setPosition(sf::Vector2f(static_cast<float>(mousePos.x) - static_cast<float>(m_brushSize * CELL_SIZE), static_cast<float>(mousePos.y) - static_cast<float>(m_brushSize * CELL_SIZE)));
+
 	m_window.draw(brush);
 
 	// Calculate and display FPS
@@ -269,21 +272,20 @@ void Game::drawTileHotbar()
 {
 	const int size = 40;
 
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 2; ++i)
 	{
 		sf::RectangleShape box;
 
 		box.setSize({ static_cast<float>(size), static_cast<float>(size) });
 		box.setPosition({ 40.f + i * (size + 5), size + 40.f });
 
-		if (i == 0) box.setFillColor(sf::Color::Black);   // Empty
-		if (i == 1) box.setFillColor(sf::Color::White);   // Solid
-		if (i == 2) box.setFillColor(sf::Color::Red);     // Spike
+		if (i == 0) box.setFillColor(sf::Color::White);   // Solid
+		if (i == 1) box.setFillColor(sf::Color::Red);     // Spike
 
 		if (static_cast<int>(m_selectedTileType) == i)
 		{
 			box.setOutlineThickness(3.f);
-			box.setOutlineColor(sf::Color::Red);
+			box.setOutlineColor(sf::Color::Green);
 		}
 
 		m_window.draw(box);

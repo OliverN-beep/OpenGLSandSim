@@ -1,6 +1,6 @@
 #include "player_controller.h"
 
-const int CELL_SIZE = 6;						// Size of each cell in pixels
+const int CELL_SIZE = 3;						// Size of each cell in pixels
 
 // ----------Tunable parameters----------
 const float MOVE_SPEED = 200.f;					// Horizontal movement speed

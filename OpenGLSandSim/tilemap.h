@@ -4,9 +4,9 @@
 #include <SFML/Graphics.hpp>
 
 enum class TileType {
-	Empty,
 	Solid,
-	Spike
+	Spike,
+	Empty
 	// Add more tile types as needed
 };
 
