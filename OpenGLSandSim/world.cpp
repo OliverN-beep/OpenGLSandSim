@@ -66,8 +66,8 @@ bool World::canMoveInto(int x1, int y1, int x2, int y2)
 	Cell& cellA = getCellRef(x1, y1);
 	Cell& cellB = getCellRef(x2, y2);
 
-	auto& matA = g_materials[(int)cellA.material];
-	auto& matB = g_materials[(int)cellB.material];
+	auto& matA = g_materials[static_cast<int>(cellA.material)];
+	auto& matB = g_materials[static_cast<int>(cellB.material)];
 
 	if (cellB.material == MaterialType::Empty)
 		return true;
@@ -104,7 +104,7 @@ bool World::tryMove(int x1, int y1, int x2, int y2)
 	return true;
 }
 
-bool World::isTileBlocked (int x, int y) const
+bool World::isTileBlocked(int x, int y) const
 {
 	if (!m_tileMap)
 		return false;
@@ -145,7 +145,7 @@ void World::updateCellBehaviour(int x, int y)
 	if (cell.updateFrame == m_currentFrame)
 		return;
 
-	MaterialProperties properties = g_materials[(int)cell.material];
+	MaterialProperties properties = g_materials[static_cast<int>(cell.material)];
 
 	// Apply gravity to the cell's velocity
 	cell.velocity.y += properties.gravity;
@@ -154,7 +154,7 @@ void World::updateCellBehaviour(int x, int y)
 	if (cell.velocity.y > properties.maxVelocity)
 		cell.velocity.y = properties.maxVelocity;
 
-	int steps = (int)cell.velocity.y;
+	int steps = static_cast<int>(cell.velocity.y);
 
 	for (int i = 0; i < steps; ++i)
 	{
@@ -279,7 +279,7 @@ void World::updateFire(int x, int y)
 
 			MaterialType neighborMat = getCellRef(nx, ny).material;
 
-			auto& neighborProps = g_materials[(int)neighborMat];
+			auto& neighborProps = g_materials[static_cast<int>(neighborMat)];
 
 			if (neighborProps.flammable && rand() % 100 < 10) // 10% chance to ignite nearby materials (for natural look)
 			{
@@ -345,11 +345,11 @@ void World::updateMesh()
 			sf::Vertex* tri = &m_vertices[index];
 
 			// Calculate the pixel position of the cell in the world
-			float px = (float)x * m_cellSize;
-			float py = (float)y * m_cellSize;	
+			float px = static_cast<float>(x) * m_cellSize;
+			float py = static_cast<float>(y) * m_cellSize;	
 
 			// Size of the cell in pixels
-			float s = (float)m_cellSize;
+			float s = static_cast<float>(m_cellSize);
 
 			// Set the color of the triangle meshes based on the material type of the cell
 			MaterialType matType = getCellRef(x, y).material;
@@ -358,7 +358,7 @@ void World::updateMesh()
 
 			if (matType != MaterialType::Empty)
 			{
-				colour = g_materials[(int)matType].colour;
+				colour = g_materials[static_cast<int>(matType)].colour;
 			}
 
 			// Triangle 1

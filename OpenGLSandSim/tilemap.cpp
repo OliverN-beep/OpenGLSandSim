@@ -13,8 +13,8 @@ bool TileMap::isSolidAtParticle(int particleX, int particleY) const
 	float worldX = particleX * 6.f;
 	float worldY = particleY * 6.f;
 
-	int tx = (int)(worldX / m_tileSize);
-	int ty = (int)(worldY / m_tileSize);
+	int tx = static_cast<int>(worldX / m_tileSize);
+	int ty = static_cast<int>(worldY / m_tileSize);
 
 	return isSolid(tx, ty);
 }
@@ -49,13 +49,20 @@ TileType TileMap::getTile(int x, int y) const
 		// Return the tile type from the 2D vector
 		return m_tiles[x][y];
 	}
+
 	return TileType::Empty; // Return Empty if out of bounds
 }
 
 bool TileMap::isSolid(int x, int y) const
 {
 	TileType type = getTile(x, y);
-	return type == TileType::Solid || type == TileType::Platform; // Consider Solid and Platform as solid tiles
+	return type == TileType::Solid;
+}
+
+bool TileMap::isSpike(int x, int y) const
+{
+	TileType type = getTile(x, y);
+	return type == TileType::Spike;
 }
 
 void TileMap::draw(sf::RenderWindow& window) const
@@ -80,14 +87,11 @@ void TileMap::draw(sf::RenderWindow& window) const
 			case TileType::Spike:
 				tileShape.setFillColor(sf::Color::Red);
 				break;
-			case TileType::Platform:
-				tileShape.setFillColor(sf::Color::Blue);
-				break;
 			}
 
 			sf::VertexArray grid(sf::PrimitiveType::Lines);
 
-			tileShape.setPosition(sf::Vector2f((float)(x * m_tileSize), (float)(y * m_tileSize)));
+			tileShape.setPosition(sf::Vector2f(static_cast<float>(x * m_tileSize), static_cast<float>(y * m_tileSize)));
 
 			window.draw(tileShape);
 		}

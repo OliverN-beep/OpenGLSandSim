@@ -13,9 +13,6 @@ class Game
 public:
 	Game();									// Constructor
 	void run();								// Main game loop
-
-	MaterialType m_selectedMaterial;		// Currently selected material for painting in the world
-	TileType m_selectedTileType;			// Currently selected tile type for editing the tile map
 		
 private:
 	void processEvents();					// Handle user input and window events
@@ -25,6 +22,9 @@ private:
 	void drawTileHotbar();					// Draw the tile hotbar for selecting tile types in editor mode
 
 	sf::RenderWindow m_window;				// SFML window for rendering
+
+	MaterialType m_selectedMaterial;		// Currently selected material for painting in the world
+	TileType m_selectedTileType;			// Currently selected tile type for editing the tile map
 
 	sf::Font m_font;						// Font for rendering text
 	sf::Text m_fpsText;						// Text object for displaying FPS

@@ -6,8 +6,7 @@
 enum class TileType {
 	Empty,
 	Solid,
-	Spike,
-	Platform
+	Spike
 	// Add more tile types as needed
 };
 
@@ -20,6 +19,7 @@ public:
 	TileType getTile(int x, int y) const;			// Get the tile type at the specified (x, y) position
 
 	bool isSolid(int x, int y) const;				// Check if the tile at the specified (x, y) position is solid
+	bool isSpike(int x, int y) const;				// Check if the tile at the specified (x, y) position is a spike
 
 	void draw(sf::RenderWindow& window) const;		// Draw the tile map onto the provided SFML render window
 

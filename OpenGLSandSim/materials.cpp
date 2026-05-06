@@ -11,7 +11,7 @@ struct DebugInit
 static DebugInit debugInit;
 
 
-MaterialProperties g_materials[(int)MaterialType::COUNT] =
+MaterialProperties g_materials[static_cast<int>(MaterialType::COUNT)] =
 {
 	// BehaviorType, Density, Flammable, Wettable, Conductive, DefaultLife, Colour, Gravity, MaxVelocity
 

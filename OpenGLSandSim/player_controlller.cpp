@@ -42,6 +42,14 @@ bool PlayerController::isSolidAt(TileMap& map, float px, float py)
 	return map.isSolid(tx, ty);
 }
 
+// Collision with spikes
+bool PlayerController::isSpikeAt(TileMap& map, float px, float py)
+{
+	int tx = static_cast<int>(px) / map.getTileSize();
+	int ty = static_cast<int>(py) / map.getTileSize();
+	return map.isSpike(tx, ty);
+}
+
 void PlayerController::update(Player& player, TileMap& map, float dt)
 {
 	// --------------Input Handling------------------
@@ -171,6 +179,7 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 	{
 		player.position.x = newPosition.x; // Update horizontal position if no collision
 	}
+
 	// Check for vertical collisions
 	if (isSolidAt(map, player.position.x, newPosition.y) || isSolidAt(map, player.position.x + player.size.x, newPosition.y + player.size.y))
 	{
@@ -186,5 +195,16 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 	{
 		player.position.y = newPosition.y; // Update vertical position if no collision
 		player.grounded = false; // Player is not grounded
+	}
+
+	if (isSpikeAt(map, player.position.x, player.position.y) || isSpikeAt(map, player.position.x + player.size.x, player.position.y + player.size.y))
+	{
+		// Handle spike collision (e.g., reset player position)
+		player.position = sf::Vector2f(100.f, 100.f); // Reset to starting position
+		player.velocity = sf::Vector2f(0.f, 0.f); // Reset velocity
+		player.grounded = false; // Player is not grounded
+		player.canDash = true; // Allow dashing again
+
+		printf("Player hit a spike! Resetting position.\n"); // Debug output for spike collision
 	}
 }

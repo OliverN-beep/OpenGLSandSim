@@ -1,12 +1,14 @@
 #include "game.h"
 
 // Constructor to initialise the game
-Game::Game()
-	: m_window(sf::VideoMode({ RW_WIDTH, RW_HEIGHT }), "OpenGL Sand Simulation"),
-	  m_fpsText(m_font),	// Text object for displaying FPS
-	  m_world(RW_WIDTH / CELL_SIZE, RW_HEIGHT / CELL_SIZE, CELL_SIZE), // World with cell size of 6 pixels
-	  m_tilemap(RW_WIDTH / TILE_SIZE, RW_HEIGHT / TILE_SIZE, TILE_SIZE), // TileMap with tile size of 32 pixels
-	  m_player({100.f, 100.f}) // Initialise player at position (100, 100)
+Game::Game():
+	m_window(sf::VideoMode({ RW_WIDTH, RW_HEIGHT }), "OpenGL Sand Simulation"),
+	m_fpsText(m_font),
+	m_world(RW_WIDTH / CELL_SIZE, RW_HEIGHT / CELL_SIZE, CELL_SIZE),
+	m_tilemap(RW_WIDTH / TILE_SIZE, RW_HEIGHT / TILE_SIZE, TILE_SIZE),
+	m_player({100.f, 100.f}),
+	m_selectedMaterial(MaterialType::Sand),
+	m_selectedTileType(TileType::Solid)
 {
 	// Cap fps
 	m_window.setFramerateLimit( 120 );
@@ -57,7 +59,7 @@ void Game::processEvents()
 		{
 			auto scroll = event->getIf<sf::Event::MouseWheelScrolled>();
 
-			m_brushSize += (int)scroll->delta;
+			m_brushSize += static_cast<int>(scroll->delta);
 
 			if (m_brushSize < 1) m_brushSize = 1;
 			if (m_brushSize > 20) m_brushSize = 20;
@@ -139,10 +141,6 @@ void Game::processEvents()
 
 				case sf::Keyboard::Key::Num3:
 					m_selectedTileType = TileType::Spike;
-					break;
-
-				case sf::Keyboard::Key::Num4:
-					m_selectedTileType = TileType::Platform;
 					break;
 				}
 			}
@@ -240,7 +238,7 @@ void Game::drawUI()
 	const int SIZE = 20;
 	const int PADDING = 10;
 
-	for (int i = 0; i < (int)MaterialType::COUNT; ++i)
+	for (int i = 0; i < static_cast<int>(MaterialType::COUNT); ++i)
 	{
 		MaterialType matType = static_cast<MaterialType>(i);
 		auto& mat = g_materials[i];
@@ -248,7 +246,9 @@ void Game::drawUI()
 		sf::RectangleShape rect(sf::Vector2f(SIZE, SIZE));
 		rect.setFillColor(mat.colour);
 
-		rect.setPosition(sf::Vector2f(PADDING + i * (SIZE + PADDING), PADDING));
+		int xPos = PADDING + i * (SIZE + PADDING);
+
+		rect.setPosition(sf::Vector2f(static_cast<float>(xPos), static_cast<float>(PADDING)));
 
 		if (matType == m_selectedMaterial)
 		{
@@ -269,19 +269,18 @@ void Game::drawTileHotbar()
 {
 	const int size = 40;
 
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 3; ++i)
 	{
 		sf::RectangleShape box;
 
-		box.setSize({ (float)size, (float)size });
+		box.setSize({ static_cast<float>(size), static_cast<float>(size) });
 		box.setPosition({ 40.f + i * (size + 5), size + 40.f });
 
 		if (i == 0) box.setFillColor(sf::Color::Black);   // Empty
 		if (i == 1) box.setFillColor(sf::Color::White);   // Solid
 		if (i == 2) box.setFillColor(sf::Color::Red);     // Spike
-		if (i == 3) box.setFillColor(sf::Color::Blue);    // Platform
 
-		if ((int)m_selectedTileType == i)
+		if (static_cast<int>(m_selectedTileType) == i)
 		{
 			box.setOutlineThickness(3.f);
 			box.setOutlineColor(sf::Color::Red);
