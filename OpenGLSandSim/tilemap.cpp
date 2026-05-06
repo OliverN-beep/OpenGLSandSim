@@ -75,18 +75,17 @@ void TileMap::draw(sf::RenderWindow& window) const
 				tileShape.setFillColor(sf::Color::Transparent);
 				break;
 			case TileType::Solid:
-				tileShape.setFillColor(sf::Color::Magenta);
-				break;
-			case TileType::Platform:
-				tileShape.setFillColor(sf::Color(139, 69, 19)); // Brown color for platform
+				tileShape.setFillColor(sf::Color::White);
 				break;
 			case TileType::Spike:
 				tileShape.setFillColor(sf::Color::Red);
 				break;
-			default:
-				tileShape.setFillColor(sf::Color::Green); // Unknown tile type
+			case TileType::Platform:
+				tileShape.setFillColor(sf::Color::Blue);
 				break;
 			}
+
+			sf::VertexArray grid(sf::PrimitiveType::Lines);
 
 			tileShape.setPosition(sf::Vector2f((float)(x * m_tileSize), (float)(y * m_tileSize)));
 

@@ -6,8 +6,8 @@
 enum class TileType {
 	Empty,
 	Solid,
-	Platform,
 	Spike,
+	Platform
 	// Add more tile types as needed
 };
 

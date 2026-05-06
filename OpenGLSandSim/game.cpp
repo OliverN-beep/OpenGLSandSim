@@ -77,53 +77,74 @@ void Game::processEvents()
 		{
 			auto keyEvent = event->getIf<sf::Event::KeyPressed>();
 
-			switch (keyEvent->code)
-			{
-			case sf::Keyboard::Key::Num1:
-				m_selectedMaterial = MaterialType::Sand;
-				break;
-
-			case sf::Keyboard::Key::Num2:
-				m_selectedMaterial = MaterialType::Water;
-				break;
-
-			case sf::Keyboard::Key::Num3:
-				m_selectedMaterial = MaterialType::Stone;
-				break;
-
-			case sf::Keyboard::Key::Num4:
-				m_selectedMaterial = MaterialType::Oil;
-				break;
-
-			case sf::Keyboard::Key::Num5:
-				m_selectedMaterial = MaterialType::Fire;
-				break;
-
-			case sf::Keyboard::Key::Num6:
-				m_selectedMaterial = MaterialType::Smoke;
-				break;
-			
-			case sf::Keyboard::Key::Num7:
-				m_selectedMaterial = MaterialType::Snow;
-				break;
-
-			case sf::Keyboard::Key::Num8:
-				m_selectedMaterial = MaterialType::Wood;
-				break;
-
-			case sf::Keyboard::Key::Num9:
-				m_selectedMaterial = MaterialType::Salt;
-				break;
-			}
-		}
-
-		if (event->is<sf::Event::KeyPressed>())
-		{
-			auto keyEvent = event->getIf<sf::Event::KeyPressed>();
 			if (keyEvent->code == sf::Keyboard::Key::Tab)
 			{
 				m_editorMode = !m_editorMode;
 				printf("Editor mode: %s\n", m_editorMode ? "ON" : "OFF");
+			}
+
+			if (!m_editorMode)
+			{
+				switch (keyEvent->code)
+				{
+				case sf::Keyboard::Key::Num1:
+					m_selectedMaterial = MaterialType::Sand;
+					break;
+
+				case sf::Keyboard::Key::Num2:
+					m_selectedMaterial = MaterialType::Water;
+					break;
+
+				case sf::Keyboard::Key::Num3:
+					m_selectedMaterial = MaterialType::Stone;
+					break;
+
+				case sf::Keyboard::Key::Num4:
+					m_selectedMaterial = MaterialType::Oil;
+					break;
+
+				case sf::Keyboard::Key::Num5:
+					m_selectedMaterial = MaterialType::Fire;
+					break;
+
+				case sf::Keyboard::Key::Num6:
+					m_selectedMaterial = MaterialType::Smoke;
+					break;
+
+				case sf::Keyboard::Key::Num7:
+					m_selectedMaterial = MaterialType::Snow;
+					break;
+
+				case sf::Keyboard::Key::Num8:
+					m_selectedMaterial = MaterialType::Wood;
+					break;
+
+				case sf::Keyboard::Key::Num9:
+					m_selectedMaterial = MaterialType::Salt;
+					break;
+				}
+			}
+
+			if (m_editorMode)
+			{
+				switch (keyEvent->code)
+				{
+				case sf::Keyboard::Key::Num1:
+					m_selectedTileType = TileType::Empty;
+					break;
+
+				case sf::Keyboard::Key::Num2:
+					m_selectedTileType = TileType::Solid;
+					break;
+
+				case sf::Keyboard::Key::Num3:
+					m_selectedTileType = TileType::Spike;
+					break;
+
+				case sf::Keyboard::Key::Num4:
+					m_selectedTileType = TileType::Platform;
+					break;
+				}
 			}
 		}
 	}
@@ -143,20 +164,13 @@ void Game::update(float dt)
 	int yTile = mouse.y / TILE_SIZE;
 
 	// If the editor mode is active, allow editing the tile map with the left and right mouse buttons
-	if (m_editorMode)
+	if (m_editorMode && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 	{
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-		{
-			m_tilemap.setTile(xTile, yTile, TileType::Solid);
-		}
-		else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
-		{
-			m_tilemap.setTile(xTile, yTile, TileType::Empty);
-		}
+		m_tilemap.setTile(xTile, yTile, m_selectedTileType);
 	}
 
 	// If the editor mode is not active, allow painting materials in the world with the left mouse button
-	if (!m_editorMode)
+	if (!m_editorMode && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 	{
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 		{
@@ -173,33 +187,29 @@ void Game::render()
 	m_tilemap.draw(m_window);
 	m_player.draw(m_window);
 
-	void drawUI();
+	Game::drawUI();
+	Game::drawTileHotbar();
+
+	// Draw grid lines in editor mode
+	if (m_editorMode)
 	{
-		const int size = 20;
-		const int padding = 10;
+		sf::VertexArray gridLines(sf::PrimitiveType::Lines);
 
-		for (int i = 0; i < (int)MaterialType::COUNT; ++i)
+		// Vertical lines
+		for (int x = 0; x <= RW_WIDTH; ++x)
 		{
-			MaterialType matType = static_cast<MaterialType>(i);
-			auto& mat = g_materials[i];
-
-			sf::RectangleShape rect(sf::Vector2f(size, size));
-			rect.setFillColor(mat.colour);
-
-			rect.setPosition(sf::Vector2f(padding + i * (size + padding), padding));
-
-			if (matType == m_selectedMaterial)
-			{
-				rect.setOutlineColor(sf::Color::White);
-				rect.setOutlineThickness(2.f);
-			}
-			else
-			{
-				rect.setOutlineColor(sf::Color::Transparent);
-				rect.setOutlineThickness(0.f);
-			}
-			m_window.draw(rect);
+			gridLines.append(sf::Vertex(sf::Vector2f(static_cast<float>(x * TILE_SIZE), 0.f), sf::Color(255, 255, 255, 50)));
+			gridLines.append(sf::Vertex(sf::Vector2f(static_cast<float>(x * TILE_SIZE), static_cast<float>(RW_HEIGHT)), sf::Color(255, 255, 255, 50)));
 		}
+
+		// Horizontal lines
+		for (int y = 0; y <= RW_HEIGHT; ++y)
+		{
+			gridLines.append(sf::Vertex(sf::Vector2f(0.f, static_cast<float>(y * TILE_SIZE)), sf::Color(255, 255, 255, 50)));
+			gridLines.append(sf::Vertex(sf::Vector2f(static_cast<float>(RW_WIDTH), static_cast<float>(y * TILE_SIZE)), sf::Color(255, 255, 255, 50)));
+		}
+
+		m_window.draw(gridLines);
 	}
 
 	// Brush
@@ -223,4 +233,60 @@ void Game::render()
 
 	// End the current frame and display its contents on screen
 	m_window.display();
+}
+
+void Game::drawUI()
+{
+	const int SIZE = 20;
+	const int PADDING = 10;
+
+	for (int i = 0; i < (int)MaterialType::COUNT; ++i)
+	{
+		MaterialType matType = static_cast<MaterialType>(i);
+		auto& mat = g_materials[i];
+
+		sf::RectangleShape rect(sf::Vector2f(SIZE, SIZE));
+		rect.setFillColor(mat.colour);
+
+		rect.setPosition(sf::Vector2f(PADDING + i * (SIZE + PADDING), PADDING));
+
+		if (matType == m_selectedMaterial)
+		{
+			rect.setOutlineColor(sf::Color::White);
+			rect.setOutlineThickness(2.f);
+		}
+		else
+		{
+			rect.setOutlineColor(sf::Color::Transparent);
+			rect.setOutlineThickness(0.f);
+		}
+
+		m_window.draw(rect);
+	}
+}
+
+void Game::drawTileHotbar()
+{
+	const int size = 40;
+
+	for (int i = 0; i < 4; ++i)
+	{
+		sf::RectangleShape box;
+
+		box.setSize({ (float)size, (float)size });
+		box.setPosition({ 40.f + i * (size + 5), size + 40.f });
+
+		if (i == 0) box.setFillColor(sf::Color::Black);   // Empty
+		if (i == 1) box.setFillColor(sf::Color::White);   // Solid
+		if (i == 2) box.setFillColor(sf::Color::Red);     // Spike
+		if (i == 3) box.setFillColor(sf::Color::Blue);    // Platform
+
+		if ((int)m_selectedTileType == i)
+		{
+			box.setOutlineThickness(3.f);
+			box.setOutlineColor(sf::Color::Red);
+		}
+
+		m_window.draw(box);
+	}
 }

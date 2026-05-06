@@ -11,15 +11,18 @@
 class Game
 {
 public:
-	Game();													// Constructor
-	void run();												// Main game loop
+	Game();									// Constructor
+	void run();								// Main game loop
 
-	MaterialType m_selectedMaterial = MaterialType::Sand;	// Currently selected material for painting in the world
+	MaterialType m_selectedMaterial;		// Currently selected material for painting in the world
+	TileType m_selectedTileType;			// Currently selected tile type for editing the tile map
 		
 private:
 	void processEvents();					// Handle user input and window events
 	void update(float dt);					// Update game state (player, world, etc.)
 	void render();							// Render the game (world, player, UI, etc.)
+	void drawUI();							// Draw the user interface (FPS, brush size, selected material/tile, etc.)
+	void drawTileHotbar();					// Draw the tile hotbar for selecting tile types in editor mode
 
 	sf::RenderWindow m_window;				// SFML window for rendering
 
