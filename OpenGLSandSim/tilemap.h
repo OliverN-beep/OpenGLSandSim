@@ -6,8 +6,7 @@
 enum class TileType {
 	Solid,
 	Spike,
-	Empty
-	// Add more tile types as needed
+	Empty	// Keep "Empty" as last entry to avoid issues with indexing in drawTileHotbar() in game.cpp
 };
 
 class TileMap

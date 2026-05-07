@@ -133,6 +133,8 @@
     <ClCompile Include="player.cpp" />
     <ClCompile Include="player_controller.h" />
     <ClCompile Include="player_controlller.cpp" />
+    <ClCompile Include="room.cpp" />
+    <ClCompile Include="room_manager.cpp" />
     <ClCompile Include="tilemap.cpp" />
     <ClCompile Include="world.cpp" />
   </ItemGroup>
@@ -140,6 +142,8 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="materials.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="room.h" />
+    <ClInclude Include="room_manager.h" />
     <ClInclude Include="tilemap.h" />
     <ClInclude Include="world.h" />
   </ItemGroup>

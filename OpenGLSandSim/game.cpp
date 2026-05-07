@@ -4,16 +4,26 @@
 Game::Game():
 	m_window(sf::VideoMode({ RW_WIDTH, RW_HEIGHT }), "OpenGL Sand Simulation"),
 	m_fpsText(m_font),
-	m_world(RW_WIDTH / CELL_SIZE, RW_HEIGHT / CELL_SIZE, CELL_SIZE),
-	m_tilemap(RW_WIDTH / TILE_SIZE, RW_HEIGHT / TILE_SIZE, TILE_SIZE),
-	m_player({100.f, 100.f}),
-	m_selectedMaterial(MaterialType::Sand),
-	m_selectedTileType(TileType::Solid)
+	m_player({100.f, 100.f})
 {
+	m_room_manager.addRoom(
+		Room(RW_WIDTH / CELL_SIZE,
+			RW_HEIGHT / CELL_SIZE,
+			CELL_SIZE,
+			TILE_SIZE,
+			{ 0, 0 }));
+
+	m_room_manager.addRoom(
+		Room(RW_WIDTH / CELL_SIZE,
+			RW_HEIGHT / CELL_SIZE,
+			CELL_SIZE,
+			TILE_SIZE,
+			{ 1, 0 }));
+
 	// Cap fps
 	m_window.setFramerateLimit( 120 );
 
-	m_world.setTileMap(&m_tilemap); // Set the tile map for the world to enable particle collision detection
+	//m_world.setTileMap(&m_tilemap); // Set the tile map for the world to enable particle collision detection
 
 	// Load font for displaying text
 	if (!m_font.openFromFile("fonts/monospace_medium.ttf"))
@@ -27,10 +37,15 @@ Game::Game():
 	m_fpsText.setPosition({ RW_WIDTH - 150.f, 50.f });
 
 	// Build simple test room with tile map floor
-	for (int x = 0; x < m_tilemap.getWidth(); ++x)
+	for (int x = 0; x < currentRoom().getTileMap().getWidth(); ++x)
 	{
-		m_tilemap.setTile(x, m_tilemap.getHeight() - 1, TileType::Solid); // Set the bottom row as solid tiles
+		currentRoom().getTileMap().setTile(x, currentRoom().getTileMap().getHeight() - 2, TileType::Solid); // Set the bottom row as solid tiles
 	}
+}
+
+Room& Game::currentRoom()
+{
+	return m_room_manager.getCurrentRoom();
 }
 
 void Game::run()
@@ -85,7 +100,7 @@ void Game::processEvents()
 				printf("Editor mode: %s\n", m_editorMode ? "ON" : "OFF");
 			}
 
-			if (!m_editorMode)
+			if (m_editorMode)
 			{
 				switch (keyEvent->code)
 				{
@@ -124,18 +139,12 @@ void Game::processEvents()
 				case sf::Keyboard::Key::Num9:
 					m_selectedMaterial = MaterialType::Salt;
 					break;
-				}
-			}
 
-			if (m_editorMode)
-			{
-				switch (keyEvent->code)
-				{
-				case sf::Keyboard::Key::Num1:
+				case sf::Keyboard::Key::Q:
 					m_selectedTileType = TileType::Solid;
 					break;
 
-				case sf::Keyboard::Key::Num2:
+				case sf::Keyboard::Key::E:
 					m_selectedTileType = TileType::Spike;
 					break;
 				}
@@ -146,8 +155,20 @@ void Game::processEvents()
 
 void Game::update(float dt)
 {
-	m_playerController.update(m_player, m_tilemap, dt);
-	m_world.update();
+	// Store player position
+	sf::Vector2f playerPos = m_player.position;
+
+	if (playerPos.x < 0)
+	{
+		switchRoom({ -1, 0 });
+	}
+	else if (playerPos.x > RW_WIDTH)
+	{
+		switchRoom({ 1, 0 });
+	}
+
+	m_playerController.update(m_player, currentRoom().getTileMap(), dt);
+	currentRoom().update();
 
 	sf::Vector2i mouse = sf::Mouse::getPosition(m_window);
 
@@ -158,22 +179,21 @@ void Game::update(float dt)
 	int yTile = mouse.y / TILE_SIZE;
 
 	// If the editor mode is active, allow editing the tile map with the left and right mouse buttons
-	if (m_editorMode && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-	{
-		m_tilemap.setTile(xTile, yTile, m_selectedTileType);
-	}
-
-	if (m_editorMode && sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
-	{
-		m_tilemap.setTile(xTile, yTile, TileType::Empty);
-	}
-
-	// If the editor mode is not active, allow painting materials in the world with the left mouse button
-	if (!m_editorMode && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+	if (m_editorMode)
 	{
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 		{
-			m_world.paintCircle(xCell, yCell, m_brushSize, m_selectedMaterial);
+			currentRoom().getTileMap().setTile(xTile, yTile, m_selectedTileType);
+		}
+
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
+		{
+			currentRoom().getTileMap().setTile(xTile, yTile, TileType::Empty);
+		}
+
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle))
+		{
+			currentRoom().getWorld().paintCircle(xCell, yCell, m_brushSize, m_selectedMaterial);
 		}
 	}
 }
@@ -182,8 +202,7 @@ void Game::render()
 {
 	m_window.clear(BACKGROUND_COLOR);
 
-	m_world.draw(m_window);
-	m_tilemap.draw(m_window);
+	currentRoom().draw(m_window);
 	m_player.draw(m_window);
 
 	Game::drawUI();
@@ -290,4 +309,29 @@ void Game::drawTileHotbar()
 
 		m_window.draw(box);
 	}
+}
+
+void Game::switchRoom(sf::Vector2i direction)
+{
+	Room& room = currentRoom();
+
+	sf::Vector2i currentGrid = room.getGridPosition();
+	sf::Vector2i targetGrid = { currentGrid.x + direction.x, currentGrid.y + direction.y };
+
+	int roomIndex = m_room_manager.findRoomAtGridPosition(targetGrid);
+
+	if (roomIndex == -1)
+		return;
+
+	m_room_manager.setCurrentRoom(roomIndex);
+
+	sf::Vector2f pos = m_player.position;
+
+	if (direction.x > 0)
+		pos.x = 5.f;
+
+	else if (direction.x < 0)
+		pos.x = RW_WIDTH - 5.f;
+
+	pos = m_player.position;
 }
