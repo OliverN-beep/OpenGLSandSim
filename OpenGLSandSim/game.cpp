@@ -328,10 +328,10 @@ void Game::switchRoom(sf::Vector2i direction)
 	sf::Vector2f pos = m_player.position;
 
 	if (direction.x > 0)
-		pos.x = 5.f;
+		pos.x = 50.f;
 
 	else if (direction.x < 0)
-		pos.x = RW_WIDTH - 5.f;
+		pos.x = RW_WIDTH - 50.f;
 
-	pos = m_player.position;
+	m_player.position = pos;
 }
