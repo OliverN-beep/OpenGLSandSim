@@ -11,14 +11,16 @@ Game::Game():
 			RW_HEIGHT / CELL_SIZE,
 			CELL_SIZE,
 			TILE_SIZE,
-			{ 0, 0 }));
+			{ 0, 0 },
+			"ROOM 1"));
 
 	m_room_manager.addRoom(
 		Room(RW_WIDTH / CELL_SIZE,
 			RW_HEIGHT / CELL_SIZE,
 			CELL_SIZE,
 			TILE_SIZE,
-			{ 1, 0 }));
+			{ 1, 0 },
+			"ROOM 2"));
 
 	// Cap fps
 	m_window.setFramerateLimit( 120 );
@@ -70,6 +72,7 @@ void Game::processEvents()
 			m_window.close();
 		}
 
+		// Mouse wheel scroll
 		if (event->is<sf::Event::MouseWheelScrolled>())
 		{
 			auto scroll = event->getIf<sf::Event::MouseWheelScrolled>();
@@ -80,27 +83,27 @@ void Game::processEvents()
 			if (m_brushSize > 20) m_brushSize = 20;
 		}
 
-		// Close the window if the Escape key is pressed
+		// Key Input
 		if (event->is<sf::Event::KeyPressed>())
 		{
 			auto keyEvent = event->getIf<sf::Event::KeyPressed>();
+
+			// Close the window if the Escape key is pressed
 			if (keyEvent->code == sf::Keyboard::Key::Escape)
 			{
 				m_window.close();
 			}
-		}
 
-		if (event->is<sf::Event::KeyPressed>())
-		{
-			auto keyEvent = event->getIf<sf::Event::KeyPressed>();
+			if (keyEvent->code == sf::Keyboard::Key::F1)
+				m_editorState = EditorState::Gameplay;
 
-			if (keyEvent->code == sf::Keyboard::Key::Tab)
-			{
-				m_editorMode = !m_editorMode;
-				printf("Editor mode: %s\n", m_editorMode ? "ON" : "OFF");
-			}
+			if (keyEvent->code == sf::Keyboard::Key::F2)
+				m_editorState = EditorState::WorldEditor;
 
-			if (m_editorMode)
+			if (keyEvent->code == sf::Keyboard::Key::F3)
+					m_editorState = EditorState::RoomOverview;
+
+			if (m_editorState == EditorState::WorldEditor)
 			{
 				switch (keyEvent->code)
 				{
@@ -149,6 +152,19 @@ void Game::processEvents()
 					break;
 				}
 			}
+
+			if (m_editorState == EditorState::RoomOverview)
+			{
+				if (event->is<sf::Event::MouseButtonPressed>())
+				{
+					auto mouseEvent = event->getIf <sf::Event::MouseButtonPressed>();
+
+					if (mouseEvent->button == sf::Mouse::Button::Left)
+					{
+						handleRoomOverviewClick(mouseEvent->position);
+					}
+				}
+			}
 		}
 	}
 }
@@ -179,7 +195,7 @@ void Game::update(float dt)
 	int yTile = mouse.y / TILE_SIZE;
 
 	// If the editor mode is active, allow editing the tile map with the left and right mouse buttons
-	if (m_editorMode)
+	if (m_editorState == EditorState::WorldEditor)
 	{
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 		{
@@ -202,26 +218,33 @@ void Game::render()
 {
 	m_window.clear(BACKGROUND_COLOR);
 
-	currentRoom().draw(m_window);
-	m_player.draw(m_window);
+	if (m_editorState == EditorState::RoomOverview)
+	{
+		drawRoomOverview();
+	}
+	else
+	{
+		currentRoom().draw(m_window);
+		m_player.draw(m_window);
+	}
 
 	Game::drawUI();
 	Game::drawTileHotbar();
 
 	// Draw grid lines in editor mode
-	if (m_editorMode)
+	if (m_editorState == EditorState::WorldEditor)
 	{
 		sf::VertexArray gridLines(sf::PrimitiveType::Lines);
 
 		// Vertical lines
-		for (int x = 0; x <= RW_WIDTH; ++x)
+		for (int x = 0; x <= RW_WIDTH / TILE_SIZE; ++x)
 		{
 			gridLines.append(sf::Vertex(sf::Vector2f(static_cast<float>(x * TILE_SIZE), 0.f), sf::Color(255, 255, 255, 50)));
 			gridLines.append(sf::Vertex(sf::Vector2f(static_cast<float>(x * TILE_SIZE), static_cast<float>(RW_HEIGHT)), sf::Color(255, 255, 255, 50)));
 		}
 
 		// Horizontal lines
-		for (int y = 0; y <= RW_HEIGHT; ++y)
+		for (int y = 0; y <= RW_HEIGHT / TILE_SIZE; ++y)
 		{
 			gridLines.append(sf::Vertex(sf::Vector2f(0.f, static_cast<float>(y * TILE_SIZE)), sf::Color(255, 255, 255, 50)));
 			gridLines.append(sf::Vertex(sf::Vector2f(static_cast<float>(RW_WIDTH), static_cast<float>(y * TILE_SIZE)), sf::Color(255, 255, 255, 50)));
@@ -231,18 +254,21 @@ void Game::render()
 	}
 
 	// Brush
-	sf::CircleShape brush;
+	if (m_editorState == EditorState::WorldEditor)
+	{
+		sf::CircleShape brush;
 
-	brush.setRadius(static_cast<float>(m_brushSize * CELL_SIZE));
-	brush.setFillColor(sf::Color::Transparent);
-	brush.setOutlineColor(sf::Color::White);
-	brush.setOutlineThickness(2.f);
+		brush.setRadius(static_cast<float>(m_brushSize * CELL_SIZE));
+		brush.setFillColor(sf::Color::Transparent);
+		brush.setOutlineColor(sf::Color::White);
+		brush.setOutlineThickness(2.f);
 
-	auto mousePos = sf::Mouse::getPosition(m_window);
+		auto mousePos = sf::Mouse::getPosition(m_window);
 
-	brush.setPosition(sf::Vector2f(static_cast<float>(mousePos.x) - static_cast<float>(m_brushSize * CELL_SIZE), static_cast<float>(mousePos.y) - static_cast<float>(m_brushSize * CELL_SIZE)));
+		brush.setPosition(sf::Vector2f(static_cast<float>(mousePos.x) - static_cast<float>(m_brushSize * CELL_SIZE), static_cast<float>(mousePos.y) - static_cast<float>(m_brushSize * CELL_SIZE)));
 
-	m_window.draw(brush);
+		m_window.draw(brush);
+	}
 
 	// Calculate and display FPS
 	float fps = 1.f / m_fps;
@@ -334,4 +360,64 @@ void Game::switchRoom(sf::Vector2i direction)
 		pos.x = RW_WIDTH - 50.f;
 
 	m_player.position = pos;
+}
+
+void Game::drawRoomOverview()
+{
+	const float ROOM_BOX_SIZE = 120.f;
+	const float SPACING = 20.f;
+
+	for (int i = 0; i < m_room_manager.getRoomCount(); ++i)
+	{
+		Room& room = m_room_manager.getRoom(i);
+
+		sf::Vector2i grid = room.getGridPosition();
+
+		sf::RectangleShape box;
+
+		box.setSize({ ROOM_BOX_SIZE, ROOM_BOX_SIZE });
+
+		float x = 200.f + grid.x * (ROOM_BOX_SIZE + SPACING);
+		float y = 200.f + grid.y * (ROOM_BOX_SIZE + SPACING);
+
+		box.setPosition({ x, y });
+
+		// Highlight current room
+		if (&room == &currentRoom())
+		{
+			box.setFillColor(sf::Color(100, 200, 255));
+		}
+		else
+		{
+			box.setFillColor(sf::Color(60, 60, 60));
+		}
+
+		box.setOutlineThickness(2.f);
+		box.setOutlineColor(sf::Color::White);
+	}
+}
+
+void Game::handleRoomOverviewClick(sf::Vector2i mousePos)
+{
+	const float ROOM_BOX_SIZE = 120.f;
+	const float SPACING = 20.f;
+
+	for (int i = 0; i < m_room_manager.getRoomCount(); ++i)
+	{
+		Room& room = m_room_manager.getRoom(i);
+
+		sf::Vector2i grid = room.getGridPosition();
+
+		float x = 200 + grid.x * (ROOM_BOX_SIZE + SPACING);
+
+		float y = 200 + grid.y * (ROOM_BOX_SIZE + SPACING);
+
+		sf::FloatRect bounds({ x, y }, { ROOM_BOX_SIZE, ROOM_BOX_SIZE });
+
+		if (bounds.contains(sf::Vector2f(mousePos)))
+		{
+			m_room_manager.setCurrentRoom(i);
+			break;
+		}
+	}
 }

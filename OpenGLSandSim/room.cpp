@@ -1,6 +1,6 @@
 #include "room.h"
 
-Room::Room(int width, int height, int cellSize, int tileSize, sf::Vector2i roomGridPosition):
+Room::Room(int width, int height, int cellSize, int tileSize, sf::Vector2i roomGridPosition, const std::string& roomName):
 	m_world(width, height, cellSize),
 	m_tileMap(width / (tileSize / cellSize), height / (tileSize / cellSize), tileSize),
 	m_gridPosition(roomGridPosition)

@@ -35,3 +35,18 @@ int RoomManager::findRoomAtGridPosition(sf::Vector2i pos) const
 
 	return -1;
 }
+
+int RoomManager::getRoomCount() const
+{
+	return static_cast<int>(m_rooms.size());
+}
+
+Room& RoomManager::getRoom(int index)
+{
+	return m_rooms[index];
+}
+
+const Room& RoomManager::getRoom(int index) const
+{
+	return m_rooms[index];
+}

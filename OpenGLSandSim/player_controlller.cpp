@@ -3,12 +3,12 @@
 const int CELL_SIZE = 3;						// Size of each cell in pixels
 
 // ----------Tunable parameters----------
-const float MOVE_SPEED = 600.f;					// Horizontal movement speed
-const float GROUND_ACCELERATION = 1000.f;		// Acceleration when on the ground
+const float MOVE_SPEED = 400.f;					// Horizontal movement speed
+const float GROUND_ACCELERATION = 2000.f;		// Acceleration when on the ground
 const float AIR_ACCELERATION = 600.f;			// Acceleration when in the air
 const float FRICTION = 1200.f;					// Friction applied when grounded
 
-const float GRAVITY = 0.f;					// Gravity force applied to the player
+const float GRAVITY = 1500.f;					// Gravity force applied to the player
 const float FALL_GRAVITY_MULTIPLIER = 1.5f;		// Multiplier for gravity when falling
 
 const float JUMP_SPEED = -500.f;				// Initial jump speed

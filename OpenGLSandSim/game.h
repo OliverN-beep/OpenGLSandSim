@@ -7,6 +7,13 @@
 
 #include <iostream>
 
+enum class EditorState
+{
+	Gameplay,
+	WorldEditor,
+	RoomOverview
+};
+
 class Game
 {
 public:
@@ -19,6 +26,8 @@ private:
 	void render();							// Render the game (world, player, UI, etc.)
 	void drawUI();							// Draw the user interface (FPS, brush size, selected material/tile, etc.)
 	void drawTileHotbar();					// Draw the tile hotbar for selecting tile types in editor mode
+	void drawRoomOverview();				// Draw the overview for our room layout
+	void handleRoomOverviewClick(sf::Vector2i mousePos);
 
 	sf::RenderWindow m_window;				// SFML window for rendering
 
@@ -49,7 +58,7 @@ private:
 
 	const sf::Color BACKGROUND_COLOR = sf::Color(0, 20, 85);	// Background color of the window
 
-	bool m_editorMode = false;				// Flag to indicate if the editor mode is active
+	EditorState m_editorState = EditorState::Gameplay;	// Flag to check which editor state we are in
 
 	void switchRoom(sf::Vector2i direction);
 };

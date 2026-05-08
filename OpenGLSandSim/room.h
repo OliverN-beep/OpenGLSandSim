@@ -6,11 +6,13 @@
 class Room
 {
 public:
-	Room(int width,
-		 int height,
-		 int cellSize,
-		 int tileSize,
-		 sf::Vector2i roomGridPosition);
+	Room(
+		int width,
+		int height,
+		int cellSize,
+		int tileSize,
+		sf::Vector2i roomGridPosition,
+		const std::string& roomName);
 
 	void update();
 	void draw(sf::RenderWindow& window) const;

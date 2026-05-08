@@ -16,6 +16,10 @@ public:
 	int getCurrentRoomIndex() const;
 	int findRoomAtGridPosition(sf::Vector2i pos) const;
 
+	int getRoomCount() const;
+	Room& getRoom(int index);
+	const Room& getRoom(int index) const;
+
 private:
 	std::vector<Room> m_rooms;
 
