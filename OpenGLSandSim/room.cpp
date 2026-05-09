@@ -1,6 +1,13 @@
 #include "room.h"
 
-Room::Room(int width, int height, int cellSize, int tileSize, sf::Vector2i roomGridPosition, const std::string& roomName):
+Room::Room(
+	int width,
+	int height,
+	int cellSize,
+	int tileSize,
+	sf::Vector2i roomGridPosition,
+	const std::string& roomName):
+	
 	m_world(width, height, cellSize),
 	m_tileMap(width / (tileSize / cellSize), height / (tileSize / cellSize), tileSize),
 	m_gridPosition(roomGridPosition)
@@ -14,10 +21,10 @@ void Room::update()
 	m_world.update();
 }
 
-void Room::draw(sf::RenderWindow& window) const
+void Room::draw(sf::RenderWindow& window, sf::Vector2f offset)
 {
-	m_world.draw(window);
-	m_tileMap.draw(window);
+	m_tileMap.draw(window, offset);
+	m_world.draw(window, offset);
 }
 
 World& Room::getWorld()
@@ -33,4 +40,9 @@ TileMap& Room::getTileMap()
 sf::Vector2i Room::getGridPosition() const
 {
 	return m_gridPosition;
+}
+
+const std::string& Room::getName() const
+{
+	return m_roomName;
 }

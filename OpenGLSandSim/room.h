@@ -15,16 +15,26 @@ public:
 		const std::string& roomName);
 
 	void update();
-	void draw(sf::RenderWindow& window) const;
+	void draw(sf::RenderWindow& window, sf::Vector2f offset = { 0.f, 0.f });
 
 	World& getWorld();
 	TileMap& getTileMap();
 
 	sf::Vector2i getGridPosition() const;
 
+	const std::string& getName() const;
+
+	Room(const Room&) = delete;
+	Room& operator=(const Room&) = delete;
+
+	Room(Room&&) noexcept = default;
+	Room& operator=(Room&&) noexcept = default;
+
 private:
 	World m_world;
 	TileMap m_tileMap;
 
 	sf::Vector2i m_gridPosition;
+
+	std::string m_roomName;
 };

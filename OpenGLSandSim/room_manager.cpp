@@ -1,10 +1,5 @@
 #include "room_manager.h"
 
-void RoomManager::addRoom(const Room& room)
-{
-	m_rooms.push_back(room);
-}
-
 Room& RoomManager::getCurrentRoom()
 {
 	return m_rooms[m_currentRoomIndex];

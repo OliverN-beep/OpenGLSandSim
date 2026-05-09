@@ -65,7 +65,7 @@ bool TileMap::isSpike(int x, int y) const
 	return type == TileType::Spike;
 }
 
-void TileMap::draw(sf::RenderWindow& window) const
+void TileMap::draw(sf::RenderWindow& window, sf::Vector2f offset) const
 {
 	sf::RectangleShape tileShape(sf::Vector2f(static_cast<float>(m_tileSize), static_cast<float>(m_tileSize)));
 
@@ -91,7 +91,7 @@ void TileMap::draw(sf::RenderWindow& window) const
 
 			sf::VertexArray grid(sf::PrimitiveType::Lines);
 
-			tileShape.setPosition(sf::Vector2f(static_cast<float>(x * m_tileSize), static_cast<float>(y * m_tileSize)));
+			tileShape.setPosition({offset.x + x * m_tileSize, offset.y + y * m_tileSize});
 
 			window.draw(tileShape);
 		}

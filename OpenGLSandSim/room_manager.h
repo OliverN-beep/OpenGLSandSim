@@ -2,13 +2,18 @@
 
 #include "room.h"
 #include <vector>
+#include <utility>
 
 class RoomManager
 {
 public:
 	RoomManager() = default;
 
-	void addRoom(const Room& room);
+	template<typename... Args>
+	void addRoom(Args&&... args)
+	{
+		m_rooms.emplace_back(std::forward<Args>(args)...);
+	}
 
 	Room& getCurrentRoom();
 	void setCurrentRoom(int index);

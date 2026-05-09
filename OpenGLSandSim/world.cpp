@@ -42,15 +42,11 @@ const Cell& World::getCellRef(int x, int y) const
 // Set the material type of a specific cell at (x, y) to the given material type
 void World::setCell(int x, int y, MaterialType matType)
 {
-	if (inBounds(x, y))
-	{
-		Cell& c = getCellRef(x, y);
-		if (c.material != matType)
-		{
-			c.material = matType;
-			c.m_isDirty = true;
-		}
-	}
+    if (inBounds(x, y))
+    {
+        getCellRef(x, y).material = matType;
+        m_isDirty = true;
+    }
 }
 
 bool World::isEmpty(int x, int y) const
@@ -97,9 +93,8 @@ bool World::tryMove(int x1, int y1, int x2, int y2)
 	cellA.updateFrame = m_currentFrame;
 	cellB.updateFrame = m_currentFrame;
 
-	// Mark both cells as dirty to indicate that they have changed and need to be redrawn
-	cellA.m_isDirty = true;
-	cellB.m_isDirty = true;
+	// Mark world as dirty
+	m_isDirty = true;
 
 	return true;
 }
@@ -305,11 +300,17 @@ void World::updateFire(int x, int y)
 	cell.updateFrame = m_currentFrame;
 }
 
-void World::draw(sf::RenderWindow& window) const
+void World::draw(sf::RenderWindow& window, sf::Vector2f offset) const
 {
-	const_cast<World*>(this)->updateMesh();
+	if (m_isDirty)
+	{
+		const_cast<World*>(this)->updateMesh();
+	}
 
-	window.draw(m_vertices);
+	sf::RenderStates states;
+	states.transform.translate(offset);
+
+	window.draw(m_vertices, states);
 }
 
 // Helper function for painting cells with a brush of a given size and material type
@@ -328,6 +329,8 @@ void World::paintCircle(int cx, int cy, int radius, MaterialType type)
 			}
 		}
 	}
+
+	m_isDirty = true;
 }
 
 void World::updateMesh()
@@ -336,11 +339,6 @@ void World::updateMesh()
 	{
 		for (int x = 0; x < m_width; ++x)
 		{
-			Cell& cell = getCellRef(x, y);
-
-			if (!cell.m_isDirty)
-				continue;
-
 			int index = (x + y * m_width) * 6;
 			sf::Vertex* tri = &m_vertices[index];
 
@@ -375,8 +373,8 @@ void World::updateMesh()
 			{
 				tri[i].color = colour;
 			}
-
-			cell.m_isDirty = false; // Mark the mesh as clean after rebuilding
 		}
 	}
+
+	m_isDirty = false; // Only clear m_isDirty after the entire mesh is rebuilt
 }

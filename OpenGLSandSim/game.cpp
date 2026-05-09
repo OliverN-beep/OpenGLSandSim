@@ -7,20 +7,19 @@ Game::Game():
 	m_player({100.f, 100.f})
 {
 	m_room_manager.addRoom(
-		Room(RW_WIDTH / CELL_SIZE,
-			RW_HEIGHT / CELL_SIZE,
-			CELL_SIZE,
-			TILE_SIZE,
-			{ 0, 0 },
-			"ROOM 1"));
+		RW_WIDTH / CELL_SIZE,
+		RW_HEIGHT / CELL_SIZE,
+		CELL_SIZE,
+		TILE_SIZE,
+		sf::Vector2i({ 0, 0 }),
+		"ROOM 1");
 
-	m_room_manager.addRoom(
-		Room(RW_WIDTH / CELL_SIZE,
-			RW_HEIGHT / CELL_SIZE,
-			CELL_SIZE,
-			TILE_SIZE,
-			{ 1, 0 },
-			"ROOM 2"));
+	m_room_manager.addRoom(RW_WIDTH / CELL_SIZE,
+		RW_HEIGHT / CELL_SIZE,
+		CELL_SIZE,
+		TILE_SIZE,
+		sf::Vector2i({ 1, 0 }),
+		"ROOM 2");
 
 	// Cap fps
 	m_window.setFramerateLimit( 120 );
@@ -43,6 +42,12 @@ Game::Game():
 	{
 		currentRoom().getTileMap().setTile(x, currentRoom().getTileMap().getHeight() - 2, TileType::Solid); // Set the bottom row as solid tiles
 	}
+
+	// Initialise views
+	m_gameView = m_window.getDefaultView();
+
+	m_overviewView = m_window.getDefaultView();
+	m_overviewView.zoom(4.f);
 }
 
 Room& Game::currentRoom()
@@ -102,6 +107,9 @@ void Game::processEvents()
 
 			if (keyEvent->code == sf::Keyboard::Key::F3)
 					m_editorState = EditorState::RoomOverview;
+
+			if (keyEvent->code == sf::Keyboard::Key::Tab)
+				m_roomOverviewMode = !m_roomOverviewMode;
 
 			if (m_editorState == EditorState::WorldEditor)
 			{
@@ -210,6 +218,7 @@ void Game::update(float dt)
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle))
 		{
 			currentRoom().getWorld().paintCircle(xCell, yCell, m_brushSize, m_selectedMaterial);
+			printf("Painting particles\n");
 		}
 	}
 }
@@ -217,6 +226,15 @@ void Game::update(float dt)
 void Game::render()
 {
 	m_window.clear(BACKGROUND_COLOR);
+
+	if (m_roomOverviewMode)
+	{
+		m_window.setView(m_overviewView);
+	}
+	else
+	{
+		m_window.setView(m_gameView);
+	}
 
 	if (m_editorState == EditorState::RoomOverview)
 	{
@@ -372,6 +390,10 @@ void Game::drawRoomOverview()
 		Room& room = m_room_manager.getRoom(i);
 
 		sf::Vector2i grid = room.getGridPosition();
+
+		sf::Vector2f offset(grid.x * RW_WIDTH, grid.y * RW_HEIGHT);
+
+		room.draw(m_window, offset);
 
 		sf::RectangleShape box;
 

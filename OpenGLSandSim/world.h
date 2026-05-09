@@ -14,8 +14,6 @@ struct Cell
 	uint8_t lifeTime = 0;												// Lifetime of the cell (fire, smoke, etc.)
 	uint8_t state = 0;													// Additional state information for the cell (fire spreading, wet material, etc.)
 
-	bool m_isDirty = true;												// Flag to indicate if the world state has changed and needs to be redrawn
-
 	sf::Vector2f velocity = { 0.f, 0.f };								// Velocity of the cell
 };
 
@@ -29,7 +27,7 @@ public:
 	sf::VertexArray m_vertices;											// Get the vertex array for rendering every cell in the world at once
 
 	void update();														// Update the world state (e.g., sand falling)
-	void draw(sf::RenderWindow& window) const;							// Draw the world to the given SFML window
+	void draw(sf::RenderWindow& window, sf::Vector2f offset = { 0.f, 0.f }) const;							// Draw the world to the given SFML window
 
 	void setCell(int x, int y, MaterialType matType);					// Set the material type of a specific cell
 
@@ -45,6 +43,8 @@ private:
 	int m_cellSize;										// Size of each cell in pixels
 
 	unsigned int m_currentFrame = 0;					// Current frame number for update tracking
+
+	bool m_isDirty = true;								// Flag to indicate if the world state has changed and needs to be redrawn
 
 	std::vector<Cell> cells;							// 1D array representing the world grid
 

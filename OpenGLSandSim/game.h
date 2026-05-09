@@ -61,4 +61,9 @@ private:
 	EditorState m_editorState = EditorState::Gameplay;	// Flag to check which editor state we are in
 
 	void switchRoom(sf::Vector2i direction);
+
+	sf::View m_gameView;					// View for gameplay
+	sf::View m_overviewView;				// View for room overview mode
+
+	bool m_roomOverviewMode = false;		// Flag to check whether we are in room overview mode or not
 };
