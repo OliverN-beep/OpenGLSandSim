@@ -66,4 +66,7 @@ private:
 	sf::View m_overviewView;				// View for room overview mode
 
 	bool m_roomOverviewMode = false;		// Flag to check whether we are in room overview mode or not
+
+	sf::Vector2f m_roomOverviewCameraPosition = { 0.f, 0.f };
+	float m_roomOverviewCameraZoom = 1.f;
 };

@@ -104,11 +104,8 @@ bool World::isTileBlocked(int x, int y) const
 	if (!m_tileMap)
 		return false;
 
-	float worldX = static_cast<float>(x * m_cellSize);
-	float worldY = static_cast<float>(y * m_cellSize);
-
-	int tileX = static_cast<int>(worldX / m_tileMap->getTileSize());
-	int tileY = static_cast<int>(worldY / m_tileMap->getTileSize());
+	int tileX = (x * m_cellSize) / m_tileMap->getTileSize();
+	int tileY = (y * m_cellSize) / m_tileMap->getTileSize();
 	
 	return m_tileMap->isSolid(tileX, tileY);
 }

@@ -47,7 +47,7 @@ Game::Game():
 	m_gameView = m_window.getDefaultView();
 
 	m_overviewView = m_window.getDefaultView();
-	m_overviewView.zoom(4.f);
+	m_overviewView.zoom(3.0f);
 }
 
 Room& Game::currentRoom()
@@ -218,8 +218,36 @@ void Game::update(float dt)
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle))
 		{
 			currentRoom().getWorld().paintCircle(xCell, yCell, m_brushSize, m_selectedMaterial);
-			printf("Painting particles\n");
 		}
+	}
+
+	if (m_editorState == EditorState::RoomOverview)
+	{
+		float cameraSpeed = 500.f * dt;
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+		{
+			m_roomOverviewCameraPosition.x -= cameraSpeed;
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+		{
+			m_roomOverviewCameraPosition.x += cameraSpeed;
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
+		{
+			m_roomOverviewCameraPosition.y -= cameraSpeed;
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
+		{
+			m_roomOverviewCameraPosition.y += cameraSpeed;
+		}
+
+		m_overviewView.setCenter(m_roomOverviewCameraPosition);
+
+		return;
 	}
 }
 
@@ -227,21 +255,17 @@ void Game::render()
 {
 	m_window.clear(BACKGROUND_COLOR);
 
-	if (m_roomOverviewMode)
-	{
-		m_window.setView(m_overviewView);
-	}
-	else
-	{
-		m_window.setView(m_gameView);
-	}
-
 	if (m_editorState == EditorState::RoomOverview)
 	{
+		m_overviewView.setCenter(m_roomOverviewCameraPosition);
+		m_window.setView(m_overviewView);
+
 		drawRoomOverview();
 	}
 	else
 	{
+		m_window.setView(m_gameView);
+
 		currentRoom().draw(m_window);
 		m_player.draw(m_window);
 	}
@@ -269,11 +293,8 @@ void Game::render()
 		}
 
 		m_window.draw(gridLines);
-	}
-
-	// Brush
-	if (m_editorState == EditorState::WorldEditor)
-	{
+		
+		// Brush stuff
 		sf::CircleShape brush;
 
 		brush.setRadius(static_cast<float>(m_brushSize * CELL_SIZE));
