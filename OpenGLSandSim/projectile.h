@@ -2,19 +2,16 @@
 
 #include <SFML/Graphics.hpp>
 
-class Projectile
+struct Projectile
 {
-public:
 	sf::Vector2f position;	// Current projectile position
 	sf::Vector2f velocity;	// Current projectile velocity
 
 	float radius = 4.f;		// Projectile radius
+	float lifetime = 3.f;	// Projectile lifetime
 
-	bool is_alive = false;	// Check whether the projectile is alive
+	bool isAlive = true;	// Check whether the projectile is alive
 
 	void update(float dt);
-	void draw(sf::RenderWindow& window);
-
-private:
-	sf::CircleShape projectileShape;
+	void draw(sf::RenderWindow& window) const;
 };

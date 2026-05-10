@@ -4,6 +4,7 @@
 #include "player.h"
 #include "player_controller.h"
 #include "room_manager.h"
+#include "projectile.h"
 
 #include <iostream>
 
@@ -69,4 +70,7 @@ private:
 
 	sf::Vector2f m_roomOverviewCameraPosition = { 0.f, 0.f };
 	float m_roomOverviewCameraZoom = 1.f;
+
+	std::vector<Projectile> m_projectiles;	// Projectile instance
+	void fireProjectile();					// Fires player projectile
 };

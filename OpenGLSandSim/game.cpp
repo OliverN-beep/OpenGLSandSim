@@ -77,6 +77,27 @@ void Game::processEvents()
 			m_window.close();
 		}
 
+		// Mouse click input
+		if (event->is<sf::Event::MouseButtonPressed>())
+		{
+			auto mouseEvent = event->getIf <sf::Event::MouseButtonPressed>();
+
+			if (m_editorState == EditorState::Gameplay)
+			{
+				if (mouseEvent->button == sf::Mouse::Button::Left)
+				{
+					fireProjectile();
+				}
+			}
+			if (m_editorState == EditorState::RoomOverview)
+			{
+				if (mouseEvent->button == sf::Mouse::Button::Left)
+				{
+					handleRoomOverviewClick(mouseEvent->position);
+				}
+			}
+		}
+
 		// Mouse wheel scroll
 		if (event->is<sf::Event::MouseWheelScrolled>())
 		{
@@ -88,7 +109,7 @@ void Game::processEvents()
 			if (m_brushSize > 20) m_brushSize = 20;
 		}
 
-		// Key Input
+		// Keyboard Input
 		if (event->is<sf::Event::KeyPressed>())
 		{
 			auto keyEvent = event->getIf<sf::Event::KeyPressed>();
@@ -160,19 +181,6 @@ void Game::processEvents()
 					break;
 				}
 			}
-
-			if (m_editorState == EditorState::RoomOverview)
-			{
-				if (event->is<sf::Event::MouseButtonPressed>())
-				{
-					auto mouseEvent = event->getIf <sf::Event::MouseButtonPressed>();
-
-					if (mouseEvent->button == sf::Mouse::Button::Left)
-					{
-						handleRoomOverviewClick(mouseEvent->position);
-					}
-				}
-			}
 		}
 	}
 }
@@ -201,6 +209,21 @@ void Game::update(float dt)
 
 	int xTile = mouse.x / TILE_SIZE;
 	int yTile = mouse.y / TILE_SIZE;
+
+	if (m_editorState == EditorState::Gameplay)
+	{
+		for (auto& projectile : m_projectiles)
+		{
+			projectile.update(dt);
+		}
+
+		// Erase projectiles at end of lifetime
+		m_projectiles.erase(std::remove_if(m_projectiles.begin(), m_projectiles.end(), [](const Projectile& p)
+			{
+				return !p.isAlive;
+			}),
+			m_projectiles.end());
+	}
 
 	// If the editor mode is active, allow editing the tile map with the left and right mouse buttons
 	if (m_editorState == EditorState::WorldEditor)
@@ -255,23 +278,13 @@ void Game::render()
 {
 	m_window.clear(BACKGROUND_COLOR);
 
-	if (m_editorState == EditorState::RoomOverview)
+	if (m_editorState == EditorState::Gameplay)
 	{
-		m_overviewView.setCenter(m_roomOverviewCameraPosition);
-		m_window.setView(m_overviewView);
-
-		drawRoomOverview();
+		for (const auto& projectile : m_projectiles)
+		{
+			projectile.draw(m_window);
+		}
 	}
-	else
-	{
-		m_window.setView(m_gameView);
-
-		currentRoom().draw(m_window);
-		m_player.draw(m_window);
-	}
-
-	Game::drawUI();
-	Game::drawTileHotbar();
 
 	// Draw grid lines in editor mode
 	if (m_editorState == EditorState::WorldEditor)
@@ -307,6 +320,23 @@ void Game::render()
 		brush.setPosition(sf::Vector2f(static_cast<float>(mousePos.x) - static_cast<float>(m_brushSize * CELL_SIZE), static_cast<float>(mousePos.y) - static_cast<float>(m_brushSize * CELL_SIZE)));
 
 		m_window.draw(brush);
+		Game::drawUI();
+		Game::drawTileHotbar();
+	}
+
+	if (m_editorState == EditorState::RoomOverview)
+	{
+		m_overviewView.setCenter(m_roomOverviewCameraPosition);
+		m_window.setView(m_overviewView);
+
+		drawRoomOverview();
+	}
+	else
+	{
+		m_window.setView(m_gameView);
+
+		currentRoom().draw(m_window);
+		m_player.draw(m_window);
 	}
 
 	// Calculate and display FPS
@@ -463,4 +493,37 @@ void Game::handleRoomOverviewClick(sf::Vector2i mousePos)
 			break;
 		}
 	}
+}
+
+void Game::fireProjectile()
+{
+	sf::Vector2f dir = { 0.f, 0.f };
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
+		dir.y = -1.f;
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
+		dir.y = 1.f;
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+		dir.x = -1.f;
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+		dir.x = 1.f;
+
+	// Default direction if no input
+	if (dir == sf::Vector2f(0.f, 0.f))
+		dir.x = 1.f;
+
+	// Normalise diagonal movement
+	float length = std::sqrt((dir.x * dir.x) + (dir.y * dir.y));
+
+	dir /= length;
+
+	Projectile projectile;
+
+	projectile.position = m_player.position;
+	projectile.velocity = dir * 600.f;
+
+	m_projectiles.push_back(projectile);
 }
