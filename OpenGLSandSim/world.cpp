@@ -39,6 +39,16 @@ const Cell& World::getCellRef(int x, int y) const
 	return cells[index(x, y)];
 }
 
+MaterialType World::getCell(int x, int y) const
+{
+	if (!inBounds(x, y))
+	{
+		return MaterialType::Stone;
+	}
+
+	return getCellRef(x, y).material;
+}
+
 // Set the material type of a specific cell at (x, y) to the given material type
 void World::setCell(int x, int y, MaterialType matType)
 {
@@ -374,4 +384,28 @@ void World::updateMesh()
 	}
 
 	m_isDirty = false; // Only clear m_isDirty after the entire mesh is rebuilt
+}
+
+void World::explode(int cx, int cy, int radius)
+{
+	for (int y = cy - radius; y <= cy + radius; ++y)
+	{
+		for (int x = cx - radius; x <= cx + radius; ++x)
+		{
+			if (!inBounds(x, y))
+			{
+				continue;
+			}
+
+			int dx = x - cx;
+			int dy = y - cy;
+
+			if ((dx * dx) + (dy * dy) > (radius * radius))
+			{
+				continue;
+			}
+
+			setCell(x, y, MaterialType::Empty);
+		}
+	}
 }

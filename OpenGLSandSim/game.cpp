@@ -215,6 +215,32 @@ void Game::update(float dt)
 		for (auto& projectile : m_projectiles)
 		{
 			projectile.update(dt);
+
+			// Tile collision detection with projectiles
+			int tileX = static_cast<int>(projectile.position.x) / TILE_SIZE;
+			int tileY = static_cast<int>(projectile.position.y) / TILE_SIZE;
+
+			// Despawn projectile on collision with a solid tile
+			if (currentRoom().getTileMap().isSolid(tileX, tileY))
+			{
+				projectile.isAlive = false;
+			}
+
+			// Material collision detection with projectiles
+			int cellX = static_cast<int>(projectile.position.x) / CELL_SIZE;
+			int cellY = static_cast<int>(projectile.position.y) / CELL_SIZE;
+			int explosionRadius = 12;
+
+			MaterialType mat = currentRoom().getWorld().getCell(cellX, cellY);
+
+			if (mat != MaterialType::Empty)
+			{
+				currentRoom().getWorld().explode(cellX, cellY, explosionRadius);
+
+				projectile.isAlive = false;
+
+				printf("projectile hit material\n");
+			}
 		}
 
 		// Erase projectiles at end of lifetime

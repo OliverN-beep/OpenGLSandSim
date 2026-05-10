@@ -29,11 +29,14 @@ public:
 	void update();														// Update the world state (e.g., sand falling)
 	void draw(sf::RenderWindow& window, sf::Vector2f offset = { 0.f, 0.f }) const;							// Draw the world to the given SFML window
 
+	MaterialType getCell(int x, int y) const;							// Get the material type of a specific cell
 	void setCell(int x, int y, MaterialType matType);					// Set the material type of a specific cell
 
 	void paintCircle(int cx, int cy, int radius, MaterialType type);	// Paint a circle of cells with the given material type
 
 	void updateMesh();													// Update the vertex array for rendering
+
+	void explode(int cx, int cy, int radius);			// Spawns explosions
 	
 private:
 	TileMap* m_tileMap = nullptr;						// Pointer to the tile map for particle collision detection
