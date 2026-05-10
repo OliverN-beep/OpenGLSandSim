@@ -129,9 +129,6 @@ void Game::processEvents()
 			if (keyEvent->code == sf::Keyboard::Key::F3)
 					m_editorState = EditorState::RoomOverview;
 
-			if (keyEvent->code == sf::Keyboard::Key::Tab)
-				m_roomOverviewMode = !m_roomOverviewMode;
-
 			if (m_editorState == EditorState::WorldEditor)
 			{
 				switch (keyEvent->code)

@@ -156,22 +156,27 @@ void World::updateCellBehaviour(int x, int y)
 	if (cell.velocity.y > properties.maxVelocity)
 		cell.velocity.y = properties.maxVelocity;
 
-	int steps = static_cast<int>(cell.velocity.y);
+	int ySteps = static_cast<int>(cell.velocity.y);
 
-	for (int i = 0; i < steps; ++i)
+	for (int i = 0; i < ySteps; ++i)
 	{
 
 		if (tryMove(x, y, x, y + 1))
 		{
-			y += 1;					// Update the y-coordinate to reflect the attempted move down
+			// Update the y-coordinate to reflect the attempted move down
+			y += 1;
 		}
 
 		else
 		{
-			cell.velocity.y = 0;	// Reset velocity if the cell can't move down
+			// Reset velocity if the cell can't move down
+			cell.velocity.y = 0;	
 			break;
 		}
 	}
+
+	// Velocity damping
+	cell.velocity *= 0.92f;
 
 	switch (properties.behaviour)
 	{
@@ -397,15 +402,59 @@ void World::explode(int cx, int cy, int radius)
 				continue;
 			}
 
-			int dx = x - cx;
-			int dy = y - cy;
+			float dx = static_cast<float>(x - cx);
+			float dy = static_cast<float>(y - cy);
 
-			if ((dx * dx) + (dy * dy) > (radius * radius))
+			float distSq = (dx * dx) + (dy * dy);
+
+			if (distSq > (radius * radius))
 			{
 				continue;
 			}
 
-			setCell(x, y, MaterialType::Empty);
+			float dist = std::sqrtf(distSq);
+
+			if (dist == 0.f)
+				dist = 0.1f;
+
+			// Normalise direction
+			sf::Vector2f dir(dx / dist, dy / dist);
+
+			float force = (radius - dist) / radius;
+
+			// Apply velocity
+			Cell& cell = getCellRef(x, y);
+			
+			float forceMultiplier = 8.f;
+			cell.velocity += dir * force * forceMultiplier;
+
+			// Choose which materials to destroy
+			MaterialType mat = cell.material;
+
+			if (mat == MaterialType::Stone)
+			{
+				if (force > 0.8f)
+				{
+					setCell(x, y, MaterialType::Empty);
+				}
+			}
+			if (mat == MaterialType::Sand)
+			{
+				if (force > 0.5f)
+				{
+					setCell(x, y, MaterialType::Empty);
+				}
+			}
+
+			// Add fire property to projectile
+			auto& props = g_materials[static_cast<int>(mat)];
+
+			if (props.flammable && rand() % 100 < 40)
+			{
+				setCell(x, y, MaterialType::Fire);
+
+				getCellRef(x, y).lifeTime = 10;
+			}
 		}
 	}
 }
