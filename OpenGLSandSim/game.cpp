@@ -22,7 +22,7 @@ Game::Game():
 		"ROOM 2");
 
 	// Cap fps
-	m_window.setFramerateLimit( 120 );
+	//m_window.setFramerateLimit( 120 );
 
 	//m_world.setTileMap(&m_tilemap); // Set the tile map for the world to enable particle collision detection
 

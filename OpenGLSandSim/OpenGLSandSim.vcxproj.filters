@@ -25,6 +25,9 @@
     <Filter Include="Source Files\room stuff">
       <UniqueIdentifier>{f141bead-4ba8-4e82-9856-dc05b12eb4b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\projectile">
+      <UniqueIdentifier>{d9e485a5-aac4-4f1f-ba1d-77b75b92a693}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -57,6 +60,9 @@
     <ClCompile Include="room_manager.cpp">
       <Filter>Source Files\room stuff</Filter>
     </ClCompile>
+    <ClCompile Include="projectile.cpp">
+      <Filter>Source Files\projectile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="world.h">
@@ -79,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="room_manager.h">
       <Filter>Source Files\room stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="projectile.h">
+      <Filter>Source Files\projectile</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
