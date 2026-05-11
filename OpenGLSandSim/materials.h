@@ -43,6 +43,7 @@ struct MaterialProperties							// Struct representing properties of a material
 
 	float gravity = 0.f;							// Gravity effect on the material (m/s²), used for simulating falling behavior
 	float maxVelocity = 0.f;						// Maximum velocity of the material (m/s), used for limiting the speed of falling or moving materials
+	float explosionResistance = 0.f;				// Resistance to explosions from projectiles
 };
 
 extern MaterialProperties g_materials[(int)MaterialType::COUNT];	// External array of material properties for all defined materials in the simulation

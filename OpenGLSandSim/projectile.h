@@ -7,7 +7,7 @@ struct Projectile
 	sf::Vector2f position;	// Current projectile position
 	sf::Vector2f velocity;	// Current projectile velocity
 
-	float radius = 4.f;		// Projectile radius
+	float radius = 15.f;		// Projectile radius
 	float lifetime = 1.f;	// Projectile lifetime
 
 	bool isAlive = true;	// Check whether the projectile is alive

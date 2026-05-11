@@ -458,3 +458,53 @@ void World::explode(int cx, int cy, int radius)
 		}
 	}
 }
+
+void World::applyExplosionPhysics(sf::Vector2f centre, float radius, float force)
+{
+	int cellRadius = static_cast<int>(radius / m_cellSize);
+
+	int cx = static_cast<int>(centre.x / m_cellSize);
+	int cy = static_cast<int>(centre.y / m_cellSize);
+
+	for (int dy = -cellRadius; dy <= cellRadius; ++dy)
+	{
+		for (int dx = -cellRadius; dx <= cellRadius; ++dx)
+		{
+			int x = cx * dx;
+			int y = cy * dy;
+
+			if (!inBounds(x, y))
+				continue;
+
+			float distSq = static_cast<float>((dx * dx) + (dy * dy));
+
+			if (distSq > cellRadius * cellRadius)
+				continue;
+
+			Cell& cell = getCellRef(x, y);
+
+			if (cell.material == MaterialType::Empty)
+				continue;
+
+			// Direction away from explosion
+			sf::Vector2f dir(static_cast<float>(dx), static_cast<float>(dy));
+
+			float length = sqrt((dir.x * dir.x) + (dir.y * dir.y));
+
+			if (length == 0.f)
+				continue;
+
+			dir /= length;
+
+			// Force falloff
+			float strength = force * (1.f - (length / cellRadius));
+
+			strength /= g_materials->flammable;
+
+			cell.velocity.x += dir.x * strength;
+			cell.velocity.y += dir.y * strength;
+
+			m_isDirty = true;
+		}
+	}
+}

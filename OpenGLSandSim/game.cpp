@@ -226,13 +226,16 @@ void Game::update(float dt)
 			// Material collision detection with projectiles
 			int cellX = static_cast<int>(projectile.position.x) / CELL_SIZE;
 			int cellY = static_cast<int>(projectile.position.y) / CELL_SIZE;
-			int explosionRadius = 12;
+
+			float explosionRadius = 30.f;
+			float explosionForce = 10.f;
 
 			MaterialType mat = currentRoom().getWorld().getCell(cellX, cellY);
 
 			if (mat != MaterialType::Empty)
 			{
 				currentRoom().getWorld().explode(cellX, cellY, explosionRadius);
+				currentRoom().getWorld().applyExplosionPhysics(projectile.position, explosionRadius, explosionForce);
 
 				projectile.isAlive = false;
 
