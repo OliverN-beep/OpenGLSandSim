@@ -155,7 +155,8 @@ void World::updateCellBehaviour(int x, int y)
 	// Clamp the cell's velocity to the maximum allowed velocity for its material
 	if (cell.velocity.y > properties.maxVelocity)
 		cell.velocity.y = properties.maxVelocity;
-
+	
+	// Update y velocity
 	int ySteps = static_cast<int>(cell.velocity.y);
 
 	for (int i = 0; i < ySteps; ++i)
@@ -170,7 +171,26 @@ void World::updateCellBehaviour(int x, int y)
 		else
 		{
 			// Reset velocity if the cell can't move down
-			cell.velocity.y = 0;	
+			cell.velocity.y = 0.f;	
+			break;
+		}
+	}
+
+	// Update x Velocity
+	int xSteps = static_cast<int>(cell.velocity.x);
+
+	for (int i = 0; i < abs(xSteps); ++i)
+	{
+		if (tryMove(x, y, x + 1, y))
+		{
+			// Update the y-coordinate to reflect the attempted move down
+			x += 1;
+		}
+
+		else
+		{
+			// Reset velocity if the cell can't move down
+			cell.velocity.x = 0.f;
 			break;
 		}
 	}
@@ -425,69 +445,22 @@ void World::explode(int cx, int cy, int radius)
 			// Apply velocity
 			Cell& cell = getCellRef(x, y);
 			
-			float forceMultiplier = 8.f;
-			cell.velocity += dir * force * forceMultiplier;
+			cell.velocity += dir * force;
 
-			// Choose which materials to destroy
 			MaterialType mat = cell.material;
 
-			if (mat == MaterialType::Stone)
-			{
-				if (force > 0.8f)
-				{
-					setCell(x, y, MaterialType::Empty);
-				}
-			}
-			if (mat == MaterialType::Sand)
-			{
-				if (force > 0.5f)
-				{
-					setCell(x, y, MaterialType::Empty);
-				}
-			}
+			auto& props = g_materials[static_cast<int>(cell.material)];
 
 			// Add fire property to projectile
-			auto& props = g_materials[static_cast<int>(mat)];
-
 			if (props.flammable && rand() % 100 < 40)
 			{
 				setCell(x, y, MaterialType::Fire);
 
 				getCellRef(x, y).lifeTime = 10;
 			}
-		}
-	}
-}
 
-void World::applyExplosionPhysics(sf::Vector2f centre, float radius, float force)
-{
-	int cellRadius = static_cast<int>(radius / m_cellSize);
-
-	int cx = static_cast<int>(centre.x / m_cellSize);
-	int cy = static_cast<int>(centre.y / m_cellSize);
-
-	for (int dy = -cellRadius; dy <= cellRadius; ++dy)
-	{
-		for (int dx = -cellRadius; dx <= cellRadius; ++dx)
-		{
-			int x = cx * dx;
-			int y = cy * dy;
-
-			if (!inBounds(x, y))
-				continue;
-
-			float distSq = static_cast<float>((dx * dx) + (dy * dy));
-
-			if (distSq > cellRadius * cellRadius)
-				continue;
-
-			Cell& cell = getCellRef(x, y);
-
-			if (cell.material == MaterialType::Empty)
-				continue;
-
-			// Direction away from explosion
-			sf::Vector2f dir(static_cast<float>(dx), static_cast<float>(dy));
+			// Force falloff
+			int cellRadius = static_cast<int>(radius / m_cellSize);
 
 			float length = sqrt((dir.x * dir.x) + (dir.y * dir.y));
 
@@ -496,15 +469,15 @@ void World::applyExplosionPhysics(sf::Vector2f centre, float radius, float force
 
 			dir /= length;
 
-			// Force falloff
 			float strength = force * (1.f - (length / cellRadius));
 
-			strength /= g_materials->flammable;
+			// Apply velocity strength to particles based on the material's explosion resistance
+			strength /= props.explosionResistance;
 
 			cell.velocity.x += dir.x * strength;
 			cell.velocity.y += dir.y * strength;
 
-			m_isDirty = true;
+			// Apply knockback to player
 		}
 	}
 }

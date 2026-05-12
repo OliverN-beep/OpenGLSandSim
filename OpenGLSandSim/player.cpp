@@ -15,3 +15,8 @@ void Player::draw(sf::RenderWindow& window) const
 	playerShape.setFillColor(sf::Color::Green);
 	window.draw(playerShape);
 }
+
+void Player::applyKnockback(sf::Vector2f force)
+{
+	velocity += force;
+}

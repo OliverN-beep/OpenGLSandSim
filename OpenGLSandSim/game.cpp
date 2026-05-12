@@ -227,15 +227,16 @@ void Game::update(float dt)
 			int cellX = static_cast<int>(projectile.position.x) / CELL_SIZE;
 			int cellY = static_cast<int>(projectile.position.y) / CELL_SIZE;
 
-			float explosionRadius = 30.f;
-			float explosionForce = 10.f;
+			int explosionRadius = 50;
+			int explosionForce = 230;
+
+			sf::Vector2f knockbackForce = sf::Vector2f({ 0.0, 10.0 });
 
 			MaterialType mat = currentRoom().getWorld().getCell(cellX, cellY);
 
 			if (mat != MaterialType::Empty)
 			{
 				currentRoom().getWorld().explode(cellX, cellY, explosionRadius);
-				currentRoom().getWorld().applyExplosionPhysics(projectile.position, explosionRadius, explosionForce);
 
 				projectile.isAlive = false;
 
@@ -455,6 +456,29 @@ void Game::switchRoom(sf::Vector2i direction)
 		pos.x = RW_WIDTH - 50.f;
 
 	m_player.position = pos;
+}
+
+void Game::applyPlayerExplosionKnockback(sf::Vector2f explosionPos, float radius, float force)
+{
+	sf::Vector2f playerCentre = { m_player.position.x + m_player.size.x * 0.5f, m_player.position.y + m_player.size.y * 0.5f };
+	
+	sf::Vector2f diff = playerCentre - explosionPos;
+
+	float distSq = (diff.x * diff.x) + (diff.y * diff.y);
+
+	if (distSq > radius * radius)
+		return;
+
+	float dist = std::sqrt(distSq);
+
+	if (dist < 0.001f)
+		dist = 0.001f;
+
+	sf::Vector2f dir = diff / dist;
+
+	float strength = force * (1.f - (dist / radius));
+
+	m_player.applyKnockback(dir * strength);
 }
 
 void Game::drawRoomOverview()

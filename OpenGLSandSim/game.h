@@ -28,7 +28,10 @@ private:
 	void drawUI();							// Draw the user interface (FPS, brush size, selected material/tile, etc.)
 	void drawTileHotbar();					// Draw the tile hotbar for selecting tile types in editor mode
 	void drawRoomOverview();				// Draw the overview for our room layout
+	void switchRoom(sf::Vector2i direction);
+	void applyPlayerExplosionKnockback(sf::Vector2f explosionPos, float radius, float force);
 	void handleRoomOverviewClick(sf::Vector2i mousePos);
+	void fireProjectile();					// Fires player projectile
 
 	sf::RenderWindow m_window;				// SFML window for rendering
 
@@ -61,8 +64,6 @@ private:
 
 	EditorState m_editorState = EditorState::Gameplay;	// Flag to check which editor state we are in
 
-	void switchRoom(sf::Vector2i direction);
-
 	sf::View m_gameView;					// View for gameplay
 	sf::View m_overviewView;				// View for room overview mode
 
@@ -72,5 +73,4 @@ private:
 	float m_roomOverviewCameraZoom = 1.f;
 
 	std::vector<Projectile> m_projectiles;	// Projectile instance
-	void fireProjectile();					// Fires player projectile
 };

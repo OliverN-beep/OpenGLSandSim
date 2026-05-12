@@ -21,4 +21,6 @@ struct Player
 	bool canDash = true;					// Can the player dash?
 	bool isDashing = false;					// Is the player currently dashing?
 	float dashTimer = 0.f;					// Time since the player started dashing
+
+	void applyKnockback(sf::Vector2f force);	// Function to apply knockback to player (when rocket jumping)
 };
