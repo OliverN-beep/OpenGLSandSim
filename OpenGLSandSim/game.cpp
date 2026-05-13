@@ -2,7 +2,7 @@
 
 // Constructor to initialise the game
 Game::Game():
-	m_window(sf::VideoMode({ RW_WIDTH, RW_HEIGHT }), "OpenGL Sand Simulation"),
+	m_window(sf::VideoMode({ RW_WIDTH, RW_HEIGHT }), "OpenGL Sand Simulation", sf::State::Windowed),
 	m_fpsText(m_font),
 	m_player({100.f, 100.f})
 {
@@ -492,7 +492,7 @@ void Game::drawRoomOverview()
 
 		sf::Vector2i grid = room.getGridPosition();
 
-		sf::Vector2f offset(grid.x * RW_WIDTH, grid.y * RW_HEIGHT);
+		sf::Vector2f offset(static_cast<float>(grid.x) * RW_WIDTH, static_cast<float>(grid.y) * RW_HEIGHT);
 
 		room.draw(m_window, offset);
 
