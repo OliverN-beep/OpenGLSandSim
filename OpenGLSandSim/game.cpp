@@ -224,8 +224,8 @@ void Game::update(float dt)
 			// Despawn projectile on collision with a solid tile
 			if (currentRoom().getTileMap().isSolid(tileX, tileY))
 			{
-				currentRoom().getWorld().explode(projectile.position.x / CELL_SIZE, projectile.position.y / CELL_SIZE, explosionRadius / CELL_SIZE);
-				applyPlayerExplosionKnockback(projectile.position, static_cast<float>(explosionRadius), knockbackForce);
+				currentRoom().getWorld().explode(static_cast<int>(projectile.position.x) / CELL_SIZE, static_cast<int>(projectile.position.y) / CELL_SIZE, explosionRadius / CELL_SIZE);
+				applyPlayerExplosionKnockback(projectile.position, static_cast<float>(explosionRadius), static_cast<float>(knockbackForce));
 
 				projectile.isAlive = false;
 
@@ -246,7 +246,7 @@ void Game::update(float dt)
 			{
 				currentRoom().getWorld().explode(cellX, cellY, explosionRadius / CELL_SIZE);
 
-				applyPlayerExplosionKnockback(projectile.position, explosionRadius, knockbackForce);
+				applyPlayerExplosionKnockback(projectile.position, static_cast<float>(explosionRadius), static_cast<float>(knockbackForce));
 
 				projectile.isAlive = false;
 

@@ -3,20 +3,18 @@
 const int CELL_SIZE = 3;						// Size of each cell in pixels
 
 // ----------Tunable parameters----------
-const float MOVE_SPEED = 400.f;					// Horizontal movement speed
-const float GROUND_ACCELERATION = 2000.f;		// Acceleration when on the ground
-const float AIR_ACCELERATION = 600.f;			// Acceleration when in the air
-const float FRICTION = 1200.f;					// Friction applied when grounded
+const float MOVE_SPEED = 320.f;					// Horizontal movement speed
+const float GROUND_ACCELERATION = 1400.f;		// Acceleration when on the ground
+const float AIR_ACCELERATION = 900.f;			// Acceleration when in the air
+const float FRICTION = 700.f;					// Friction applied when grounded
 
-const float GRAVITY = 1500.f;					// Gravity force applied to the player
-const float FALL_GRAVITY_MULTIPLIER = 1.5f;		// Multiplier for gravity when falling
+const float GRAVITY = 1200.f;					// Gravity force applied to the player
+const float FALL_GRAVITY_MULTIPLIER = 1.15f;	// Multiplier for gravity when falling
 
-const float JUMP_SPEED = -500.f;				// Initial jump speed
+const float JUMP_SPEED = -420.f;				// Initial jump speed
 
-const float COYOTE_TIME = 0.1f;					// Time allowed to jump after leaving the ground
+const float COYOTE_TIME = 0.15f;				// Time allowed to jump after leaving the ground
 const float JUMP_BUFFER_TIME = 0.1f;			// Time allowed to jump after pressing the jump button
-
-const float DASH_SPEED = 800.f;					// Speed during dash
 
 float PlayerController::moveToward(float current, float target, float amount)
 {
@@ -82,15 +80,6 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 		player.jumpBufferTimer = JUMP_BUFFER_TIME; // Reset jump buffer timer when jump is pressed
 	}
 
-	jumpPressedLastFrame = jumpHeld; // Update the jumpPressedLastFrame state
-
-	// Dash input handling
-	static bool dashPressedLastFrame = false;
-	bool dashHeld = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift);
-
-	bool dashPressed = dashHeld && !dashPressedLastFrame;	// Dash is pressed if held and wasn't pressed last frame
-	dashPressedLastFrame = dashHeld;						// Update the dashPressedLastFrame state
-
 	// --------------Logic------------------
 
 	// Horizontal movement logic
@@ -98,12 +87,17 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 
 	if (input != 0.f)
 	{
-		player.velocity.x = moveToward(player.velocity.x, input * MOVE_SPEED, acceleration * dt);
+		player.velocity.x += input * acceleration * dt;
 	}
-	else if (player.grounded)
-	{
-		player.velocity.x = moveToward(player.velocity.x, 0.f, FRICTION * dt);
-	}
+	if (player.grounded && input == 0.f)
+		player.velocity.x *= 0.94f;
+	
+	// Clamp horizontal move speed
+	if (player.velocity.x > MOVE_SPEED)
+		player.velocity.x = MOVE_SPEED;
+
+	if (player.velocity.x < -MOVE_SPEED)
+		player.velocity.x = -MOVE_SPEED;
 
 	// Jumping logic
 	if (player.jumpBufferTimer > 0.f && player.coyoteTimer > 0.f)
@@ -117,38 +111,8 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 	// Variable jump height logic
 	if (!jumpHeld && player.velocity.y < 0.f)
 	{
-		player.velocity.y *= 0.5f; // Reduce upward velocity for variable jump height
+		player.velocity.y *= 0.92f; // Reduce upward velocity for variable jump height
 	}
-
-	// Dash logic
-	if (dashPressed && player.canDash)
-	{
-		player.isDashing = true;			// Start dashing
-		player.canDash = false;				// Disable further dashes until grounded
-		player.dashTimer = 0.f;				// Reset dash timer
-		player.velocity.y = 0.f;			// No vertical movement during dash
-
-		if (player.facingRight)
-		{
-			player.velocity.x = DASH_SPEED;
-		}
-		else
-		{
-			player.velocity.x = -DASH_SPEED;
-		}
-	}
-	if (player.isDashing)
-	{
-		player.dashTimer -= dt;			// Decrease dash timer
-		player.velocity.y = -GRAVITY;	// Apply a slight upward force to counteract gravity during dash
-
-		if (player.dashTimer <= 0.f)
-		{
-			player.isDashing = false; // End dash when timer runs out
-		}
-		printf("Dashing: %.2f seconds left\n", player.dashTimer); // Debug output for dash timer
-	}
-
 	else
 	{
 		// Gravity logic
@@ -173,7 +137,7 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 	// Check for horizontal collisions
 	if (isSolidAt(map, newPosition.x, player.position.y) || isSolidAt(map, newPosition.x + player.size.x, player.position.y))
 	{
-		player.velocity.x = 0.f; // Stop horizontal movement if colliding
+		player.velocity.x *= 0.2f; // Slow horizontal movement if colliding
 	}
 	else
 	{
@@ -187,7 +151,6 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 		{
 			player.grounded = true; // Player is grounded
 			player.coyoteTimer = COYOTE_TIME; // Reset coyote timer
-			player.canDash = true; // Allow dashing again
 		}
 		player.velocity.y = 0.f; // Stop vertical movement if colliding
 	}
@@ -203,7 +166,6 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 		player.position = sf::Vector2f(100.f, 100.f); // Reset to starting position
 		player.velocity = sf::Vector2f(0.f, 0.f); // Reset velocity
 		player.grounded = false; // Player is not grounded
-		player.canDash = true; // Allow dashing again
 
 		printf("Player hit a spike! Resetting position.\n"); // Debug output for spike collision
 	}

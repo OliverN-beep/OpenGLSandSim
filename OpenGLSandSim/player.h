@@ -7,6 +7,7 @@ struct Player
 	Player(float x, float y);
 
 	void draw(sf::RenderWindow& window) const;
+	void applyKnockback(sf::Vector2f force);	// Function to apply knockback to player (when rocket jumping)
 
 	sf::Vector2f position;					// Player's position
 	sf::Vector2f velocity;					// Player's velocity
@@ -18,9 +19,4 @@ struct Player
 
 	float coyoteTimer = 0.f;				// Time since the player left the ground
 	float jumpBufferTimer = 0.f;			// Time since the player pressed the jump button
-	bool canDash = true;					// Can the player dash?
-	bool isDashing = false;					// Is the player currently dashing?
-	float dashTimer = 0.f;					// Time since the player started dashing
-
-	void applyKnockback(sf::Vector2f force);	// Function to apply knockback to player (when rocket jumping)
 };
