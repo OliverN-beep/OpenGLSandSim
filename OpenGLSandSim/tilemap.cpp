@@ -1,6 +1,6 @@
 #include "tilemap.h"
 
-TileMap::TileMap(int width, int height, int tileSize = 1) :
+TileMap::TileMap(int width, int height, int tileSize = 32) :
 	m_width(width),
 	m_height(height),
 	m_tileSize(tileSize),
@@ -10,6 +10,7 @@ TileMap::TileMap(int width, int height, int tileSize = 1) :
 
 bool TileMap::isSolidAtParticle(int particleX, int particleY) const
 {
+	// Not sure what 6.f represents?
 	float worldX = particleX * 6.f;
 	float worldY = particleY * 6.f;
 

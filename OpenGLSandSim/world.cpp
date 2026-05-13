@@ -116,8 +116,8 @@ bool World::isTileBlocked(int x, int y) const
 
 	// This occurs because m_tileSize is storing 0 initially for some reason?
 	if (m_tileMap->getTileSize() == 0)
-		printf("ERROR: Int div by 0 (tileSize is initialised to 0)\n");
-		return 0;
+		printf("Error: Int div by 0 (tileSize is initialised to 0)\n");
+		return 1;	// Return failure
 
 	int tileX = (x * m_cellSize) / m_tileMap->getTileSize();
 	int tileY = (y * m_cellSize) / m_tileMap->getTileSize();
