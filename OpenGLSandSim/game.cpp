@@ -217,26 +217,36 @@ void Game::update(float dt)
 			int tileX = static_cast<int>(projectile.position.x) / TILE_SIZE;
 			int tileY = static_cast<int>(projectile.position.y) / TILE_SIZE;
 
+			int explosionRadius = 80;
+			int explosionForce = 30;
+			int knockbackForce = 1800;
+
 			// Despawn projectile on collision with a solid tile
 			if (currentRoom().getTileMap().isSolid(tileX, tileY))
 			{
+				currentRoom().getWorld().explode(projectile.position.x / CELL_SIZE, projectile.position.y / CELL_SIZE, explosionRadius / CELL_SIZE);
+				applyPlayerExplosionKnockback(projectile.position, static_cast<float>(explosionRadius), knockbackForce);
+
 				projectile.isAlive = false;
+
+				printf("projectile hit tile\n");
 			}
+
+			// Prevent collision from running after projectile has exploded
+			if (!projectile.isAlive)
+				continue;
 
 			// Material collision detection with projectiles
 			int cellX = static_cast<int>(projectile.position.x) / CELL_SIZE;
 			int cellY = static_cast<int>(projectile.position.y) / CELL_SIZE;
 
-			int explosionRadius = 50;
-			int explosionForce = 230;
-
-			sf::Vector2f knockbackForce = sf::Vector2f({ 0.0, 10.0 });
-
 			MaterialType mat = currentRoom().getWorld().getCell(cellX, cellY);
 
 			if (mat != MaterialType::Empty)
 			{
-				currentRoom().getWorld().explode(cellX, cellY, explosionRadius);
+				currentRoom().getWorld().explode(cellX, cellY, explosionRadius / CELL_SIZE);
+
+				applyPlayerExplosionKnockback(projectile.position, explosionRadius, knockbackForce);
 
 				projectile.isAlive = false;
 
@@ -479,6 +489,9 @@ void Game::applyPlayerExplosionKnockback(sf::Vector2f explosionPos, float radius
 	float strength = force * (1.f - (dist / radius));
 
 	m_player.applyKnockback(dir * strength);
+
+	printf("Explosion knockback triggered\n");
+	printf("Strength: %f\n", strength);
 }
 
 void Game::drawRoomOverview()

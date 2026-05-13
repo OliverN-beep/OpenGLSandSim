@@ -117,7 +117,7 @@ bool World::isTileBlocked(int x, int y) const
 	// This occurs because m_tileSize is storing 0 initially for some reason?
 	if (m_tileMap->getTileSize() == 0)
 		printf("Error: Int div by 0 (tileSize is initialised to 0)\n");
-		return 1;	// Return failure
+		return 0;	// Return failure (makes sand stop falling)
 
 	int tileX = (x * m_cellSize) / m_tileMap->getTileSize();
 	int tileY = (y * m_cellSize) / m_tileMap->getTileSize();
@@ -464,25 +464,11 @@ void World::explode(int cx, int cy, int radius)
 				getCellRef(x, y).lifeTime = 10;
 			}
 
-			// Force falloff
-			int cellRadius = static_cast<int>(radius / m_cellSize);
-
-			float length = sqrt((dir.x * dir.x) + (dir.y * dir.y));
-
-			if (length == 0.f)
-				continue;
-
-			dir /= length;
-
-			float strength = force * (1.f - (length / cellRadius));
-
 			// Apply velocity strength to particles based on the material's explosion resistance
-			strength /= props.explosionResistance;
+			float strength = force / props.explosionResistance;
 
 			cell.velocity.x += dir.x * strength;
 			cell.velocity.y += dir.y * strength;
-
-			// Apply knockback to player
 		}
 	}
 }
