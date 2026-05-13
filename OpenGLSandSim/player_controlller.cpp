@@ -34,8 +34,8 @@ float PlayerController::moveToward(float current, float target, float amount)
 // Collision with tiles
 bool PlayerController::isSolidAt(TileMap& map, float px, float py)
 {
-	int tx = static_cast<int>(px) / map.getTileSize();
-	int ty = static_cast<int>(py) / map.getTileSize();
+	int tx = static_cast<int>(std::floor(px / map.getTileSize()));
+	int ty = static_cast<int>(std::floor(py / map.getTileSize()));
 
 	return map.isSolid(tx, ty);
 }
@@ -109,9 +109,9 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 	}
 
 	// Variable jump height logic
-	if (!jumpHeld && player.velocity.y < 0.f)
+	if (!jumpHeld && player.velocity.y < -120.f)
 	{
-		player.velocity.y *= 0.92f; // Reduce upward velocity for variable jump height
+		player.velocity.y = -120.f; // Reduce upward velocity for variable jump height
 	}
 	else
 	{
@@ -129,44 +129,50 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 	}
 }
 
+bool PlayerController::isColliding(TileMap& map, sf::FloatRect bounds)
+{
+	return
+		isSolidAt(map, bounds.position.x, bounds.position.y) ||
+		isSolidAt(map, bounds.position.x + bounds.size.x, bounds.position.y) ||
+		isSolidAt(map, bounds.position.x, bounds.position.y + bounds.size.y) ||
+		isSolidAt(map, bounds.position.x + bounds.size.x, bounds.position.y + bounds.size.y);
+}
+
 void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 {
-	// Calculate the new position based on velocity and delta time
-	sf::Vector2f newPosition = player.position + player.velocity * dt;
+	player.grounded = false;
 
-	// Check for horizontal collisions
-	if (isSolidAt(map, newPosition.x, player.position.y) || isSolidAt(map, newPosition.x + player.size.x, player.position.y))
+	// -------- Horizontal --------
+	player.position.x += player.velocity.x * dt;
+
+	sf::FloatRect horizontalBounds(player.position, player.size);
+
+	if (isColliding(map, horizontalBounds))
 	{
-		player.velocity.x *= 0.2f; // Slow horizontal movement if colliding
-	}
-	else
-	{
-		player.position.x = newPosition.x; // Update horizontal position if no collision
+		// Undo movement
+		player.position.x -= player.velocity.x * dt;
+
+		// Damp instead of hard stop
+		player.velocity.x *= 0.2f;
 	}
 
-	// Check for vertical collisions
-	if (isSolidAt(map, player.position.x, newPosition.y) || isSolidAt(map, player.position.x + player.size.x, newPosition.y + player.size.y))
+	// -------- Vertical --------
+
+	player.position.y += player.velocity.y * dt;
+
+	sf::FloatRect verticalBounds(player.position, player.size);
+
+	if (isColliding(map, verticalBounds))
 	{
-		if (player.velocity.y > 0.f) // If falling
+		// Undo movement
+		player.position.y -= player.velocity.y * dt;
+
+		if (player.velocity.y > 0.f)
 		{
-			player.grounded = true; // Player is grounded
-			player.coyoteTimer = COYOTE_TIME; // Reset coyote timer
+			player.grounded = true;
+			player.coyoteTimer = COYOTE_TIME;
 		}
-		player.velocity.y = 0.f; // Stop vertical movement if colliding
-	}
-	else
-	{
-		player.position.y = newPosition.y; // Update vertical position if no collision
-		player.grounded = false; // Player is not grounded
-	}
 
-	if (isSpikeAt(map, player.position.x, player.position.y) || isSpikeAt(map, player.position.x + player.size.x, player.position.y + player.size.y))
-	{
-		// Handle spike collision (e.g., reset player position)
-		player.position = sf::Vector2f(100.f, 100.f); // Reset to starting position
-		player.velocity = sf::Vector2f(0.f, 0.f); // Reset velocity
-		player.grounded = false; // Player is not grounded
-
-		printf("Player hit a spike! Resetting position.\n"); // Debug output for spike collision
+		player.velocity.y = 0.f;
 	}
 }
