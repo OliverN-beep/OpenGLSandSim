@@ -347,7 +347,7 @@ void Game::render()
 		brush.setPosition(sf::Vector2f(static_cast<float>(mousePos.x) - static_cast<float>(m_brushSize * CELL_SIZE), static_cast<float>(mousePos.y) - static_cast<float>(m_brushSize * CELL_SIZE)));
 
 		m_window.draw(brush);
-		Game::drawUI();
+		Game::drawMaterialUI();
 		Game::drawTileHotbar();
 	}
 
@@ -377,7 +377,7 @@ void Game::render()
 	m_window.display();
 }
 
-void Game::drawUI()
+void Game::drawMaterialUI()
 {
 	const int SIZE = 20;
 	const int PADDING = 10;

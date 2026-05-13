@@ -1,6 +1,6 @@
 #include "tilemap.h"
 
-TileMap::TileMap(int width, int height, int tileSize) :
+TileMap::TileMap(int width, int height, int tileSize = 1) :
 	m_width(width),
 	m_height(height),
 	m_tileSize(tileSize),

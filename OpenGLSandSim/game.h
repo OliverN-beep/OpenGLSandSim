@@ -25,7 +25,7 @@ private:
 	void processEvents();					// Handle user input and window events
 	void update(float dt);					// Update game state (player, world, etc.)
 	void render();							// Render the game (world, player, UI, etc.)
-	void drawUI();							// Draw the user interface (FPS, brush size, selected material/tile, etc.)
+	void drawMaterialUI();							// Draw the user interface (FPS, brush size, selected material/tile, etc.)
 	void drawTileHotbar();					// Draw the tile hotbar for selecting tile types in editor mode
 	void drawRoomOverview();				// Draw the overview for our room layout
 	void switchRoom(sf::Vector2i direction);
