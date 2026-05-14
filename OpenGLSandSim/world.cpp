@@ -14,7 +14,7 @@ World::World(int width, int height, int cellSize)
 	cells(width * height)
 {
 	m_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
-	m_vertices.resize(m_width* m_height * 6);
+	m_vertices.resize(static_cast<size_t>(m_width* m_height * 6));
 }
 
 int World::index(int x, int y) const

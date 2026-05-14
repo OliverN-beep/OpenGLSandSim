@@ -585,7 +585,12 @@ void Game::fireProjectile()
 
 	Projectile projectile;
 
-	projectile.position = m_player.position;
+	float projectileOffsetX = m_player.size.x / 2;
+	float projectileOffsetY = m_player.size.y / 2;
+
+	// Initial values of the projectile
+	projectile.position.x = m_player.position.x + projectileOffsetX;
+	projectile.position.y = m_player.position.y + projectileOffsetY;
 	projectile.velocity = dir * 600.f;
 
 	m_projectiles.push_back(projectile);
