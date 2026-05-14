@@ -3,7 +3,8 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 
-enum class TileType {
+enum class TileType
+{
 	Solid,
 	Spike,
 	Empty	// Keep "Empty" as last entry to avoid issues with indexing in drawTileHotbar() in game.cpp

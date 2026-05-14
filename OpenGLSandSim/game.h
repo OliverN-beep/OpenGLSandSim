@@ -25,7 +25,7 @@ private:
 	void processEvents();					// Handle user input and window events
 	void update(float dt);					// Update game state (player, world, etc.)
 	void render();							// Render the game (world, player, UI, etc.)
-	void drawMaterialUI();							// Draw the user interface (FPS, brush size, selected material/tile, etc.)
+	void drawMaterialUI();					// Draw the user interface (FPS, brush size, selected material/tile, etc.)
 	void drawTileHotbar();					// Draw the tile hotbar for selecting tile types in editor mode
 	void drawRoomOverview();				// Draw the overview for our room layout
 	void switchRoom(sf::Vector2i direction);
@@ -40,7 +40,8 @@ private:
 
 	sf::Font m_font;						// Font for rendering text
 	sf::Text m_fpsText;						// Text object for displaying FPS
-	const static int CHARACTER_SIZE = 20;	// Size of the text for displaying FPS
+
+	const static int CHARACTER_SIZE = 28;	// Size of the text for displaying FPS
 	float m_fps = 0.f;						// Current frames per second
 
 	RoomManager m_room_manager;				// Room manager for loading and switiching between rooms
@@ -73,4 +74,6 @@ private:
 	float m_roomOverviewCameraZoom = 1.f;
 
 	std::vector<Projectile> m_projectiles;	// Projectile instance
+
+	TileMap* m_tilemap = nullptr;
 };

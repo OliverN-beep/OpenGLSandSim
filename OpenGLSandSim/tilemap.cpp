@@ -10,12 +10,12 @@ TileMap::TileMap(int width, int height, int tileSize = 32) :
 
 bool TileMap::isSolidAtParticle(int particleX, int particleY) const
 {
-	// Not sure what 6.f represents?
-	float worldX = particleX * 6.f;
-	float worldY = particleY * 6.f;
+	// Not sure what 6 represents?
+	int worldX = particleX * 6;
+	int worldY = particleY * 6;
 
-	int tx = static_cast<int>(worldX / m_tileSize);
-	int ty = static_cast<int>(worldY / m_tileSize);
+	int tx = worldX / m_tileSize;
+	int ty = worldY / m_tileSize;
 
 	return isSolid(tx, ty);
 }

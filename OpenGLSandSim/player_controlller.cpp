@@ -45,6 +45,7 @@ bool PlayerController::isSpikeAt(TileMap& map, float px, float py)
 {
 	int tx = static_cast<int>(px) / map.getTileSize();
 	int ty = static_cast<int>(py) / map.getTileSize();
+
 	return map.isSpike(tx, ty);
 }
 
@@ -68,12 +69,13 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 	if (input < 0.f) player.facingRight = false;
 
 	// Update timers
-	player.coyoteTimer -= dt; // Decrease coyote timer
-	player.jumpBufferTimer -= dt; // Decrease jump buffer timer
+	player.coyoteTimer -= dt;		// Decrease coyote timer
+	player.jumpBufferTimer -= dt;	// Decrease jump buffer timer
 
 	// Jump input handling with jump buffering
-	static bool jumpPressedLastFrame = false;
 	bool jumpHeld = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space);
+
+	static bool jumpPressedLastFrame = false;
 
 	if (jumpHeld && !jumpPressedLastFrame)
 	{
@@ -82,7 +84,7 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 
 	// --------------Logic------------------
 
-	// Horizontal movement logic
+	// If player is grounded, apply ground acceleration, if not apply air acceleration
 	float acceleration = player.grounded ? GROUND_ACCELERATION : AIR_ACCELERATION;
 
 	if (input != 0.f)
@@ -103,9 +105,9 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 	if (player.jumpBufferTimer > 0.f && player.coyoteTimer > 0.f)
 	{
 		player.velocity.y = JUMP_SPEED; // Apply jump speed
-		player.grounded = false;		// Player is no longer grounded
 		player.coyoteTimer = 0.f;		// Reset coyote timer
 		player.jumpBufferTimer = 0.f;	// Reset jump buffer timer
+		player.grounded = false;		// Player is no longer grounded
 	}
 
 	// Variable jump height logic
@@ -115,20 +117,14 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 	}
 	else
 	{
-		// Gravity logic
-		if (player.velocity.y < 0.f) // If moving upwards
-		{
-			player.velocity.y += GRAVITY * dt; // Apply normal gravity
-		}
-		else // If falling
-		{
-			player.velocity.y += GRAVITY * FALL_GRAVITY_MULTIPLIER * dt; // Apply increased gravity for faster fall
-		}
+		// If player is moving upwards apply normal gravity, if not apply increased gravity for faster falling
+		player.velocity.y += (player.velocity.y < 0.f) ? (GRAVITY * dt) : (GRAVITY * FALL_GRAVITY_MULTIPLIER * dt);
 
 		moveAndCollide(player, map, dt); // Handle movement and collision
 	}
 }
 
+// AABB collision checker
 bool PlayerController::isColliding(TileMap& map, sf::FloatRect bounds)
 {
 	return
@@ -153,11 +149,10 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 		player.position.x -= player.velocity.x * dt;
 
 		// Damp instead of hard stop
-		player.velocity.x *= 0.2f;
+		player.velocity.x *= 0.3f;
 	}
 
 	// -------- Vertical --------
-
 	player.position.y += player.velocity.y * dt;
 
 	sf::FloatRect verticalBounds(player.position, player.size);

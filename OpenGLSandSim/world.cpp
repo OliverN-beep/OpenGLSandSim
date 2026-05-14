@@ -14,6 +14,8 @@ World::World(int width, int height, int cellSize)
 	cells(width * height)
 {
 	m_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
+
+	// Not sure what 6 represents here either? (SEE TILEMAP.CPP LINE 13)
 	m_vertices.resize(static_cast<size_t>(m_width* m_height * 6));
 }
 

@@ -24,7 +24,9 @@ Game::Game():
 	// Cap fps
 	//m_window.setFramerateLimit( 120 );
 
-	//m_world.setTileMap(&m_tilemap); // Set the tile map for the world to enable particle collision detection
+	// Set the tile map for the world to enable particle collision detection
+	//m_world.setTileMap(&m_tilemap);
+	currentRoom().getWorld().setTileMap(m_tilemap);
 
 	// Load font for displaying text
 	if (!m_font.openFromFile("fonts/monospace_medium.ttf"))
@@ -35,7 +37,7 @@ Game::Game():
 	m_fpsText.setFont(m_font);
 	m_fpsText.setCharacterSize(CHARACTER_SIZE);
 	m_fpsText.setFillColor(sf::Color::White);
-	m_fpsText.setPosition({ RW_WIDTH - 150.f, 50.f });
+	m_fpsText.setPosition({ RW_WIDTH - 150, 50 });
 
 	// Build simple test room with tile map floor
 	for (int x = 0; x < currentRoom().getTileMap().getWidth(); ++x)
@@ -218,7 +220,7 @@ void Game::update(float dt)
 			int tileY = static_cast<int>(projectile.position.y) / TILE_SIZE;
 
 			int projectileExplosionRadius = 80;
-			int projectileExplosionForce = 30;
+			int projectileExplosionForce = 50;
 			int projectileKnockbackForce = 2800;
 
 			// Despawn projectile on collision with a solid tile
