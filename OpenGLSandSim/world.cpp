@@ -114,10 +114,14 @@ bool World::isTileBlocked(int x, int y) const
 	if (!m_tileMap)
 		return false;
 
+	// This fixes tileSize crashing error below
+	if (m_isPainting)
+		return 0;
+
 	// This occurs because m_tileSize is storing 0 initially for some reason?
 	if (m_tileMap->getTileSize() == 0)
 		printf("Error: Int div by 0 (tileSize is initialised to 0)\n");
-		return 0;	// Return failure (makes sand stop falling)
+		return 1;	// Return failure (makes sand stop falling)
 
 	int tileX = (x * m_cellSize) / m_tileMap->getTileSize();
 	int tileY = (y * m_cellSize) / m_tileMap->getTileSize();
@@ -368,6 +372,7 @@ void World::paintCircle(int cx, int cy, int radius, MaterialType type)
 	}
 
 	m_isDirty = true;
+	m_isPainting = true;
 }
 
 void World::updateMesh()

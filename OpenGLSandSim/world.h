@@ -48,6 +48,7 @@ private:
 	unsigned int m_currentFrame = 0;					// Current frame number for update tracking
 
 	bool m_isDirty = true;								// Flag to indicate if the world state has changed and needs to be redrawn
+	bool m_isPainting;									// Flag to check whether we are in painting mode
 
 	std::vector<Cell> cells;							// 1D array representing the world grid
 

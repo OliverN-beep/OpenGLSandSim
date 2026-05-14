@@ -217,15 +217,15 @@ void Game::update(float dt)
 			int tileX = static_cast<int>(projectile.position.x) / TILE_SIZE;
 			int tileY = static_cast<int>(projectile.position.y) / TILE_SIZE;
 
-			int explosionRadius = 80;
-			int explosionForce = 30;
-			int knockbackForce = 1800;
+			int projectileExplosionRadius = 80;
+			int projectileExplosionForce = 30;
+			int projectileKnockbackForce = 2800;
 
 			// Despawn projectile on collision with a solid tile
 			if (currentRoom().getTileMap().isSolid(tileX, tileY))
 			{
-				currentRoom().getWorld().explode(static_cast<int>(projectile.position.x) / CELL_SIZE, static_cast<int>(projectile.position.y) / CELL_SIZE, explosionRadius / CELL_SIZE);
-				applyPlayerExplosionKnockback(projectile.position, static_cast<float>(explosionRadius), static_cast<float>(knockbackForce));
+				currentRoom().getWorld().explode(static_cast<int>(projectile.position.x) / CELL_SIZE, static_cast<int>(projectile.position.y) / CELL_SIZE, projectileExplosionRadius / CELL_SIZE);
+				applyPlayerExplosionKnockback(projectile.position, static_cast<float>(projectileExplosionRadius), static_cast<float>(projectileKnockbackForce));
 
 				projectile.isAlive = false;
 
@@ -244,9 +244,9 @@ void Game::update(float dt)
 
 			if (mat != MaterialType::Empty)
 			{
-				currentRoom().getWorld().explode(cellX, cellY, explosionRadius / CELL_SIZE);
+				currentRoom().getWorld().explode(cellX, cellY, projectileExplosionRadius / CELL_SIZE);
 
-				applyPlayerExplosionKnockback(projectile.position, static_cast<float>(explosionRadius), static_cast<float>(knockbackForce));
+				applyPlayerExplosionKnockback(projectile.position, static_cast<float>(projectileExplosionRadius), static_cast<float>(projectileKnockbackForce));
 
 				projectile.isAlive = false;
 
@@ -545,7 +545,6 @@ void Game::handleRoomOverviewClick(sf::Vector2i mousePos)
 		sf::Vector2i grid = room.getGridPosition();
 
 		float x = 200 + grid.x * (ROOM_BOX_SIZE + SPACING);
-
 		float y = 200 + grid.y * (ROOM_BOX_SIZE + SPACING);
 
 		sf::FloatRect bounds({ x, y }, { ROOM_BOX_SIZE, ROOM_BOX_SIZE });
@@ -585,12 +584,13 @@ void Game::fireProjectile()
 
 	Projectile projectile;
 
-	float projectileOffsetX = m_player.size.x / 2;
-	float projectileOffsetY = m_player.size.y / 2;
+	float projectileOffsetX = m_player.size.x * 0.5f;
+	float projectileOffsetY = m_player.size.y * 0.5f;
 
 	// Initial values of the projectile
 	projectile.position.x = m_player.position.x + projectileOffsetX;
 	projectile.position.y = m_player.position.y + projectileOffsetY;
+
 	projectile.velocity = dir * 600.f;
 
 	m_projectiles.push_back(projectile);
