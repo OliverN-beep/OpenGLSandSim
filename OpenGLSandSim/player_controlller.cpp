@@ -120,8 +120,12 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 		player.velocity.y = -120.f; // Reduce upward velocity for variable jump height
 	}
 
-	// If player is moving upwards apply normal gravity, if not apply increased gravity for faster falling
-	player.velocity.y += (player.velocity.y < 0.f) ? (GRAVITY * dt) : (GRAVITY * FALL_GRAVITY_MULTIPLIER * dt);
+	// Only apply gravity when the player is not touching the ground
+	if (!player.grounded)
+	{
+		// If player is moving upwards apply normal gravity, if not apply increased gravity for faster falling
+		player.velocity.y += (player.velocity.y < 0.f) ? (GRAVITY * dt) : (GRAVITY * FALL_GRAVITY_MULTIPLIER * dt);
+	}
 
 	moveAndCollide(player, map, dt); // Handle movement and collision
 }
@@ -170,10 +174,6 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 			player.coyoteTimer = COYOTE_TIME;
 		}
 
-		if (std::abs(player.velocity.y) < 50.f)
-		{
-			// Falling to ground
-			player.velocity.y = 0.f;
-		}
+		player.velocity.y = 0.f;
 	}
 }
