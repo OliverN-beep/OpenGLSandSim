@@ -13,7 +13,7 @@ enum class TileType
 class TileMap
 {
 public:
-	TileMap(int width, int height, int tileSize);	// Constructor to initialize the tile map with given dimensions and tile size
+	TileMap(int width, int height, int tileSize = 32);	// Constructor to initialize the tile map with given dimensions and tile size
 
 	void setTile(int x, int y, TileType type);		// Set the tile type at the specified (x, y) position
 	TileType getTile(int x, int y) const;			// Get the tile type at the specified (x, y) position
@@ -27,12 +27,9 @@ public:
 	int getHeight() const { return m_height; }		// Get the height of the tile map in tiles
 	int getTileSize() const { return m_tileSize; }	// Get the size of each tile in pixels
 
-	bool isSolidAtParticle(int x, int y) const;		// Check if the tile at the specified (x, y) position is solid for particle collision detection
-
 	TileType m_selectedTileType = TileType::Solid;	// Currently selected tile type for editing the tile map
 
 private:
-	int index(int x, int y) const;					// Convert (x, y) tile coordinates to a linear index in the tile vector
 	bool inBounds(int x, int y) const;				// Check if the (x, y) tile coordinates are within the bounds of the tile map
 
 	int m_width;									// Width of the tile map in tiles

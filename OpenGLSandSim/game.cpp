@@ -26,7 +26,7 @@ Game::Game():
 
 	// Set the tile map for the world to enable particle collision detection
 	//m_world.setTileMap(&m_tilemap);
-	currentRoom().getWorld().setTileMap(m_tilemap);
+	currentRoom().getWorld().setTileMap(&currentRoom().getTileMap());
 
 	// Load font for displaying text
 	if (!m_font.openFromFile("fonts/monospace_medium.ttf"))
@@ -42,7 +42,7 @@ Game::Game():
 	// Build simple test room with tile map floor
 	for (int x = 0; x < currentRoom().getTileMap().getWidth(); ++x)
 	{
-		currentRoom().getTileMap().setTile(x, currentRoom().getTileMap().getHeight() - 2, TileType::Solid); // Set the bottom row as solid tiles
+		currentRoom().getTileMap().setTile(x, currentRoom().getTileMap().getHeight() - 1, TileType::Solid); // Set the bottom row as solid tiles
 	}
 
 	// Initialise views
@@ -221,12 +221,12 @@ void Game::update(float dt)
 
 			int projectileExplosionRadius = 80;
 			int projectileExplosionForce = 50;
-			int projectileKnockbackForce = 2800;
+			int projectileKnockbackForce = 800;
 
 			// Despawn projectile on collision with a solid tile
 			if (currentRoom().getTileMap().isSolid(tileX, tileY))
 			{
-				currentRoom().getWorld().explode(static_cast<int>(projectile.position.x) / CELL_SIZE, static_cast<int>(projectile.position.y) / CELL_SIZE, projectileExplosionRadius / CELL_SIZE);
+				currentRoom().getWorld().explode(tileX, tileY, projectileExplosionRadius / TILE_SIZE);
 				applyPlayerExplosionKnockback(projectile.position, static_cast<float>(projectileExplosionRadius), static_cast<float>(projectileKnockbackForce));
 
 				projectile.isAlive = false;

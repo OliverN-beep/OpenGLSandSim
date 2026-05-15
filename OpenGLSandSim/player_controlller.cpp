@@ -82,6 +82,8 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 		player.jumpBufferTimer = JUMP_BUFFER_TIME; // Reset jump buffer timer when jump is pressed
 	}
 
+	jumpPressedLastFrame = jumpHeld;
+
 	// --------------Logic------------------
 
 	// If player is grounded, apply ground acceleration, if not apply air acceleration
@@ -104,7 +106,9 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 	// Jumping logic
 	if (player.jumpBufferTimer > 0.f && player.coyoteTimer > 0.f)
 	{
-		player.velocity.y = JUMP_SPEED; // Apply jump speed
+		if (player.velocity.y > JUMP_SPEED)
+			player.velocity.y = JUMP_SPEED;
+
 		player.coyoteTimer = 0.f;		// Reset coyote timer
 		player.jumpBufferTimer = 0.f;	// Reset jump buffer timer
 		player.grounded = false;		// Player is no longer grounded
@@ -115,13 +119,11 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 	{
 		player.velocity.y = -120.f; // Reduce upward velocity for variable jump height
 	}
-	else
-	{
-		// If player is moving upwards apply normal gravity, if not apply increased gravity for faster falling
-		player.velocity.y += (player.velocity.y < 0.f) ? (GRAVITY * dt) : (GRAVITY * FALL_GRAVITY_MULTIPLIER * dt);
 
-		moveAndCollide(player, map, dt); // Handle movement and collision
-	}
+	// If player is moving upwards apply normal gravity, if not apply increased gravity for faster falling
+	player.velocity.y += (player.velocity.y < 0.f) ? (GRAVITY * dt) : (GRAVITY * FALL_GRAVITY_MULTIPLIER * dt);
+
+	moveAndCollide(player, map, dt); // Handle movement and collision
 }
 
 // AABB collision checker
@@ -168,6 +170,10 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 			player.coyoteTimer = COYOTE_TIME;
 		}
 
-		player.velocity.y = 0.f;
+		if (std::abs(player.velocity.y) < 50.f)
+		{
+			// Falling to ground
+			player.velocity.y = 0.f;
+		}
 	}
 }

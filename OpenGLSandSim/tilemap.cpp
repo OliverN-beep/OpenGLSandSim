@@ -1,29 +1,11 @@
 #include "tilemap.h"
 
-TileMap::TileMap(int width, int height, int tileSize = 32) :
+TileMap::TileMap(int width, int height, int tileSize) :
 	m_width(width),
 	m_height(height),
 	m_tileSize(tileSize),
 	m_tiles(width, std::vector<TileType>(height, TileType::Empty))
 {
-}
-
-bool TileMap::isSolidAtParticle(int particleX, int particleY) const
-{
-	// Not sure what 6 represents?
-	int worldX = particleX * 6;
-	int worldY = particleY * 6;
-
-	int tx = worldX / m_tileSize;
-	int ty = worldY / m_tileSize;
-
-	return isSolid(tx, ty);
-}
-
-int TileMap::index(int x, int y) const
-{
-	// Convert (x, y) tile coordinates to a linear index in the tile vector
-	return y * m_width + x;
 }
 
 bool TileMap::inBounds(int x, int y) const

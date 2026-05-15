@@ -14,9 +14,29 @@ World::World(int width, int height, int cellSize)
 	cells(width * height)
 {
 	m_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
+	m_vertices.resize(m_width * m_height * 6);
 
-	// Not sure what 6 represents here either? (SEE TILEMAP.CPP LINE 13)
-	m_vertices.resize(static_cast<size_t>(m_width* m_height * 6));
+	for (int y = 0; y < m_height; ++y)
+	{
+		for (int x = 0; x < m_width; ++x)
+		{
+			int index = (x + y * m_width) * 6;
+
+			sf::Vertex* tri = &m_vertices[index];
+
+			float px = static_cast<float>(x * m_cellSize);
+			float py = static_cast<float>(y * m_cellSize);
+			float s = static_cast<float>(m_cellSize);
+
+			tri[0].position = { px, py };
+			tri[1].position = { px + s, py };
+			tri[2].position = { px + s, py + s };
+
+			tri[3].position = { px, py };
+			tri[4].position = { px + s, py + s };
+			tri[5].position = { px, py + s };
+		}
+	}
 }
 
 int World::index(int x, int y) const
@@ -116,17 +136,18 @@ bool World::isTileBlocked(int x, int y) const
 	if (!m_tileMap)
 		return false;
 
-	// This fixes tileSize crashing error below
-	if (m_isPainting)
-		return 0;
-
-	// This occurs because m_tileSize is storing 0 initially for some reason?
-	if (m_tileMap->getTileSize() == 0)
-		printf("Error: Int div by 0 (tileSize is initialised to 0)\n");
-		return 1;	// Return failure (makes sand stop falling)
+	int worldX = x * m_cellSize;
+	int worldY = y * m_cellSize;
 
 	int tileX = (x * m_cellSize) / m_tileMap->getTileSize();
 	int tileY = (y * m_cellSize) / m_tileMap->getTileSize();
+
+	// This occurs because m_tileSize is storing 0 initially for some reason?
+	if (m_tileMap->getTileSize() == 0)
+	{
+		printf("Error: Int div by 0 (tileSize is initialised to 0)\n");
+		return true;	// Return failure (makes sand stop falling)
+	}
 	
 	return m_tileMap->isSolid(tileX, tileY);
 }
@@ -168,7 +189,7 @@ void World::updateCellBehaviour(int x, int y)
 		cell.velocity.y = properties.maxVelocity;
 	
 	// Update y velocity
-	int ySteps = static_cast<int>(cell.velocity.y);
+	int ySteps = static_cast<int>(std::abs(cell.velocity.y));
 
 	for (int i = 0; i < ySteps; ++i)
 	{
@@ -188,7 +209,7 @@ void World::updateCellBehaviour(int x, int y)
 	}
 
 	// Update x Velocity
-	int xSteps = static_cast<int>(cell.velocity.x);
+	int xSteps = static_cast<int>(std::abs(cell.velocity.x));
 
 	for (int i = 0; i < abs(xSteps); ++i)
 	{
@@ -374,7 +395,6 @@ void World::paintCircle(int cx, int cy, int radius, MaterialType type)
 	}
 
 	m_isDirty = true;
-	m_isPainting = true;
 }
 
 void World::updateMesh()
@@ -384,16 +404,9 @@ void World::updateMesh()
 		for (int x = 0; x < m_width; ++x)
 		{
 			int index = (x + y * m_width) * 6;
+
 			sf::Vertex* tri = &m_vertices[index];
 
-			// Calculate the pixel position of the cell in the world
-			float px = static_cast<float>(x) * m_cellSize;
-			float py = static_cast<float>(y) * m_cellSize;	
-
-			// Size of the cell in pixels
-			float s = static_cast<float>(m_cellSize);
-
-			// Set the color of the triangle meshes based on the material type of the cell
 			MaterialType matType = getCellRef(x, y).material;
 
 			sf::Color colour = sf::Color::Transparent;
@@ -403,16 +416,6 @@ void World::updateMesh()
 				colour = g_materials[static_cast<int>(matType)].colour;
 			}
 
-			// Triangle 1
-			tri[0].position = sf::Vector2f(px, py);
-			tri[1].position = sf::Vector2f(px + s, py);
-			tri[2].position = sf::Vector2f(px + s, py + s);
-
-			// Triangle 2
-			tri[3].position = sf::Vector2f(px, py);
-			tri[4].position = sf::Vector2f(px + s, py + s);
-			tri[5].position = sf::Vector2f(px, py + s);
-
 			for (int i = 0; i < 6; ++i)
 			{
 				tri[i].color = colour;
@@ -420,7 +423,7 @@ void World::updateMesh()
 		}
 	}
 
-	m_isDirty = false; // Only clear m_isDirty after the entire mesh is rebuilt
+	m_isDirty = false;
 }
 
 void World::explode(int cx, int cy, int radius)

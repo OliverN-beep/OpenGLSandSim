@@ -9,11 +9,13 @@ Room::Room(
 	const std::string& roomName):
 	
 	m_world(width, height, cellSize),
-	m_tileMap(width / (tileSize / cellSize), height / (tileSize / cellSize), tileSize),
+	m_tileMap((width * cellSize) / tileSize, (height * cellSize) / tileSize, tileSize),
 	m_gridPosition(roomGridPosition)
 {
 	// Set the tile map for the world to enable particle collision detection
 	m_world.setTileMap(&m_tileMap);
+
+	printf("Tile size: %d\n", m_tileMap.getTileSize());
 }
 
 void Room::update()
