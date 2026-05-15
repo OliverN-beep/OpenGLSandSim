@@ -114,12 +114,6 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 		player.grounded = false;		// Player is no longer grounded
 	}
 
-	// Variable jump height logic
-	if (!jumpHeld && player.velocity.y < -120.f)
-	{
-		player.velocity.y = -120.f; // Reduce upward velocity for variable jump height
-	}
-
 	// Only apply gravity when the player is not touching the ground
 	if (!player.grounded)
 	{
