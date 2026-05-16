@@ -192,16 +192,19 @@ void World::updateCellBehaviour(int x, int y)
 	if (cell.velocity.y > properties.maxVelocity)
 		cell.velocity.y = properties.maxVelocity;
 	
+	// Define y direction (if velocity > 0, yDir = 1, if velocity < 0, yDir = -1)
+	int yDir = (cell.velocity.y > 0.f) ? 1 : -1;
+
 	// Update y velocity
 	int ySteps = static_cast<int>(std::abs(cell.velocity.y));
 
 	for (int i = 0; i < ySteps; ++i)
 	{
 
-		if (tryMove(x, y, x, y + 1))
+		if (tryMove(x, y, x, y + yDir))
 		{
 			// Update the y-coordinate to reflect the attempted move down
-			y += 1;
+			y += yDir;
 		}
 
 		else
@@ -212,15 +215,18 @@ void World::updateCellBehaviour(int x, int y)
 		}
 	}
 
+	// Define y direction (if velocity > 0, yDir = 1, if velocity < 0, yDir = -1)
+	int xDir = (cell.velocity.x > 0.f) ? 1 : -1;
+
 	// Update x Velocity
 	int xSteps = static_cast<int>(std::abs(cell.velocity.x));
 
-	for (int i = 0; i < abs(xSteps); ++i)
+	for (int i = 0; i < xSteps; ++i)
 	{
-		if (tryMove(x, y, x + 1, y))
+		if (tryMove(x, y, x + xDir, y))
 		{
 			// Update the y-coordinate to reflect the attempted move down
-			x += 1;
+			x += xDir;
 		}
 
 		else
@@ -231,9 +237,10 @@ void World::updateCellBehaviour(int x, int y)
 		}
 	}
 
-	// Velocity damping
+	// Velocity damping for particles
 	cell.velocity *= 0.92f;
 
+	// Paticle behaviours
 	switch (properties.behaviour)
 	{
 		// Update fire first
@@ -519,11 +526,10 @@ void World::explodeParticles(int cx, int cy, int radius)
 			}
 
 			// Apply velocity strength to particles based on the material's explosion resistance
-			float strength = force * 18.f / props.explosionResistance;
+			float strength = force * 4.f / props.explosionResistance;
 
 			// Calculate velocity and apply damping
 			cell.velocity += dir * strength;
-			cell.velocity *= 0.95f;
 
 			printf("particle velocity = { %f, %f }\n", cell.velocity.x, cell.velocity.y);
 		}
