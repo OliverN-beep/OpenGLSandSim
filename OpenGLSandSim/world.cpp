@@ -167,6 +167,9 @@ void World::update()
 	}
 }
 
+// NOTE FOR updateCellBehaviour(), updatePowder(), updateLiquid(), and updateGas()
+// The order in which operations are performed DOES matter greatly
+
 void World::updateCellBehaviour(int x, int y)
 {
 	if (!inBounds(x, y))
@@ -277,6 +280,19 @@ void World::updatePowder(int x, int y)
 
 void World::updateLiquid(int x, int y)
 {
+	// Try to move down
+	if (tryMove(x, y, x, y + 1))
+		return;
+
+	// Try to move down-left
+	if (tryMove(x, y, x - 1, y + 1))
+		return;
+
+	// Try to move down-right
+	if (tryMove(x, y, x + 1, y + 1))
+		return;
+
+	// Randomise when in contact with ground
 	bool leftFirst = rand() % 2 == 0;
 
 	if (leftFirst)
@@ -295,18 +311,6 @@ void World::updateLiquid(int x, int y)
 		if (tryMove(x, y, x - 1, y))
 			return;
 	}
-
-	// Try to move down
-	if (tryMove(x, y, x, y + 1))
-		return;
-
-	// Try to move down-left
-	if (tryMove(x, y, x - 1, y + 1))
-		return;
-
-	// Try to move down-right
-	if (tryMove(x, y, x + 1, y + 1))
-		return;
 
 	// Try to move left
 	if (tryMove(x, y, x - 1, y))
@@ -322,6 +326,18 @@ void World::updateLiquid(int x, int y)
 
 void World::updateGas(int x, int y)
 {
+	// Try to move up
+	if (tryMove(x, y, x, y - 1))
+		return;
+
+	// Try to move up-left
+	if (tryMove(x, y, x - 1, y - 1))
+		return;
+
+	// Try to move up-right
+	if (tryMove(x, y, x + 1, y - 1))
+		return;
+
 	bool leftFirst = rand() % 2 == 0;
 
 	if (leftFirst)
@@ -340,18 +356,6 @@ void World::updateGas(int x, int y)
 		if (tryMove(x, y, x - 1, y))
 			return;
 	}
-
-	// Try to move up
-	if (tryMove(x, y, x, y - 1))
-		return;
-
-	// Try to move up-left
-	if (tryMove(x, y, x - 1, y - 1))
-		return;
-
-	// Try to move up-right
-	if (tryMove(x, y, x + 1, y - 1))
-		return;
 
 	// If none of the moves were possible, mark the cell as updated for this frame
 	getCellRef(x, y).updateFrame = m_currentFrame;
