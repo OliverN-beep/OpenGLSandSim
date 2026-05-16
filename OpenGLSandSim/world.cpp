@@ -13,8 +13,9 @@ World::World(int width, int height, int cellSize)
 	m_cellSize(cellSize),
 	cells(width * height)
 {
+	// The number 6 represents 6 vertices (2 triangles)
 	m_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
-	m_vertices.resize(m_width * m_height * 6);
+	m_vertices.resize(static_cast<size_t>(m_width) * m_height * 6);
 
 	for (int y = 0; y < m_height; ++y)
 	{
@@ -276,6 +277,25 @@ void World::updatePowder(int x, int y)
 
 void World::updateLiquid(int x, int y)
 {
+	bool leftFirst = rand() % 2 == 0;
+
+	if (leftFirst)
+	{
+		if (tryMove(x, y, x - 1, y))
+			return;
+
+		if (tryMove(x, y, x + 1, y))
+			return;
+	}
+	else
+	{
+		if (tryMove(x, y, x + 1, y))
+			return;
+
+		if (tryMove(x, y, x - 1, y))
+			return;
+	}
+
 	// Try to move down
 	if (tryMove(x, y, x, y + 1))
 		return;
@@ -302,6 +322,25 @@ void World::updateLiquid(int x, int y)
 
 void World::updateGas(int x, int y)
 {
+	bool leftFirst = rand() % 2 == 0;
+
+	if (leftFirst)
+	{
+		if (tryMove(x, y, x - 1, y))
+			return;
+
+		if (tryMove(x, y, x + 1, y))
+			return;
+	}
+	else
+	{
+		if (tryMove(x, y, x + 1, y))
+			return;
+
+		if (tryMove(x, y, x - 1, y))
+			return;
+	}
+
 	// Try to move up
 	if (tryMove(x, y, x, y - 1))
 		return;
@@ -384,7 +423,7 @@ void World::paintCircle(int cx, int cy, int radius, MaterialType type)
 	{
 		for (int dx = -radius; dx <= radius; ++dx)
 		{
-			if (dx * dx + dy * dy > radius * radius)
+			if ((dx * dx) + (dy * dy) > radius * radius)
 				continue;
 
 			if (rand() % 100 < 9) // Randomly skip some cells for a more natural look
@@ -426,7 +465,7 @@ void World::updateMesh()
 	m_isDirty = false;
 }
 
-void World::explode(int cx, int cy, int radius)
+void World::explodeParticles(int cx, int cy, int radius)
 {
 	for (int y = cy - radius; y <= cy + radius; ++y)
 	{
@@ -459,8 +498,9 @@ void World::explode(int cx, int cy, int radius)
 
 			// Apply velocity
 			Cell& cell = getCellRef(x, y);
-			
-			cell.velocity += dir * force;
+
+			if (cell.material == MaterialType::Empty)
+				continue;
 
 			MaterialType mat = cell.material;
 
@@ -475,10 +515,13 @@ void World::explode(int cx, int cy, int radius)
 			}
 
 			// Apply velocity strength to particles based on the material's explosion resistance
-			float strength = force / props.explosionResistance;
+			float strength = force * 18.f / props.explosionResistance;
 
-			cell.velocity.x += dir.x * strength;
-			cell.velocity.y += dir.y * strength;
+			// Calculate velocity and apply damping
+			cell.velocity += dir * strength;
+			cell.velocity *= 0.95f;
+
+			printf("particle velocity = { %f, %f }\n", cell.velocity.x, cell.velocity.y);
 		}
 	}
 }

@@ -36,7 +36,7 @@ public:
 
 	void updateMesh();													// Update the vertex array for rendering
 
-	void explode(int cx, int cy, int radius);							// Spawns explosions	
+	void explodeParticles(int cx, int cy, int radius);					// Spawns explosions	
 
 private:
 	TileMap* m_tileMap = nullptr;						// Pointer to the tile map for particle collision detection

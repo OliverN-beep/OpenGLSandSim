@@ -22,7 +22,7 @@ Game::Game():
 		"ROOM 2");
 
 	// Cap fps
-	//m_window.setFramerateLimit( 120 );
+	m_window.setFramerateLimit( 60 );
 
 	// Set the tile map for the world to enable particle collision detection
 	//m_world.setTileMap(&m_tilemap);
@@ -226,7 +226,7 @@ void Game::update(float dt)
 			// Despawn projectile on collision with a solid tile
 			if (currentRoom().getTileMap().isSolid(tileX, tileY))
 			{
-				currentRoom().getWorld().explode(tileX, tileY, projectileExplosionRadius / TILE_SIZE);
+				currentRoom().getWorld().explodeParticles(tileX, tileY, projectileExplosionRadius / TILE_SIZE);
 				applyPlayerExplosionKnockback(projectile.position, static_cast<float>(projectileExplosionRadius), static_cast<float>(projectileKnockbackForce));
 
 				projectile.isAlive = false;
@@ -246,9 +246,9 @@ void Game::update(float dt)
 
 			if (mat != MaterialType::Empty)
 			{
-				currentRoom().getWorld().explode(cellX, cellY, projectileExplosionRadius / CELL_SIZE);
+				currentRoom().getWorld().explodeParticles(cellX, cellY, projectileExplosionRadius / CELL_SIZE);
 
-				applyPlayerExplosionKnockback(projectile.position, static_cast<float>(projectileExplosionRadius), static_cast<float>(projectileKnockbackForce));
+				//applyPlayerExplosionKnockback(projectile.position, static_cast<float>(projectileExplosionRadius), static_cast<float>(projectileKnockbackForce));
 
 				projectile.isAlive = false;
 
@@ -358,9 +358,10 @@ void Game::render()
 
 		brush.setPosition(sf::Vector2f(static_cast<float>(mousePos.x) - static_cast<float>(m_brushSize * CELL_SIZE), static_cast<float>(mousePos.y) - static_cast<float>(m_brushSize * CELL_SIZE)));
 
-		m_window.draw(brush);
 		Game::drawMaterialUI();
 		Game::drawTileHotbar();
+
+		m_window.draw(brush);
 	}
 
 	if (m_editorState == EditorState::RoomOverview)
@@ -373,10 +374,10 @@ void Game::render()
 	else
 	{
 		m_window.setView(m_gameView);
-
-		currentRoom().draw(m_window);
-		m_player.draw(m_window);
 	}
+
+	currentRoom().draw(m_window);	// Draw room
+	m_player.draw(m_window);		// Draw player
 
 	// Calculate and display FPS
 	float fps = 1.f / m_fps;
