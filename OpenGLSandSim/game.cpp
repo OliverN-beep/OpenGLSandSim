@@ -4,23 +4,9 @@
 Game::Game():
 	m_window(sf::VideoMode({ RW_WIDTH, RW_HEIGHT }), "OpenGL Sand Simulation", sf::State::Windowed),
 	m_fpsText(m_font),
-	m_player({100.f, 100.f})
+	m_player({100.f, 100.f}),
+	m_room_manager(RW_WIDTH / CELL_SIZE, RW_HEIGHT / CELL_SIZE, CELL_SIZE, TILE_SIZE)
 {
-	m_room_manager.addRoom(
-		RW_WIDTH / CELL_SIZE,
-		RW_HEIGHT / CELL_SIZE,
-		CELL_SIZE,
-		TILE_SIZE,
-		sf::Vector2i({ 0, 0 }),
-		"ROOM 1");
-
-	m_room_manager.addRoom(RW_WIDTH / CELL_SIZE,
-		RW_HEIGHT / CELL_SIZE,
-		CELL_SIZE,
-		TILE_SIZE,
-		sf::Vector2i({ 1, 0 }),
-		"ROOM 2");
-
 	// Cap fps
 	m_window.setFramerateLimit( 60 );
 
@@ -185,7 +171,6 @@ void Game::update(float dt)
 		switchRoom({ 1, 0 });
 	}
 
-	m_playerController.update(m_player, currentRoom().getTileMap(), dt);
 	currentRoom().update();
 
 	sf::Vector2i mouse = sf::Mouse::getPosition(m_window);
@@ -210,7 +195,11 @@ void Game::update(float dt)
 			int projectileExplosionForce = 50;
 			int projectileKnockbackForce = 800;
 
-			// Despawn projectile on collision with a solid tile
+			// Prevent collision from running after projectile has exploded
+			if (!projectile.isAlive)
+				continue;
+
+			// Check projectile collision with tiles
 			if (currentRoom().getTileMap().isSolid(tileX, tileY))
 			{
 				currentRoom().getWorld().explodeParticles(tileX, tileY, projectileExplosionRadius / TILE_SIZE);
@@ -221,21 +210,14 @@ void Game::update(float dt)
 				printf("projectile hit tile\n");
 			}
 
-			// Prevent collision from running after projectile has exploded
-			if (!projectile.isAlive)
-				continue;
-
 			// Material collision detection with projectiles
 			int cellX = static_cast<int>(projectile.position.x) / CELL_SIZE;
 			int cellY = static_cast<int>(projectile.position.y) / CELL_SIZE;
 
-			MaterialType mat = currentRoom().getWorld().getCell(cellX, cellY);
-
-			if (mat != MaterialType::Empty)
+			// Check projectile collision with materials
+			if (currentRoom().getWorld().getCell(cellX, cellY) != MaterialType::Empty)
 			{
 				currentRoom().getWorld().explodeParticles(cellX, cellY, projectileExplosionRadius / CELL_SIZE);
-
-				//applyPlayerExplosionKnockback(projectile.position, static_cast<float>(projectileExplosionRadius), static_cast<float>(projectileKnockbackForce));
 
 				projectile.isAlive = false;
 
@@ -249,6 +231,9 @@ void Game::update(float dt)
 				return !p.isAlive;
 			}),
 			m_projectiles.end());
+
+		// Only update player input in gameplay mode
+		m_playerController.update(m_player, currentRoom().getTileMap(), dt);
 	}
 
 	// If the editor mode is active, allow editing the tile map with the left and right mouse buttons
@@ -276,24 +261,20 @@ void Game::update(float dt)
 
 		// ----------- Keyboard Input -----------
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
-		{
 			switchRoom({ 0, -1 });
-		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
-		{
 			switchRoom({ -1, 0 });
-		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
-		{
 			switchRoom({ 0, 1 });
-		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
-		{
 			switchRoom({ 1, 0 });
-		}
+
+		// Delete room
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Delete))
+			m_room_manager.deleteCurrentRoom();
 	}
 }
 
@@ -428,19 +409,32 @@ void Game::switchRoom(sf::Vector2i direction)
 	int roomIndex = m_room_manager.findRoomAtGridPosition(targetGrid);
 
 	if (roomIndex == -1)
-		return;
+	{
+		m_room_manager.createRoom(targetGrid);
+
+		roomIndex = m_room_manager.findRoomAtGridPosition(targetGrid);
+	}
 
 	m_room_manager.setCurrentRoom(roomIndex);
 
 	sf::Vector2f pos = m_player.position;
 
+	// Set player spawns
 	if (direction.x > 0)
 		pos.x = 50.f;
 
 	else if (direction.x < 0)
 		pos.x = RW_WIDTH - 50.f;
 
+	if (direction.y > 0)
+		pos.y = 50.f;
+
+	else if (direction.y < 0)
+		pos.y = RW_HEIGHT - 50.f;
+
 	m_player.position = pos;
+
+	printf("current grid coordinates: %d, %d\n", targetGrid.x, targetGrid.y);
 }
 
 void Game::applyPlayerExplosionKnockback(sf::Vector2f explosionPos, float radius, float force)

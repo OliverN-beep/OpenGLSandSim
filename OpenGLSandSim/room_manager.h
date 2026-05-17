@@ -7,13 +7,22 @@
 class RoomManager
 {
 public:
-	RoomManager() = default;
+	int m_roomWidth;
+	int m_roomHeight;
+	int m_cellSize;
+	int m_tileSize;
 
-	template<typename... Args>
-	void addRoom(Args&&... args)
-	{
-		m_rooms.emplace_back(std::forward<Args>(args)...);
-	}
+public:
+	// Constructor
+	RoomManager(
+		int roomWidth,
+		int roomHeight,
+		int cellSize,
+		int tileSize
+	);
+
+	void createRoom(sf::Vector2i gridPos);
+	void deleteCurrentRoom();
 
 	Room& getCurrentRoom();
 	void setCurrentRoom(int index);
@@ -22,8 +31,11 @@ public:
 	int findRoomAtGridPosition(sf::Vector2i pos) const;
 
 	int getRoomCount() const;
+
 	Room& getRoom(int index);
 	const Room& getRoom(int index) const;
+
+	bool hasRoomAt(sf::Vector2i gridPos) const;
 
 private:
 	std::vector<Room> m_rooms;
