@@ -47,9 +47,6 @@ Game::Game():
 
 	// Initialise views
 	m_gameView = m_window.getDefaultView();
-
-	m_overviewView = m_window.getDefaultView();
-	m_overviewView.zoom(3.0f);
 }
 
 Room& Game::currentRoom()
@@ -84,18 +81,11 @@ void Game::processEvents()
 		{
 			auto mouseEvent = event->getIf <sf::Event::MouseButtonPressed>();
 
-			if (m_editorState == EditorState::Gameplay)
+			if (m_editorState == GameState::Gameplay)
 			{
 				if (mouseEvent->button == sf::Mouse::Button::Left)
 				{
 					fireProjectile();
-				}
-			}
-			if (m_editorState == EditorState::RoomOverview)
-			{
-				if (mouseEvent->button == sf::Mouse::Button::Left)
-				{
-					handleRoomOverviewClick(mouseEvent->position);
 				}
 			}
 		}
@@ -123,15 +113,12 @@ void Game::processEvents()
 			}
 
 			if (keyEvent->code == sf::Keyboard::Key::F1)
-				m_editorState = EditorState::Gameplay;
+				m_editorState = GameState::Gameplay;
 
 			if (keyEvent->code == sf::Keyboard::Key::F2)
-				m_editorState = EditorState::WorldEditor;
+				m_editorState = GameState::Editor;
 
-			if (keyEvent->code == sf::Keyboard::Key::F3)
-					m_editorState = EditorState::RoomOverview;
-
-			if (m_editorState == EditorState::WorldEditor)
+			if (m_editorState == GameState::Editor)
 			{
 				switch (keyEvent->code)
 				{
@@ -209,7 +196,7 @@ void Game::update(float dt)
 	int xTile = mouse.x / TILE_SIZE;
 	int yTile = mouse.y / TILE_SIZE;
 
-	if (m_editorState == EditorState::Gameplay)
+	if (m_editorState == GameState::Gameplay)
 	{
 		for (auto& projectile : m_projectiles)
 		{
@@ -265,7 +252,7 @@ void Game::update(float dt)
 	}
 
 	// If the editor mode is active, allow editing the tile map with the left and right mouse buttons
-	if (m_editorState == EditorState::WorldEditor)
+	if (m_editorState == GameState::Editor)
 	{
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 		{
@@ -282,42 +269,13 @@ void Game::update(float dt)
 			currentRoom().getWorld().paintCircle(xCell, yCell, m_brushSize, m_selectedMaterial);
 		}
 	}
-
-	if (m_editorState == EditorState::RoomOverview)
-	{
-		float cameraSpeed = 500.f * dt;
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
-		{
-			m_roomOverviewCameraPosition.x -= cameraSpeed;
-		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
-		{
-			m_roomOverviewCameraPosition.x += cameraSpeed;
-		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
-		{
-			m_roomOverviewCameraPosition.y -= cameraSpeed;
-		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
-		{
-			m_roomOverviewCameraPosition.y += cameraSpeed;
-		}
-
-		m_overviewView.setCenter(m_roomOverviewCameraPosition);
-
-		return;
-	}
 }
 
 void Game::render()
 {
 	m_window.clear(BACKGROUND_COLOR);
 
-	if (m_editorState == EditorState::Gameplay)
+	if (m_editorState == GameState::Gameplay)
 	{
 		for (const auto& projectile : m_projectiles)
 		{
@@ -326,7 +284,7 @@ void Game::render()
 	}
 
 	// Draw grid lines in editor mode
-	if (m_editorState == EditorState::WorldEditor)
+	if (m_editorState == GameState::Editor)
 	{
 		sf::VertexArray gridLines(sf::PrimitiveType::Lines);
 
@@ -362,18 +320,6 @@ void Game::render()
 		Game::drawTileHotbar();
 
 		m_window.draw(brush);
-	}
-
-	if (m_editorState == EditorState::RoomOverview)
-	{
-		m_overviewView.setCenter(m_roomOverviewCameraPosition);
-		m_window.setView(m_overviewView);
-
-		drawRoomOverview();
-	}
-	else
-	{
-		m_window.setView(m_gameView);
 	}
 
 	currentRoom().draw(m_window);	// Draw room
@@ -495,69 +441,6 @@ void Game::applyPlayerExplosionKnockback(sf::Vector2f explosionPos, float radius
 
 	printf("Explosion knockback triggered\n");
 	printf("Strength: %f\n", strength);
-}
-
-void Game::drawRoomOverview()
-{
-	const float ROOM_BOX_SIZE = 120.f;
-	const float SPACING = 20.f;
-
-	for (int i = 0; i < m_room_manager.getRoomCount(); ++i)
-	{
-		Room& room = m_room_manager.getRoom(i);
-
-		sf::Vector2i grid = room.getGridPosition();
-
-		sf::Vector2f offset(static_cast<float>(grid.x) * RW_WIDTH, static_cast<float>(grid.y) * RW_HEIGHT);
-
-		room.draw(m_window, offset);
-
-		sf::RectangleShape box;
-
-		box.setSize({ ROOM_BOX_SIZE, ROOM_BOX_SIZE });
-
-		float x = 200.f + grid.x * (ROOM_BOX_SIZE + SPACING);
-		float y = 200.f + grid.y * (ROOM_BOX_SIZE + SPACING);
-
-		box.setPosition({ x, y });
-
-		// Highlight current room
-		if (&room == &currentRoom())
-		{
-			box.setFillColor(sf::Color(100, 200, 255));
-		}
-		else
-		{
-			box.setFillColor(sf::Color(60, 60, 60));
-		}
-
-		box.setOutlineThickness(2.f);
-		box.setOutlineColor(sf::Color::White);
-	}
-}
-
-void Game::handleRoomOverviewClick(sf::Vector2i mousePos)
-{
-	const float ROOM_BOX_SIZE = 120.f;
-	const float SPACING = 20.f;
-
-	for (int i = 0; i < m_room_manager.getRoomCount(); ++i)
-	{
-		Room& room = m_room_manager.getRoom(i);
-
-		sf::Vector2i grid = room.getGridPosition();
-
-		float x = 200 + grid.x * (ROOM_BOX_SIZE + SPACING);
-		float y = 200 + grid.y * (ROOM_BOX_SIZE + SPACING);
-
-		sf::FloatRect bounds({ x, y }, { ROOM_BOX_SIZE, ROOM_BOX_SIZE });
-
-		if (bounds.contains(sf::Vector2f(mousePos)))
-		{
-			m_room_manager.setCurrentRoom(i);
-			break;
-		}
-	}
 }
 
 void Game::fireProjectile()

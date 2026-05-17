@@ -8,11 +8,10 @@
 
 #include <iostream>
 
-enum class EditorState
+enum class GameState
 {
 	Gameplay,
-	WorldEditor,
-	RoomOverview
+	Editor
 };
 
 class Game
@@ -27,10 +26,8 @@ private:
 	void render();							// Render the game (world, player, UI, etc.)
 	void drawMaterialUI();					// Draw the user interface (FPS, brush size, selected material/tile, etc.)
 	void drawTileHotbar();					// Draw the tile hotbar for selecting tile types in editor mode
-	void drawRoomOverview();				// Draw the overview for our room layout
 	void switchRoom(sf::Vector2i direction);
 	void applyPlayerExplosionKnockback(sf::Vector2f explosionPos, float radius, float force);
-	void handleRoomOverviewClick(sf::Vector2i mousePos);
 	void fireProjectile();					// Fires player projectile
 
 	sf::RenderWindow m_window;				// SFML window for rendering
@@ -63,15 +60,9 @@ private:
 
 	const sf::Color BACKGROUND_COLOR = sf::Color(0, 20, 85);	// Background color of the window
 
-	EditorState m_editorState = EditorState::Gameplay;	// Flag to check which editor state we are in
+	GameState m_editorState = GameState::Gameplay;	// Flag to check which editor state we are in
 
 	sf::View m_gameView;					// View for gameplay
-	sf::View m_overviewView;				// View for room overview mode
-
-	bool m_roomOverviewMode = false;		// Flag to check whether we are in room overview mode or not
-
-	sf::Vector2f m_roomOverviewCameraPosition = { 0.f, 0.f };
-	float m_roomOverviewCameraZoom = 1.f;
 
 	std::vector<Projectile> m_projectiles;	// Projectile instance
 

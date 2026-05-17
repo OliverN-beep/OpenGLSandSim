@@ -13,7 +13,7 @@ static DebugInit debugInit;
 
 MaterialProperties g_materials[static_cast<int>(MaterialType::COUNT)] =
 {
-	// BehaviorType, Density, Flammable, Wettable, Conductive, DefaultLife, Colour, Gravity, MaxVelocity
+	// BehaviorType, Density, Flammable, Wettable, Conductive, DefaultLife, Colour, Gravity, Max Velocity, Explosion Resistance
 
 	// Empty
 	{BehaviourType::None, 0.f, false, false, false, 0, sf::Color(0, 0, 0, 0), 0.f, 0.f, 0.f},

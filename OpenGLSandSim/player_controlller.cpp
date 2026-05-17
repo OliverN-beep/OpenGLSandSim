@@ -4,7 +4,7 @@ const int CELL_SIZE = 3;						// Size of each cell in pixels
 
 // ----------Tunable parameters----------
 const float MOVE_SPEED = 320.f;					// Horizontal movement speed
-const float GROUND_ACCELERATION = 1400.f;		// Acceleration when on the ground
+const float GROUND_ACCELERATION = 2400.f;		// Acceleration when on the ground
 const float AIR_ACCELERATION = 900.f;			// Acceleration when in the air
 const float FRICTION = 700.f;					// Friction applied when grounded
 
