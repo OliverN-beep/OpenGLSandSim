@@ -43,8 +43,8 @@ bool PlayerController::isSolidAt(TileMap& map, float px, float py)
 // Collision with spikes
 bool PlayerController::isSpikeAt(TileMap& map, float px, float py)
 {
-	int tx = static_cast<int>(px) / map.getTileSize();
-	int ty = static_cast<int>(py) / map.getTileSize();
+	int tx = static_cast<int>(std::floor(px / map.getTileSize()));
+	int ty = static_cast<int>(std::floor(py / map.getTileSize()));
 
 	return map.isSpike(tx, ty);
 }
@@ -125,7 +125,7 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 }
 
 // AABB collision checker
-bool PlayerController::isColliding(TileMap& map, sf::FloatRect bounds)
+bool PlayerController::isCollidingSolid(TileMap& map, sf::FloatRect bounds)
 {
 	return
 		isSolidAt(map, bounds.position.x, bounds.position.y) ||
@@ -134,30 +134,46 @@ bool PlayerController::isColliding(TileMap& map, sf::FloatRect bounds)
 		isSolidAt(map, bounds.position.x + bounds.size.x, bounds.position.y + bounds.size.y);
 }
 
+bool PlayerController::isCollidingSpike(TileMap& map, sf::FloatRect bounds)
+{
+	return
+		isSpikeAt(map, bounds.position.x, bounds.position.y) ||
+		isSpikeAt(map, bounds.position.x + bounds.size.x, bounds.position.y) ||
+		isSpikeAt(map, bounds.position.x, bounds.position.y + bounds.size.y) ||
+		isSpikeAt(map, bounds.position.x + bounds.size.x, bounds.position.y + bounds.size.y);
+}
+
 void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 {
 	player.grounded = false;
 
-	// -------- Horizontal --------
+	// Set x movement
 	player.position.x += player.velocity.x * dt;
 
+	// Define horizontal bounds of player
 	sf::FloatRect horizontalBounds(player.position, player.size);
 
-	if (isColliding(map, horizontalBounds))
+	if (isCollidingSolid(map, horizontalBounds))
 	{
 		// Undo movement
 		player.position.x -= player.velocity.x * dt;
 
-		// Damp instead of hard stop
-		player.velocity.x *= 0.3f;
+		player.velocity.x = 0.f;
 	}
 
-	// -------- Vertical --------
+	// Respawn player if colliding with x bounds of spike
+	if (isCollidingSpike(map, horizontalBounds))
+	{
+		player.position = { 400.f, 400.f };
+	}
+
+	// Set y movement
 	player.position.y += player.velocity.y * dt;
 
+	// Define vertical bounds of player
 	sf::FloatRect verticalBounds(player.position, player.size);
 
-	if (isColliding(map, verticalBounds))
+	if (isCollidingSolid(map, verticalBounds))
 	{
 		// Undo movement
 		player.position.y -= player.velocity.y * dt;
@@ -169,5 +185,11 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 		}
 
 		player.velocity.y = 0.f;
+	}
+
+	// Respawn player if colliding with y bounds of spike
+	if (isCollidingSpike(map, verticalBounds))
+	{
+		player.position = { 400.f, 400.f };
 	}
 }
