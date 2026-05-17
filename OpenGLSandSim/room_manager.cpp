@@ -11,6 +11,8 @@ RoomManager::RoomManager(
 	m_cellSize(cellSize),
 	m_tileSize(tileSize)
 {
+	// Create initial room
+	createRoom({ 0, 0 });
 }
 
 void RoomManager::createRoom(sf::Vector2i gridPos)
@@ -49,12 +51,14 @@ void RoomManager::deleteCurrentRoom()
 
 Room& RoomManager::getCurrentRoom()
 {
+	assert(!m_rooms.empty());
+
 	return m_rooms[m_currentRoomIndex];
 }
 
 void RoomManager::setCurrentRoom(int index)
 {
-	if (index >= 0 && index < m_rooms.size())
+	if (index >= 0 && index < static_cast<int>(m_rooms.size()))
 	{
 		m_currentRoomIndex = index;
 	}

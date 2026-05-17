@@ -159,17 +159,20 @@ void Game::processEvents()
 
 void Game::update(float dt)
 {
-	// Store player position
+	// Store player position and switch rooms
 	sf::Vector2f playerPos = m_player.position;
 
 	if (playerPos.x < 0)
-	{
 		switchRoom({ -1, 0 });
-	}
+
 	else if (playerPos.x > RW_WIDTH)
-	{
 		switchRoom({ 1, 0 });
-	}
+
+	if (playerPos.y < 0)
+		switchRoom({ 0, -1 });
+
+	else if (playerPos.y > RW_HEIGHT)
+		switchRoom({ 0, 1 });
 
 	currentRoom().update();
 
@@ -260,21 +263,31 @@ void Game::update(float dt)
 		}
 
 		// ----------- Keyboard Input -----------
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
+		bool wHeld = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W);
+		if (wHeld && !m_keyHeldLastFrameW)
 			switchRoom({ 0, -1 });
+		m_keyHeldLastFrameW = wHeld;
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+		bool aHeld = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A);
+		if (aHeld && !m_keyHeldLastFrameA)
 			switchRoom({ -1, 0 });
+		m_keyHeldLastFrameA = aHeld;
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
+		bool sHeld = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S);
+		if (sHeld && !m_keyHeldLastFrameS)
 			switchRoom({ 0, 1 });
+		m_keyHeldLastFrameS = sHeld;
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+		bool dHeld = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D);
+		if (dHeld && !m_keyHeldLastFrameD)
 			switchRoom({ 1, 0 });
+		m_keyHeldLastFrameD = dHeld;
 
 		// Delete room
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Delete))
+		bool deleteHeld = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Delete);
+		if (deleteHeld && !m_keyHeldLastFrameDel)
 			m_room_manager.deleteCurrentRoom();
+		m_keyHeldLastFrameDel = deleteHeld;
 	}
 }
 

@@ -67,4 +67,10 @@ private:
 	std::vector<Projectile> m_projectiles;	// Projectile instance
 
 	TileMap* m_tilemap = nullptr;
+
+	bool m_keyHeldLastFrameW = false;
+	bool m_keyHeldLastFrameA = false;
+	bool m_keyHeldLastFrameS = false;
+	bool m_keyHeldLastFrameD = false;
+	bool m_keyHeldLastFrameDel = false;
 };
