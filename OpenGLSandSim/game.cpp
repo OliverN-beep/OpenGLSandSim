@@ -254,6 +254,7 @@ void Game::update(float dt)
 	// If the editor mode is active, allow editing the tile map with the left and right mouse buttons
 	if (m_editorState == GameState::Editor)
 	{
+		// ----------- Mouse Input -----------
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 		{
 			currentRoom().getTileMap().setTile(xTile, yTile, m_selectedTileType);
@@ -271,6 +272,27 @@ void Game::update(float dt)
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle))
 		{
 			currentRoom().getWorld().paintCircle(xCell, yCell, m_brushSize, m_selectedMaterial);
+		}
+
+		// ----------- Keyboard Input -----------
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
+		{
+			switchRoom({ 0, -1 });
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+		{
+			switchRoom({ -1, 0 });
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
+		{
+			switchRoom({ 0, 1 });
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+		{
+			switchRoom({ 1, 0 });
 		}
 	}
 }
