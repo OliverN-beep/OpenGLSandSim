@@ -1,6 +1,5 @@
 #include "player.h"
 
-
 Player::Player(float x, float y)
 {
 	position = { x, y };
@@ -10,10 +9,16 @@ Player::Player(float x, float y)
 
 void Player::draw(sf::RenderWindow& window) const
 {
+	sf::Texture playerTex("tilesets/mono_tileset_d.png");
+	sf::Sprite playerSprite(playerTex);
+	playerSprite.setPosition(position);
+
 	sf::RectangleShape playerShape(size);
 	playerShape.setPosition(position);
 	playerShape.setFillColor(sf::Color::Green);
-	window.draw(playerShape);
+
+	//window.draw(playerShape);
+	window.draw(playerSprite);
 }
 
 void Player::applyKnockback(sf::Vector2f force)
