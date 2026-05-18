@@ -9,7 +9,7 @@ Player::Player(float x, float y)
 
 void Player::draw(sf::RenderWindow& window) const
 {
-	sf::Texture playerTex("tilesets/mono_tileset_d.png");
+	sf::Texture playerTex("player/player_d.png");
 	sf::Sprite playerSprite(playerTex);
 	playerSprite.setPosition(position);
 
