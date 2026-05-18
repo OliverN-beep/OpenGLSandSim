@@ -69,4 +69,6 @@ private:
 	bool canMoveInto(int x1, int y1, int x2, int y2);	// Check if a cell can move from (x1, y1) to (x2, y2) based on material properties and tile map
 	bool tryMove(int x, int y, int newX, int newY);		// Attempt to move a cell from (x, y) to (newX, newY) if the destination is empty
 	bool isEmpty(int x, int y) const;					// Check if the cell at the given coordinates is empty
+
+	void randomiseParticleDistribution(int x, int y);	// Helper function to randomise distribution of particles (mainly for liquids and gasses)
 };

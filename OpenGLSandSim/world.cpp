@@ -245,7 +245,7 @@ void World::updateCellBehaviour(int x, int y)
 	{
 		// Update fire first
 		case BehaviourType::Fire:
-			updateFire(x, y);
+			updateFire(x, y);	
 			break;
 
 		case BehaviourType::Powder:
@@ -291,6 +291,14 @@ void World::updateLiquid(int x, int y)
 	if (tryMove(x, y, x, y + 1))
 		return;
 
+	// Try to move left
+	if (tryMove(x, y, x - 1, y))
+		return;
+
+	// Try to move right
+	if (tryMove(x, y, x + 1, y))
+		return;
+
 	// Try to move down-left
 	if (tryMove(x, y, x - 1, y + 1))
 		return;
@@ -300,32 +308,7 @@ void World::updateLiquid(int x, int y)
 		return;
 
 	// Randomise when in contact with ground
-	bool leftFirst = rand() % 2 == 0;
-
-	if (leftFirst)
-	{
-		if (tryMove(x, y, x - 1, y))
-			return;
-
-		if (tryMove(x, y, x + 1, y))
-			return;
-	}
-	else
-	{
-		if (tryMove(x, y, x + 1, y))
-			return;
-
-		if (tryMove(x, y, x - 1, y))
-			return;
-	}
-
-	// Try to move left
-	if (tryMove(x, y, x - 1, y))
-		return;
-
-	// Try to move right
-	if (tryMove(x, y, x + 1, y))
-		return;
+	randomiseParticleDistribution(x, y);
 
 	// If none of the moves were possible, mark the cell as updated for this frame
 	getCellRef(x, y).updateFrame = m_currentFrame;
@@ -345,24 +328,7 @@ void World::updateGas(int x, int y)
 	if (tryMove(x, y, x + 1, y - 1))
 		return;
 
-	bool leftFirst = rand() % 2 == 0;
-
-	if (leftFirst)
-	{
-		if (tryMove(x, y, x - 1, y))
-			return;
-
-		if (tryMove(x, y, x + 1, y))
-			return;
-	}
-	else
-	{
-		if (tryMove(x, y, x + 1, y))
-			return;
-
-		if (tryMove(x, y, x - 1, y))
-			return;
-	}
+	randomiseParticleDistribution(x, y);
 
 	// If none of the moves were possible, mark the cell as updated for this frame
 	getCellRef(x, y).updateFrame = m_currentFrame;
@@ -533,5 +499,27 @@ void World::explodeParticles(int cx, int cy, int radius)
 
 			printf("particle velocity = { %f, %f }\n", cell.velocity.x, cell.velocity.y);
 		}
+	}
+}
+
+void World::randomiseParticleDistribution(int x, int y)
+{
+	bool leftFirst = rand() % 2 == 0;
+
+	if (leftFirst)
+	{
+		if (tryMove(x, y, x - 1, y))
+			return;
+
+		if (tryMove(x, y, x + 1, y))
+			return;
+	}
+	else
+	{
+		if (tryMove(x, y, x + 1, y))
+			return;
+
+		if (tryMove(x, y, x - 1, y))
+			return;
 	}
 }
