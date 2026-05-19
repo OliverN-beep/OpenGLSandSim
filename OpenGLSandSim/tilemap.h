@@ -30,12 +30,19 @@ public:
 
 	TileType m_selectedTileType = TileType::Solid;	// Currently selected tile type for editing the tile map
 
+	int getTileAtlasTexture(TileType type);			// Gets tilemap's atlas texture
+	void updateTileMesh();							// Updates the tileset atlas mesh (simplifies draw call)
+
 private:
 	bool inBounds(int x, int y) const;				// Check if the (x, y) tile coordinates are within the bounds of the tile map
 
 	int m_width;									// Width of the tile map in tiles
 	int m_height;									// Height of the tile map in tiles
 	int m_tileSize;									// Size of each tile in pixels
+	sf::Texture m_tileset;							// Stores tileset atlas texture
+	sf::VertexArray m_verticies;					// Vertex array for tileset
+
+	bool m_tileMeshDirty = true;
 
 	std::vector<std::vector<TileType>> m_tiles;		// 2D vector to store the tile types for the tile map
 };
