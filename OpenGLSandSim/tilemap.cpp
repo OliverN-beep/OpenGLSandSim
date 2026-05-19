@@ -52,6 +52,8 @@ void TileMap::draw(sf::RenderWindow& window, sf::Vector2f offset) const
 {
 	sf::RectangleShape tileShape(sf::Vector2f(static_cast<float>(m_tileSize), static_cast<float>(m_tileSize)));
 
+	sf::Texture tileTex("tilesets/mono_tileset_d.png");
+
 	// Draw the tile map onto the provided SFML render window
 	for (int x = 0; x < m_width; ++x)
 	{

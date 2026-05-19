@@ -497,7 +497,7 @@ void World::explodeParticles(int cx, int cy, int radius)
 			// Calculate velocity and apply damping
 			cell.velocity += dir * strength;
 
-			printf("particle velocity = { %f, %f }\n", cell.velocity.x, cell.velocity.y);
+			//printf("particle velocity = { %f, %f }\n", cell.velocity.x, cell.velocity.y);
 		}
 	}
 }

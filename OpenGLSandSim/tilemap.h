@@ -13,7 +13,8 @@ enum class TileType
 class TileMap
 {
 public:
-	TileMap(int width, int height, int tileSize = 32);	// Constructor to initialize the tile map with given dimensions and tile size
+	// Constructor to initialize the tile map with given dimensions and tile size
+	TileMap(int width, int height, int tileSize = 32);
 
 	void setTile(int x, int y, TileType type);		// Set the tile type at the specified (x, y) position
 	TileType getTile(int x, int y) const;			// Get the tile type at the specified (x, y) position
