@@ -335,7 +335,7 @@ void Game::render()
 		brush.setPosition(sf::Vector2f(static_cast<float>(mousePos.x) - static_cast<float>(m_brushSize * CELL_SIZE), static_cast<float>(mousePos.y) - static_cast<float>(m_brushSize * CELL_SIZE)));
 
 		Game::drawMaterialUI();
-		Game::drawTileHotbar();
+		Game::drawTilePalette();
 
 		m_window.draw(brush);
 	}
@@ -386,27 +386,74 @@ void Game::drawMaterialUI()
 	}
 }
 
-void Game::drawTileHotbar()
+void Game::drawTilePalette()
 {
-	const int size = 40;
+	// Set atlas
+	sf::Sprite atlas(currentRoom().getTileMap().getTileset());
 
-	for (int i = 0; i < 2; ++i)
+	atlas.setPosition({ 40.f, 60.f });
+
+	m_window.draw(atlas);
+
+	// Set selector
+	sf::RectangleShape selector;
+
+	selector.setSize({ static_cast<float>(TILE_SIZE), static_cast<float>(TILE_SIZE) });
+	selector.setFillColor(sf::Color::Transparent);
+	selector.setOutlineThickness(2.f);
+	selector.setOutlineColor(sf::Color::Yellow);
+
+	// Compute selected atlas index
+	int selectedIndex = 0;
+
+	switch (m_selectedTileType)
 	{
-		sf::RectangleShape box;
+	case TileType::Solid:
+		selectedIndex = 0;
+		break;
 
-		box.setSize({ static_cast<float>(size), static_cast<float>(size) });
-		box.setPosition({ 40.f + i * (size + 5), size + 40.f });
+	case TileType::Spike:
+		selectedIndex = 1;
+		break;
+	}
 
-		if (i == 0) box.setFillColor(sf::Color::White);   // Solid
-		if (i == 1) box.setFillColor(sf::Color::Red);     // Spike
+	int atlasColumns = currentRoom().getTileMap().getTileset().getSize().x / TILE_SIZE;
 
-		if (static_cast<int>(m_selectedTileType) == i)
-		{
-			box.setOutlineThickness(3.f);
-			box.setOutlineColor(sf::Color::Green);
-		}
+	int sx = selectedIndex % atlasColumns;
+	int sy = selectedIndex / atlasColumns;
 
-		m_window.draw(box);
+	selector.setPosition({ 40.f + sx * TILE_SIZE, 60.f + sy * TILE_SIZE });
+
+	m_window.draw(selector);
+}
+
+void Game::handleTilePaletteClick(sf::Vector2i mousePos)
+{
+	const int atlasX = 20;
+	const int atlasY = 20;
+
+	if (mousePos.x < atlasX || mousePos.y < atlasY)
+		return;
+
+	int localX = mousePos.x - atlasX;
+	int localY = mousePos.y - atlasY;
+
+	int tileX = localX / TILE_SIZE;
+	int tileY = localY / TILE_SIZE;
+
+	int atlasColumns = currentRoom().getTileMap().getTileset().getSize().x / TILE_SIZE;
+
+	int tileIndex = tileX + tileY * atlasColumns;
+
+	switch (tileIndex)
+	{
+	case 0:
+		m_selectedTileType = TileType::Solid;
+		break;
+		
+	case 1:
+		m_selectedTileType = TileType::Spike;
+		break;
 	}
 }
 

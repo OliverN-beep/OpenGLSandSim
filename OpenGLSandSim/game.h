@@ -25,7 +25,8 @@ private:
 	void update(float dt);					// Update game state (player, world, etc.)
 	void render();							// Render the game (world, player, UI, etc.)
 	void drawMaterialUI();					// Draw the user interface (FPS, brush size, selected material/tile, etc.)
-	void drawTileHotbar();					// Draw the tile hotbar for selecting tile types in editor mode
+	void drawTilePalette();					// Draw the tileset atlas for use in editor mode
+	void handleTilePaletteClick(sf::Vector2i mousePos);			// Handles clicking on tile palette
 	void switchRoom(sf::Vector2i direction);
 	void applyPlayerExplosionKnockback(sf::Vector2f explosionPos, float radius, float force);
 	void fireProjectile();					// Fires player projectile

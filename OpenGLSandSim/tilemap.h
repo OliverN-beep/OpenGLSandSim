@@ -33,6 +33,8 @@ public:
 	int getTileAtlasIndex(TileType type);			// Gets tilemap's atlas texture
 	void updateTileMesh();							// Updates the tileset atlas mesh (simplifies draw call)
 
+	const sf::Texture& getTileset() const { return m_tileset; }	// Gets our tileset
+
 private:
 	bool inBounds(int x, int y) const;				// Check if the (x, y) tile coordinates are within the bounds of the tile map
 
