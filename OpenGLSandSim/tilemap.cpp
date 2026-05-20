@@ -13,7 +13,7 @@ TileMap::TileMap(int width, int height, int tileSize) :
 	m_tileset.setSmooth(false);
 
 	m_verticies.setPrimitiveType(sf::PrimitiveType::Triangles);
-	m_verticies.resize(m_width * m_height * 6);
+	m_verticies.resize(static_cast<size_t>(m_width) * m_height * 6);
 }
 
 bool TileMap::inBounds(int x, int y) const
@@ -58,14 +58,17 @@ bool TileMap::isSpike(int x, int y) const
 	return type == TileType::Spike;
 }
 
+// BUG: Default case (transparent tiles) is overriding painting
+// UPDATE: It appears that setting the colour in updateTileMesh() to transparent causes the tile to get painted but displayed as transparent
 int TileMap::getTileAtlasTexture(TileType type)
 {
 	switch (type)
 	{
-		case TileType::Solid: return 0;
-		case TileType::Spike: return 1;
-
-		default: return -1;
+	case TileType::Solid: return 0;
+	case TileType::Spike: return 1;
+	
+	// Fill with empty otherwise
+	default: return -1;
 	}
 }
 
@@ -89,7 +92,7 @@ void TileMap::updateTileMesh()
 			{
 				for (int i = 0; i < 6; ++i)
 				{
-					tri[i].color = sf::Color::Transparent;
+					tri[i].color = sf::Color::Green;
 				}
 
 				continue;

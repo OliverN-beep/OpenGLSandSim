@@ -14,7 +14,7 @@ class TileMap
 {
 public:
 	// Constructor to initialize the tile map with given dimensions and tile size
-	TileMap(int width, int height, int tileSize = 32);
+	TileMap(int width, int height, int tileSize);
 
 	void setTile(int x, int y, TileType type);		// Set the tile type at the specified (x, y) position
 	TileType getTile(int x, int y) const;			// Get the tile type at the specified (x, y) position

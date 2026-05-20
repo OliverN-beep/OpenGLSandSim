@@ -250,10 +250,8 @@ void Game::update(float dt)
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
 		{
-			// Erase tiles
+			// Erase tiles and cells
 			currentRoom().getTileMap().setTile(xTile, yTile, TileType::Empty);
-
-			// Erase cells (particles)
 			currentRoom().getWorld().paintCircle(xCell, yCell, m_brushSize, MaterialType::Empty);
 		}
 
