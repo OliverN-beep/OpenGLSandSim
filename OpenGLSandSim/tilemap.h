@@ -30,7 +30,7 @@ public:
 
 	TileType m_selectedTileType = TileType::Solid;	// Currently selected tile type for editing the tile map
 
-	int getTileAtlasTexture(TileType type);			// Gets tilemap's atlas texture
+	int getTileAtlasIndex(TileType type);			// Gets tilemap's atlas texture
 	void updateTileMesh();							// Updates the tileset atlas mesh (simplifies draw call)
 
 private:
@@ -40,7 +40,7 @@ private:
 	int m_height;									// Height of the tile map in tiles
 	int m_tileSize;									// Size of each tile in pixels
 	sf::Texture m_tileset;							// Stores tileset atlas texture
-	sf::VertexArray m_verticies;					// Vertex array for tileset
+	sf::VertexArray m_vertices;						// Vertex array for tileset
 
 	bool m_tileMeshDirty = true;
 

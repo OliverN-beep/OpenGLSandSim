@@ -12,8 +12,8 @@ TileMap::TileMap(int width, int height, int tileSize) :
 
 	m_tileset.setSmooth(false);
 
-	m_verticies.setPrimitiveType(sf::PrimitiveType::Triangles);
-	m_verticies.resize(static_cast<size_t>(m_width) * m_height * 6);
+	m_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
+	m_vertices.resize(static_cast<size_t>(m_width) * m_height * 6);
 }
 
 bool TileMap::inBounds(int x, int y) const
@@ -58,9 +58,7 @@ bool TileMap::isSpike(int x, int y) const
 	return type == TileType::Spike;
 }
 
-// BUG: Default case (transparent tiles) is overriding painting
-// UPDATE: It appears that setting the colour in updateTileMesh() to transparent causes the tile to get painted but displayed as transparent
-int TileMap::getTileAtlasTexture(TileType type)
+int TileMap::getTileAtlasIndex(TileType type)
 {
 	switch (type)
 	{
@@ -83,16 +81,32 @@ void TileMap::updateTileMesh()
 		{
 			TileType type = getTile(x, y);
 
-			int tileIndex = getTileAtlasTexture(type);
+			int tileIndex = getTileAtlasIndex(type);
 			int vertexIndex = (x + y * m_width) * 6;
 
-			sf::Vertex* tri = &m_verticies[vertexIndex];
+			sf::Vertex* tri = &m_vertices[vertexIndex];
 
 			if (tileIndex == -1)
 			{
+				float px = static_cast<float>(x * m_tileSize);
+				float py = static_cast<float>(y * m_tileSize);
+
+				float s = static_cast<float>(m_tileSize);
+
+				// Triangle 1
+				tri[0].position = { px, py };
+				tri[1].position = { px + s, py };
+				tri[2].position = { px + s, py + s };
+
+				// Triangle 2
+				tri[3].position = { px, py };
+				tri[4].position = { px + s, py + s };
+				tri[5].position = { px, py + s };
+
 				for (int i = 0; i < 6; ++i)
 				{
-					tri[i].color = sf::Color::Green;
+					tri[i].color = sf::Color::Transparent;
+					tri[i].texCoords = { 0.f, 0.f };
 				}
 
 				continue;
@@ -126,6 +140,12 @@ void TileMap::updateTileMesh()
 			tri[3].texCoords = { tx, ty };
 			tri[4].texCoords = { tx + s, ty + s };
 			tri[5].texCoords = { tx, ty + s };
+
+			// Initialise colour to avoid transparency bug
+			for (int i = 0; i < 6; ++i)
+			{
+				tri[i].color = sf::Color::White;
+			}
 		}
 	}
 
@@ -142,5 +162,5 @@ void TileMap::draw(sf::RenderWindow& window, sf::Vector2f offset) const
 
 	states.transform.translate(offset);
 
-	window.draw(m_verticies, states);
+	window.draw(m_vertices, states);
 }
