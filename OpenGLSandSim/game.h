@@ -54,10 +54,10 @@ private:
 
 	int m_brushSize = 4;					// Size of the brush for painting materials in the world
 
-	const static int RW_WIDTH = 1280;		// Width of the render window
-	const static int RW_HEIGHT = 720;		// Height of the render window
+	const static int RW_WIDTH = 640;		// Width of the render window
+	const static int RW_HEIGHT = 360;		// Height of the render window
 	const static int CELL_SIZE = 3;			// Size of each cell in the world
-	const static int TILE_SIZE = 32;		// Size of each tile in the tile map
+	const static int TILE_SIZE = 16;		// Size of each tile in the tile map
 
 	const sf::Color BACKGROUND_COLOR = sf::Color(0, 20, 85);	// Background color of the window
 
