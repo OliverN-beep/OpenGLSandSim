@@ -74,6 +74,19 @@ void Game::processEvents()
 					fireProjectile();
 				}
 			}
+
+			if (m_editorState == GameState::Editor)
+			{
+				if (mouseEvent->button == sf::Mouse::Button::Left)
+				{
+					sf::Vector2f mousePos(static_cast<float>(mouseEvent->position.x), static_cast<float>(mouseEvent->position.y));
+
+					if (m_tilePaletteBounds.contains(mousePos))
+					{
+						handleTilePaletteClick(mouseEvent->position);
+					}
+				}
+			}
 		}
 
 		// Mouse wheel scroll
@@ -143,14 +156,6 @@ void Game::processEvents()
 				case sf::Keyboard::Key::Num9:
 					m_selectedMaterial = MaterialType::Salt;
 					break;
-
-				case sf::Keyboard::Key::Q:
-					m_selectedTileType = TileType::Solid;
-					break;
-
-				case sf::Keyboard::Key::E:
-					m_selectedTileType = TileType::Spike;
-					break;
 				}
 			}
 		}
@@ -183,6 +188,8 @@ void Game::update(float dt)
 
 	int xTile = mouse.x / TILE_SIZE;
 	int yTile = mouse.y / TILE_SIZE;
+
+	bool mouseOverPalette = m_tilePaletteBounds.contains(sf::Vector2f(mouse));
 
 	if (m_editorState == GameState::Gameplay)
 	{
@@ -243,9 +250,12 @@ void Game::update(float dt)
 	if (m_editorState == GameState::Editor)
 	{
 		// ----------- Mouse Input -----------
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+		if (!mouseOverPalette)
 		{
-			currentRoom().getTileMap().setTile(xTile, yTile, m_selectedTileType);
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+			{
+				currentRoom().getTileMap().setTile(xTile, yTile, m_selectedTileType);
+			}
 		}
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
@@ -293,8 +303,14 @@ void Game::render()
 {
 	m_window.clear(BACKGROUND_COLOR);
 
+	// Draw room
+	currentRoom().draw(m_window);
+
 	if (m_editorState == GameState::Gameplay)
 	{
+		// Draw player
+		m_player.draw(m_window);
+
 		for (const auto& projectile : m_projectiles)
 		{
 			projectile.draw(m_window);
@@ -339,9 +355,6 @@ void Game::render()
 
 		m_window.draw(brush);
 	}
-
-	currentRoom().draw(m_window);	// Draw room
-	m_player.draw(m_window);		// Draw player
 
 	// Calculate and display FPS
 	float fps = 1.f / m_fps;
@@ -395,6 +408,9 @@ void Game::drawTilePalette()
 
 	m_window.draw(atlas);
 
+	// Store clickable bounds
+	m_tilePaletteBounds = atlas.getGlobalBounds();
+
 	// Set selector
 	sf::RectangleShape selector;
 
@@ -415,6 +431,10 @@ void Game::drawTilePalette()
 	case TileType::Spike:
 		selectedIndex = 1;
 		break;
+
+	case TileType::Bounce:
+		selectedIndex = 2;
+		break;
 	}
 
 	int atlasColumns = currentRoom().getTileMap().getTileset().getSize().x / TILE_SIZE;
@@ -429,14 +449,11 @@ void Game::drawTilePalette()
 
 void Game::handleTilePaletteClick(sf::Vector2i mousePos)
 {
-	const int atlasX = 20;
-	const int atlasY = 20;
-
-	if (mousePos.x < atlasX || mousePos.y < atlasY)
+	if (!m_tilePaletteBounds.contains(static_cast<sf::Vector2f>(mousePos)))
 		return;
 
-	int localX = mousePos.x - atlasX;
-	int localY = mousePos.y - atlasY;
+	int localX = static_cast<int>(mousePos.x - m_tilePaletteBounds.position.x);
+	int localY = static_cast<int>(mousePos.y - m_tilePaletteBounds.position.y);
 
 	int tileX = localX / TILE_SIZE;
 	int tileY = localY / TILE_SIZE;
@@ -453,6 +470,10 @@ void Game::handleTilePaletteClick(sf::Vector2i mousePos)
 		
 	case 1:
 		m_selectedTileType = TileType::Spike;
+		break;
+
+	case 2:
+		m_selectedTileType = TileType::Bounce;
 		break;
 	}
 }

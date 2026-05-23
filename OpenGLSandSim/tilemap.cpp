@@ -64,6 +64,7 @@ int TileMap::getTileAtlasIndex(TileType type)
 	{
 	case TileType::Solid: return 0;
 	case TileType::Spike: return 1;
+	case TileType::Bounce: return 2;
 	
 	// Fill with empty otherwise
 	default: return -1;

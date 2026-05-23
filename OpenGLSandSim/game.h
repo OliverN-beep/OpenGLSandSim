@@ -74,4 +74,6 @@ private:
 	bool m_keyHeldLastFrameS = false;
 	bool m_keyHeldLastFrameD = false;
 	bool m_keyHeldLastFrameDel = false;
+
+	sf::FloatRect m_tilePaletteBounds;
 };

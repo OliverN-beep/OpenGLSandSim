@@ -7,6 +7,7 @@ enum class TileType
 {
 	Solid,
 	Spike,
+	Bounce,
 	Empty	// Keep "Empty" as last entry to avoid issues with indexing in drawTileHotbar() in game.cpp
 };
 
