@@ -380,7 +380,7 @@ void World::updateFire(int x, int y)
 	cell.updateFrame = m_currentFrame;
 }
 
-void World::draw(sf::RenderWindow& window, sf::Vector2f offset) const
+void World::draw(sf::RenderTarget& target, sf::Vector2f offset) const
 {
 	if (m_isDirty)
 	{
@@ -390,7 +390,7 @@ void World::draw(sf::RenderWindow& window, sf::Vector2f offset) const
 	sf::RenderStates states;
 	states.transform.translate(offset);
 
-	window.draw(m_vertices, states);
+	target.draw(m_vertices, states);
 }
 
 // Helper function for painting cells with a brush of a given size and material type

@@ -7,18 +7,13 @@ Player::Player(float x, float y)
 	size = { 20.f, 30.f };
 }
 
-void Player::draw(sf::RenderWindow& window) const
+void Player::draw(sf::RenderTarget& target) const
 {
 	sf::Texture playerTex("player/player_d.png");
 	sf::Sprite playerSprite(playerTex);
 	playerSprite.setPosition(position);
 
-	sf::RectangleShape playerShape(size);
-	playerShape.setPosition(position);
-	playerShape.setFillColor(sf::Color::Green);
-
-	//window.draw(playerShape);
-	window.draw(playerSprite);
+	target.draw(playerSprite);
 }
 
 void Player::applyKnockback(sf::Vector2f force)

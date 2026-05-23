@@ -6,7 +6,7 @@ struct Player
 {
 	Player(float x, float y);
 
-	void draw(sf::RenderWindow& window) const;
+	void draw(sf::RenderTarget& target) const;
 	void applyKnockback(sf::Vector2f force);	// Function to apply knockback to player (when rocket jumping)
 
 	sf::Vector2f position;					// Player's position

@@ -23,7 +23,7 @@ public:
 	bool isSolid(int x, int y) const;				// Check if the tile at the specified (x, y) position is solid
 	bool isSpike(int x, int y) const;				// Check if the tile at the specified (x, y) position is a spike
 
-	void draw(sf::RenderWindow& window, sf::Vector2f offset = { 0.f, 0.f }) const;		// Draw the tile map onto the provided SFML render window
+	void draw(sf::RenderTarget& target, sf::Vector2f offset = { 0.f, 0.f }) const;		// Draw the tile map onto the provided SFML render window
 
 	int getWidth() const { return m_width; }		// Get the width of the tile map in tiles
 	int getHeight() const { return m_height; }		// Get the height of the tile map in tiles

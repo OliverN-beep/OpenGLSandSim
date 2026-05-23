@@ -153,7 +153,7 @@ void TileMap::updateTileMesh()
 	m_tileMeshDirty = false;
 }
 
-void TileMap::draw(sf::RenderWindow& window, sf::Vector2f offset) const
+void TileMap::draw(sf::RenderTarget& target, sf::Vector2f offset) const
 {
 	if (m_tileMeshDirty)
 		const_cast<TileMap*>(this)->updateTileMesh();
@@ -163,5 +163,5 @@ void TileMap::draw(sf::RenderWindow& window, sf::Vector2f offset) const
 
 	states.transform.translate(offset);
 
-	window.draw(m_vertices, states);
+	target.draw(m_vertices, states);
 }

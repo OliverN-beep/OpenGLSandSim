@@ -23,10 +23,10 @@ void Room::update()
 	m_world.update();
 }
 
-void Room::draw(sf::RenderWindow& window, sf::Vector2f offset)
+void Room::draw(sf::RenderTarget& target, sf::Vector2f offset)
 {
-	m_tileMap.draw(window, offset);
-	m_world.draw(window, offset);
+	m_tileMap.draw(target, offset);
+	m_world.draw(target, offset);
 }
 
 World& Room::getWorld()

@@ -15,7 +15,7 @@ public:
 		const std::string& roomName);
 
 	void update();
-	void draw(sf::RenderWindow& window, sf::Vector2f offset = { 0.f, 0.f });
+	void draw(sf::RenderTarget& target, sf::Vector2f offset = { 0.f, 0.f });
 
 	World& getWorld();
 	TileMap& getTileMap();

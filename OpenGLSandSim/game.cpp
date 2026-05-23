@@ -2,16 +2,15 @@
 
 // Constructor to initialise the game
 Game::Game():
-	m_window(sf::VideoMode({ RW_WIDTH, RW_HEIGHT }), "OpenGL Sand Simulation", sf::State::Windowed),
+	m_window(sf::VideoMode({ WINDOW_WIDTH, WINDOW_HEIGHT }), "OpenGL Sand Simulation", sf::State::Windowed),
 	m_fpsText(m_font),
 	m_player({100.f, 100.f}),
-	m_room_manager(RW_WIDTH / CELL_SIZE, RW_HEIGHT / CELL_SIZE, CELL_SIZE, TILE_SIZE)
+	m_room_manager(GAME_WIDTH / CELL_SIZE, GAME_HEIGHT / CELL_SIZE, CELL_SIZE, TILE_SIZE)
 {
 	// Cap fps
 	m_window.setFramerateLimit( 60 );
 
 	// Set the tile map for the world to enable particle collision detection
-	//m_world.setTileMap(&m_tilemap);
 	currentRoom().getWorld().setTileMap(&currentRoom().getTileMap());
 
 	// Load font for displaying text
@@ -23,7 +22,7 @@ Game::Game():
 	m_fpsText.setFont(m_font);
 	m_fpsText.setCharacterSize(CHARACTER_SIZE);
 	m_fpsText.setFillColor(sf::Color::White);
-	m_fpsText.setPosition({ RW_WIDTH - 150, 50 });
+	m_fpsText.setPosition({ WINDOW_WIDTH - 150, 50 });
 
 	// Build simple test room with tile map floor
 	for (int x = 0; x < currentRoom().getTileMap().getWidth(); ++x)
@@ -33,6 +32,14 @@ Game::Game():
 
 	// Initialise views
 	m_gameView = m_window.getDefaultView();
+
+	// Initialise low resolution render texture
+	if (!m_gameTexture.resize({ GAME_WIDTH, GAME_HEIGHT }))
+	{
+		printf("failed to create render texture\n");
+	}
+
+	m_gameTexture.setSmooth(false);
 }
 
 Room& Game::currentRoom()
@@ -79,11 +86,11 @@ void Game::processEvents()
 			{
 				if (mouseEvent->button == sf::Mouse::Button::Left)
 				{
-					sf::Vector2f mousePos(static_cast<float>(mouseEvent->position.x), static_cast<float>(mouseEvent->position.y));
+					sf::Vector2f mousePos = getMouseGamePosition();
 
 					if (m_tilePaletteBounds.contains(mousePos))
 					{
-						handleTilePaletteClick(mouseEvent->position);
+						handleTilePaletteClick(sf::Vector2i(mousePos));
 					}
 				}
 			}
@@ -170,24 +177,24 @@ void Game::update(float dt)
 	if (playerPos.x < 0)
 		switchRoom({ -1, 0 });
 
-	else if (playerPos.x > RW_WIDTH)
+	else if (playerPos.x > GAME_WIDTH)
 		switchRoom({ 1, 0 });
 
 	if (playerPos.y < 0)
 		switchRoom({ 0, -1 });
 
-	else if (playerPos.y > RW_HEIGHT)
+	else if (playerPos.y > GAME_HEIGHT)
 		switchRoom({ 0, 1 });
 
 	currentRoom().update();
 
-	sf::Vector2i mouse = sf::Mouse::getPosition(m_window);
+	sf::Vector2f mouse = getMouseGamePosition();
 
-	int xCell = mouse.x / CELL_SIZE;
-	int yCell = mouse.y / CELL_SIZE;
+	int xCell = static_cast<int>(mouse.x) / CELL_SIZE;
+	int yCell = static_cast<int>(mouse.y) / CELL_SIZE;
 
-	int xTile = mouse.x / TILE_SIZE;
-	int yTile = mouse.y / TILE_SIZE;
+	int xTile = static_cast<int>(mouse.x) / TILE_SIZE;
+	int yTile = static_cast<int>(mouse.y) / TILE_SIZE;
 
 	bool mouseOverPalette = m_tilePaletteBounds.contains(sf::Vector2f(mouse));
 
@@ -301,15 +308,16 @@ void Game::update(float dt)
 
 void Game::render()
 {
-	m_window.clear(BACKGROUND_COLOR);
+	m_gameTexture.clear(BACKGROUND_COLOR);
 
 	// Draw room
-	currentRoom().draw(m_window);
+	currentRoom().draw(m_gameTexture);
 
+	// ------- GAMEPLAY -------
 	if (m_editorState == GameState::Gameplay)
 	{
 		// Draw player
-		m_player.draw(m_window);
+		m_player.draw(m_gameTexture);
 
 		for (const auto& projectile : m_projectiles)
 		{
@@ -317,26 +325,26 @@ void Game::render()
 		}
 	}
 
-	// Draw grid lines in editor mode
+	// ------- EDITOR -------
 	if (m_editorState == GameState::Editor)
 	{
 		sf::VertexArray gridLines(sf::PrimitiveType::Lines);
 
 		// Vertical lines
-		for (int x = 0; x <= RW_WIDTH / TILE_SIZE; ++x)
+		for (int x = 0; x <= GAME_WIDTH / TILE_SIZE; ++x)
 		{
 			gridLines.append(sf::Vertex(sf::Vector2f(static_cast<float>(x * TILE_SIZE), 0.f), sf::Color(255, 255, 255, 50)));
-			gridLines.append(sf::Vertex(sf::Vector2f(static_cast<float>(x * TILE_SIZE), static_cast<float>(RW_HEIGHT)), sf::Color(255, 255, 255, 50)));
+			gridLines.append(sf::Vertex(sf::Vector2f(static_cast<float>(x * TILE_SIZE), static_cast<float>(GAME_HEIGHT)), sf::Color(255, 255, 255, 50)));
 		}
 
 		// Horizontal lines
-		for (int y = 0; y <= RW_HEIGHT / TILE_SIZE; ++y)
+		for (int y = 0; y <= GAME_HEIGHT / TILE_SIZE; ++y)
 		{
 			gridLines.append(sf::Vertex(sf::Vector2f(0.f, static_cast<float>(y * TILE_SIZE)), sf::Color(255, 255, 255, 50)));
-			gridLines.append(sf::Vertex(sf::Vector2f(static_cast<float>(RW_WIDTH), static_cast<float>(y * TILE_SIZE)), sf::Color(255, 255, 255, 50)));
+			gridLines.append(sf::Vertex(sf::Vector2f(static_cast<float>(GAME_WIDTH), static_cast<float>(y * TILE_SIZE)), sf::Color(255, 255, 255, 50)));
 		}
 
-		m_window.draw(gridLines);
+		m_gameTexture.draw(gridLines);
 		
 		// Brush stuff
 		sf::CircleShape brush;
@@ -348,13 +356,29 @@ void Game::render()
 
 		auto mousePos = sf::Mouse::getPosition(m_window);
 
-		brush.setPosition(sf::Vector2f(static_cast<float>(mousePos.x) - static_cast<float>(m_brushSize * CELL_SIZE), static_cast<float>(mousePos.y) - static_cast<float>(m_brushSize * CELL_SIZE)));
+		float scaleX = static_cast<float>(WINDOW_WIDTH) / GAME_WIDTH;
+		float scaleY = static_cast<float>(WINDOW_HEIGHT) / GAME_HEIGHT;
+
+		sf::Vector2f gameMouse(mousePos.x / scaleX, mousePos.y / scaleY);
+
+		brush.setPosition({ gameMouse.x - (m_brushSize * CELL_SIZE), gameMouse.y - (m_brushSize * CELL_SIZE)});
+
+		m_gameTexture.draw(brush);
 
 		Game::drawMaterialUI();
 		Game::drawTilePalette();
-
-		m_window.draw(brush);
 	}
+
+	// Finalise game texture
+	m_gameTexture.display();
+
+	m_window.clear();
+
+	sf::Sprite gameSprite(m_gameTexture.getTexture());
+
+	gameSprite.setScale({ static_cast<float>(WINDOW_WIDTH / GAME_WIDTH), static_cast<float>(WINDOW_HEIGHT / GAME_HEIGHT) });
+
+	m_window.draw(gameSprite);
 
 	// Calculate and display FPS
 	float fps = 1.f / m_fps;
@@ -369,8 +393,8 @@ void Game::render()
 
 void Game::drawMaterialUI()
 {
-	const int SIZE = 20;
-	const int PADDING = 10;
+	const int SIZE = 8;
+	const int PADDING = 3;
 
 	for (int i = 0; i < static_cast<int>(MaterialType::COUNT); ++i)
 	{
@@ -387,7 +411,7 @@ void Game::drawMaterialUI()
 		if (matType == m_selectedMaterial)
 		{
 			rect.setOutlineColor(sf::Color::White);
-			rect.setOutlineThickness(2.f);
+			rect.setOutlineThickness(1.f);
 		}
 		else
 		{
@@ -395,7 +419,7 @@ void Game::drawMaterialUI()
 			rect.setOutlineThickness(0.f);
 		}
 
-		m_window.draw(rect);
+		m_gameTexture.draw(rect);
 	}
 }
 
@@ -404,9 +428,9 @@ void Game::drawTilePalette()
 	// Set atlas
 	sf::Sprite atlas(currentRoom().getTileMap().getTileset());
 
-	atlas.setPosition({ 40.f, 60.f });
+	atlas.setPosition({ 20.f, 40.f });
 
-	m_window.draw(atlas);
+	m_gameTexture.draw(atlas);
 
 	// Store clickable bounds
 	m_tilePaletteBounds = atlas.getGlobalBounds();
@@ -442,9 +466,9 @@ void Game::drawTilePalette()
 	int sx = selectedIndex % atlasColumns;
 	int sy = selectedIndex / atlasColumns;
 
-	selector.setPosition({ 40.f + sx * TILE_SIZE, 60.f + sy * TILE_SIZE });
+	selector.setPosition({ 20.f + sx * TILE_SIZE, 40.f + sy * TILE_SIZE });
 
-	m_window.draw(selector);
+	m_gameTexture.draw(selector);
 }
 
 void Game::handleTilePaletteClick(sf::Vector2i mousePos)
@@ -503,13 +527,13 @@ void Game::switchRoom(sf::Vector2i direction)
 		pos.x = 50.f;
 
 	else if (direction.x < 0)
-		pos.x = RW_WIDTH - 50.f;
+		pos.x = GAME_WIDTH - 50.f;
 
 	if (direction.y > 0)
 		pos.y = 50.f;
 
 	else if (direction.y < 0)
-		pos.y = RW_HEIGHT - 50.f;
+		pos.y = GAME_HEIGHT - 50.f;
 
 	m_player.position = pos;
 
@@ -579,4 +603,18 @@ void Game::fireProjectile()
 	projectile.velocity = dir * 600.f;
 
 	m_projectiles.push_back(projectile);
+}
+
+sf::Vector2f Game::getMouseGamePosition() const
+{
+	sf::Vector2i mouse = sf::Mouse::getPosition(m_window);
+
+	float scaleX = static_cast<float>(WINDOW_WIDTH) / GAME_WIDTH;
+	float scaleY = static_cast<float>(WINDOW_HEIGHT) / GAME_HEIGHT;
+
+	return
+	{
+		mouse.x / scaleX,
+		mouse.y / scaleY
+	};
 }

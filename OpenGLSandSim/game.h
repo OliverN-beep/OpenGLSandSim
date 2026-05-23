@@ -30,6 +30,7 @@ private:
 	void switchRoom(sf::Vector2i direction);
 	void applyPlayerExplosionKnockback(sf::Vector2f explosionPos, float radius, float force);
 	void fireProjectile();					// Fires player projectile
+	sf::Vector2f getMouseGamePosition() const;
 
 	sf::RenderWindow m_window;				// SFML window for rendering
 
@@ -54,9 +55,13 @@ private:
 
 	int m_brushSize = 4;					// Size of the brush for painting materials in the world
 
-	const static int RW_WIDTH = 640;		// Width of the render window
-	const static int RW_HEIGHT = 360;		// Height of the render window
-	const static int CELL_SIZE = 3;			// Size of each cell in the world
+	const static int WINDOW_WIDTH = 1280;
+	const static int WINDOW_HEIGHT = 720;
+
+	const static int GAME_WIDTH = 320;
+	const static int GAME_HEIGHT = 180;
+
+	const static int CELL_SIZE = 1;			// Size of each cell in the world
 	const static int TILE_SIZE = 16;		// Size of each tile in the tile map
 
 	const sf::Color BACKGROUND_COLOR = sf::Color(0, 20, 85);	// Background color of the window
@@ -76,4 +81,6 @@ private:
 	bool m_keyHeldLastFrameDel = false;
 
 	sf::FloatRect m_tilePaletteBounds;
+
+	sf::RenderTexture m_gameTexture;
 };
