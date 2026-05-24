@@ -208,10 +208,6 @@ void Game::update(float dt)
 			int tileX = static_cast<int>(projectile.position.x) / TILE_SIZE;
 			int tileY = static_cast<int>(projectile.position.y) / TILE_SIZE;
 
-			int projectileExplosionRadius = 80;
-			int projectileExplosionForce = 50;
-			int projectileKnockbackForce = 600;
-
 			// Prevent collision from running after projectile has exploded
 			if (!projectile.isAlive)
 				continue;
@@ -219,8 +215,8 @@ void Game::update(float dt)
 			// Check projectile collision with tiles
 			if (currentRoom().getTileMap().isSolid(tileX, tileY))
 			{
-				currentRoom().getWorld().explodeParticles(tileX, tileY, projectileExplosionRadius / TILE_SIZE);
-				applyPlayerExplosionKnockback(projectile.position, static_cast<float>(projectileExplosionRadius), static_cast<float>(projectileKnockbackForce));
+				currentRoom().getWorld().explodeParticles(tileX, tileY, static_cast<int>(projectile.explosionRadius) / TILE_SIZE);
+				applyPlayerExplosionKnockback(projectile.position, projectile.explosionRadius, projectile.playerKnockback);
 
 				projectile.isAlive = false;
 
@@ -234,7 +230,7 @@ void Game::update(float dt)
 			// Check projectile collision with materials
 			if (currentRoom().getWorld().getCell(cellX, cellY) != MaterialType::Empty)
 			{
-				currentRoom().getWorld().explodeParticles(cellX, cellY, projectileExplosionRadius / CELL_SIZE);
+				currentRoom().getWorld().explodeParticles(cellX, cellY, static_cast<int>(projectile.explosionRadius) / CELL_SIZE);
 
 				projectile.isAlive = false;
 
@@ -602,8 +598,7 @@ void Game::fireProjectile()
 	// Initial values of the projectile
 	projectile.position.x = m_player.position.x + projectileOffsetX;
 	projectile.position.y = m_player.position.y + projectileOffsetY;
-
-	projectile.velocity = dir * 600.f;
+	projectile.velocity = dir * projectile.speed;
 
 	m_projectiles.push_back(projectile);
 }
