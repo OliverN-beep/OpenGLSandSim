@@ -28,6 +28,9 @@
     <Filter Include="Source Files\projectile">
       <UniqueIdentifier>{d9e485a5-aac4-4f1f-ba1d-77b75b92a693}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\animation">
+      <UniqueIdentifier>{0e7368ae-4ef6-4c12-8ac5-b96b9e6e25dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -63,6 +66,9 @@
     <ClCompile Include="projectile.cpp">
       <Filter>Source Files\projectile</Filter>
     </ClCompile>
+    <ClCompile Include="animation_player.cpp">
+      <Filter>Source Files\animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="world.h">
@@ -88,6 +94,12 @@
     </ClInclude>
     <ClInclude Include="projectile.h">
       <Filter>Source Files\projectile</Filter>
+    </ClInclude>
+    <ClInclude Include="animation.h">
+      <Filter>Source Files\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="animation_player.h">
+      <Filter>Source Files\animation</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

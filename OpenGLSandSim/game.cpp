@@ -210,7 +210,7 @@ void Game::update(float dt)
 
 			int projectileExplosionRadius = 80;
 			int projectileExplosionForce = 50;
-			int projectileKnockbackForce = 800;
+			int projectileKnockbackForce = 600;
 
 			// Prevent collision from running after projectile has exploded
 			if (!projectile.isAlive)
@@ -251,6 +251,9 @@ void Game::update(float dt)
 
 		// Only update player input in gameplay mode
 		m_playerController.update(m_player, currentRoom().getTileMap(), dt);
+
+		// Update player animations to reflect player input
+		m_player.updateAnimation(dt);
 	}
 
 	// If the editor mode is active, allow editing the tile map with the left and right mouse buttons

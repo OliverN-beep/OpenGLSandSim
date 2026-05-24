@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="animation_player.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="materials.cpp" />
@@ -146,6 +147,8 @@
     <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="animation.h" />
+    <ClInclude Include="animation_player.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="materials.h" />
     <ClInclude Include="player.h" />

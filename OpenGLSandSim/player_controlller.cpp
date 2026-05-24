@@ -1,15 +1,15 @@
 #include "player_controller.h"
 
 // ----------Tunable parameters----------
-const float MOVE_SPEED = 320.f;					// Horizontal movement speed
-const float GROUND_ACCELERATION = 2400.f;		// Acceleration when on the ground
-const float AIR_ACCELERATION = 900.f;			// Acceleration when in the air
-const float FRICTION = 700.f;					// Friction applied when grounded
+const float MOVE_SPEED = 160.f;					// Horizontal movement speed
+const float GROUND_ACCELERATION = 1240.f;		// Acceleration when on the ground
+const float AIR_ACCELERATION = 120.f;			// Acceleration when in the air
+const float FRICTION = 600.f;					// Friction applied when grounded
 
 const float GRAVITY = 1200.f;					// Gravity force applied to the player
 const float FALL_GRAVITY_MULTIPLIER = 1.15f;	// Multiplier for gravity when falling
 
-const float JUMP_SPEED = -420.f;				// Initial jump speed
+const float JUMP_SPEED = -280.f;				// Initial jump speed
 
 const float COYOTE_TIME = 0.15f;				// Time allowed to jump after leaving the ground
 const float JUMP_BUFFER_TIME = 0.1f;			// Time allowed to jump after pressing the jump button
@@ -92,7 +92,7 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 		player.velocity.x += input * acceleration * dt;
 	}
 	if (player.grounded && input == 0.f)
-		player.velocity.x *= 0.94f;
+		player.velocity.x = moveToward(player.velocity.x, 0.f, FRICTION * dt);
 	
 	// Clamp horizontal move speed
 	if (player.velocity.x > MOVE_SPEED)
@@ -162,7 +162,7 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 	// Respawn player if colliding with x bounds of spike
 	if (isCollidingSpike(map, horizontalBounds))
 	{
-		player.position = { 400.f, 400.f };
+		player.position = { 0.f, 0.f };
 	}
 
 	// Set y movement
