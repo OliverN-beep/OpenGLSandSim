@@ -12,7 +12,7 @@ void Projectile::update(float dt)
 	}
 }
 
-void Projectile::draw(sf::RenderWindow& window) const
+void Projectile::draw(sf::RenderTarget& target) const
 {
 	sf::CircleShape projectileShape(radius);
 
@@ -20,5 +20,5 @@ void Projectile::draw(sf::RenderWindow& window) const
 	projectileShape.setOrigin({ radius, radius });
 	projectileShape.setPosition(position);
 
-	window.draw(projectileShape);
+	target.draw(projectileShape);
 }

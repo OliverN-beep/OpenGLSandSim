@@ -324,7 +324,7 @@ void Game::render()
 
 		for (const auto& projectile : m_projectiles)
 		{
-			projectile.draw(m_window);
+			projectile.draw(m_gameTexture);
 		}
 	}
 

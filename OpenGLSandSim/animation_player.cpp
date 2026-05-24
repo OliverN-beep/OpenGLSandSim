@@ -25,9 +25,9 @@ void AnimationPlayer::update(float dt)
 
 	m_timer += dt;
 
-	if (m_timer >= m_currentAnimation->frameTime)
+	while (m_timer >= m_currentAnimation->frameTime)
 	{
-		m_timer = 0.f;
+		m_timer -= m_currentAnimation->frameTime;
 
 		m_frameIndex++;
 

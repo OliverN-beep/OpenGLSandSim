@@ -19,11 +19,11 @@ Player::Player(float x, float y):
 
 	// Define animations
 	Animation Idle;
-	Idle.frames = { 2, 3, 4, 5, 6, 7, 8 };
+	Idle.frames = { 2, 3, 4, 5, 6, 7};
 	Idle.frameTime = 0.15f;
 
 	Animation Run;
-	Run.frames = { 15, 16, 17, 18, 19, 20, 21, 22 };
+	Run.frames = { 14, 15, 16, 17, 18, 19, 20, 21 };
 	Run.frameTime = 0.06f;
 
 	// Add animations
