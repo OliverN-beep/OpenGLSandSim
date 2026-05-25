@@ -5,7 +5,7 @@ Player::Player(float x, float y):
 {
 	position = { x, y };
 	velocity = { 0.f, 0.f };
-	size = { 20.f, 30.f };
+	size = { 20.f, 20.f };
 
 	if (!m_texture.loadFromFile("player/player_d.png"))
 	{
@@ -45,8 +45,8 @@ void Player::updateAnimation(float dt)
 
 	int frame = m_animationPlayer.getCurrentFrame();
 
-	const int FRAME_WIDTH = 48;
-	const int FRAME_HEIGHT = 48;
+	const int FRAME_WIDTH = 20;
+	const int FRAME_HEIGHT = 20;
 
 	m_sprite.setTextureRect(sf::IntRect({ frame * FRAME_WIDTH, 0 }, { FRAME_WIDTH, FRAME_HEIGHT }));
 	m_sprite.setPosition(position);

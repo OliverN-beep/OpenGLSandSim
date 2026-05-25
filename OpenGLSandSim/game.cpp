@@ -4,7 +4,7 @@
 Game::Game():
 	m_window(sf::VideoMode({ WINDOW_WIDTH, WINDOW_HEIGHT }), "OpenGL Sand Simulation", sf::State::Windowed),
 	m_fpsText(m_font),
-	m_player({100.f, 100.f}),
+	m_player({100.f, 100.f}),	// Set initial spawn location
 	m_room_manager(GAME_WIDTH / CELL_SIZE, GAME_HEIGHT / CELL_SIZE, CELL_SIZE, TILE_SIZE)
 {
 	// Cap fps

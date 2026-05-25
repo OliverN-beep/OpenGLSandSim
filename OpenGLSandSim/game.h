@@ -64,7 +64,7 @@ private:
 	const static int CELL_SIZE = 1;			// Size of each cell in the world
 	const static int TILE_SIZE = 16;		// Size of each tile in the tile map
 
-	const sf::Color BACKGROUND_COLOR = sf::Color(0, 20, 85);	// Background color of the window
+	const sf::Color BACKGROUND_COLOR = sf::Color(0, 20, 125);	// Background color of the window
 
 	GameState m_editorState = GameState::Gameplay;	// Flag to check which editor state we are in
 

@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\engine">
-      <UniqueIdentifier>{2a8ba028-86dc-4fcb-871d-5e9660bdaae6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\world">
       <UniqueIdentifier>{ab0c8dae-6d6e-4ccc-b5ac-79baebfc25cb}</UniqueIdentifier>
     </Filter>
