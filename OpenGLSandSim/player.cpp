@@ -5,7 +5,7 @@ Player::Player(float x, float y):
 {
 	position = { x, y };
 	velocity = { 0.f, 0.f };
-	size = { 20.f, 20.f };
+	size = { 8.f, 20.f };		// Player collision box size
 
 	if (!m_texture.loadFromFile("player/player_d.png"))
 	{
@@ -15,16 +15,16 @@ Player::Player(float x, float y):
 	m_texture.setSmooth(false);
 
 	// First frame
-	m_sprite.setTextureRect(sf::IntRect({ 0, 0 }, { 48, 48 }));
+	m_sprite.setTextureRect(sf::IntRect({ 0, 0 }, { 20, 20 }));
 
 	// Define animations
 	Animation Idle;
 	Idle.frames = { 2, 3, 4, 5, 6, 7};
-	Idle.frameTime = 0.15f;
+	Idle.frameTime = 0.12f;
 
 	Animation Run;
 	Run.frames = { 14, 15, 16, 17, 18, 19, 20, 21 };
-	Run.frameTime = 0.06f;
+	Run.frameTime = 0.09f;
 
 	// Add animations
 	m_animationPlayer.addAnimation("Idle", Idle);
@@ -55,7 +55,9 @@ void Player::updateAnimation(float dt)
 	if (facingRight)
 	{
 		m_sprite.setScale({ 1.f, 1.f });
-		m_sprite.setOrigin({ 0.f, 0.f });
+
+		// Apply an offset to the origin of the player (for collision detection)
+		m_sprite.setOrigin({ 8.f, 0.f });
 	}
 	else
 	{

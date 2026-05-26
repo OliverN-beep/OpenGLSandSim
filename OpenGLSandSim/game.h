@@ -1,6 +1,5 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 #include "player.h"
 #include "player_controller.h"
 #include "room_manager.h"

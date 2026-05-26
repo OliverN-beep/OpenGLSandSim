@@ -1,9 +1,10 @@
 #pragma once
+
+#include <cmath>
+
 #include "player.h"
 #include "world.h"
 #include "tilemap.h"
-#include <cmath>
-
 
 class PlayerController
 {
