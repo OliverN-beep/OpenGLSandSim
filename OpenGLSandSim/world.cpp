@@ -190,26 +190,6 @@ void World::updateCellBehaviour(int x, int y)
 	// Clamp the cell's velocity to the maximum allowed velocity for its material
 	if (cell.velocity.y > properties.maxVelocity)
 		cell.velocity.y = properties.maxVelocity;
-	
-	// Define y direction (if velocity > 0, yDir = 1, if velocity < 0, yDir = -1)
-	int yDir = (cell.velocity.y > 0.f) ? 1 : -1;
-
-	// Update y velocity
-	int ySteps = static_cast<int>(std::abs(cell.velocity.y));
-
-	for (int i = 0; i < ySteps; ++i)
-	{
-		// Update the y-coordinate to reflect the attempted move down
-		if (tryMove(x, y, x, y + yDir))
-			y += yDir;
-
-		// Reset velocity if the cell can't move down
-		else
-		{
-			cell.velocity.y = 0.f;
-			break;
-		}
-	}
 
 	// Define x direction (if velocity > 0, xDir = 1, if velocity < 0, xDir = -1)
 	int xDir = (cell.velocity.x > 0.f) ? 1 : -1;
@@ -221,18 +201,37 @@ void World::updateCellBehaviour(int x, int y)
 	{
 		// Update the x-coordinate to reflect the attempted move down
 		if (tryMove(x, y, x + xDir, y))
+		{
 			x += xDir;
-
-		// Reset velocity if the cell can't move down
+		}
 		else
 		{
+			// Reset velocity if the cell can't move down
 			cell.velocity.x = 0.f;
 			break;
 		}
 	}
+	
+	// Define y direction (if velocity > 0, yDir = 1, if velocity < 0, yDir = -1)
+	int yDir = (cell.velocity.y > 0.f) ? 1 : -1;
 
-	// Velocity damping for particles
-	cell.velocity *= 0.96f;
+	// Update y velocity
+	int ySteps = static_cast<int>(std::abs(cell.velocity.y));
+
+	for (int i = 0; i < ySteps; ++i)
+	{
+		// Update the y-coordinate to reflect the attempted move down
+		if (tryMove(x, y, x, y + yDir))
+		{
+			y += yDir;
+		}
+		else
+		{
+			// Reset velocity if the cell can't move down
+			cell.velocity.y = 0.f;
+			break;
+		}
+	}
 
 	// Paticle behaviours
 	switch (properties.behaviour)
