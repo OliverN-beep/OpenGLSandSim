@@ -1,8 +1,9 @@
 #pragma once
 
-#include "room.h"
 #include <vector>
 #include <utility>
+
+#include "room.h"
 
 class RoomManager
 {

@@ -11,8 +11,7 @@ public:
 		int height,
 		int cellSize,
 		int tileSize,
-		sf::Vector2i roomGridPosition,
-		const std::string& roomName);
+		sf::Vector2i roomGridPosition);
 
 	void update();
 	void draw(sf::RenderTarget& target, sf::Vector2f offset = { 0.f, 0.f });

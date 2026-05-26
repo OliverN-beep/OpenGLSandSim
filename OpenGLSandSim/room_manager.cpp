@@ -5,8 +5,7 @@ RoomManager::RoomManager(
 	int roomHeight,
 	int cellSize,
 	int tileSize)
-	:
-	m_roomWidth(roomWidth),
+	: m_roomWidth(roomWidth),
 	m_roomHeight(roomHeight),
 	m_cellSize(cellSize),
 	m_tileSize(tileSize)
@@ -27,8 +26,7 @@ void RoomManager::createRoom(sf::Vector2i gridPos)
 		m_roomHeight,
 		m_cellSize,
 		m_tileSize,
-		gridPos,
-		"ROOM"
+		gridPos
 	);
 }
 

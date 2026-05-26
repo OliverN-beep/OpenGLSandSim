@@ -522,17 +522,21 @@ void Game::switchRoom(sf::Vector2i direction)
 	sf::Vector2f pos = m_player.position;
 
 	// Set player spawns when entering a new room
+	float roomSpawnOffset = 10.f;
+
+	// X bounds of room
 	if (direction.x > 0)
-		pos.x = 50.f;
+		pos.x = roomSpawnOffset;
 
 	else if (direction.x < 0)
-		pos.x = GAME_WIDTH - 50.f;
+		pos.x = GAME_WIDTH - roomSpawnOffset;
 
+	// Y bounds of room
 	if (direction.y > 0)
-		pos.y = 50.f;
+		pos.y = roomSpawnOffset;
 
 	else if (direction.y < 0)
-		pos.y = GAME_HEIGHT - 50.f;
+		pos.y = GAME_HEIGHT - roomSpawnOffset;
 
 	m_player.position = pos;
 
@@ -581,7 +585,7 @@ void Game::fireProjectile()
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
 		dir.x = 1.f;
 
-	// Default direction if no input
+	// Default direction if no input (also check player facing direction)
 	if (dir == sf::Vector2f(0.f, 0.f) && m_player.facingRight)
 		dir.x = 1.f;
 

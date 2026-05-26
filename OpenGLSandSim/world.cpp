@@ -169,7 +169,6 @@ void World::update()
 
 // NOTE FOR updateCellBehaviour(), updatePowder(), updateLiquid(), and updateGas()
 // The order in which operations are performed DOES matter greatly
-
 void World::updateCellBehaviour(int x, int y)
 {
 	if (!inBounds(x, y))
@@ -200,45 +199,40 @@ void World::updateCellBehaviour(int x, int y)
 
 	for (int i = 0; i < ySteps; ++i)
 	{
-
+		// Update the y-coordinate to reflect the attempted move down
 		if (tryMove(x, y, x, y + yDir))
-		{
-			// Update the y-coordinate to reflect the attempted move down
 			y += yDir;
-		}
 
+		// Reset velocity if the cell can't move down
 		else
 		{
-			// Reset velocity if the cell can't move down
-			cell.velocity.y = 0.f;	
+			cell.velocity.y = 0.f;
 			break;
 		}
 	}
 
-	// Define y direction (if velocity > 0, yDir = 1, if velocity < 0, yDir = -1)
+	// Define x direction (if velocity > 0, xDir = 1, if velocity < 0, xDir = -1)
 	int xDir = (cell.velocity.x > 0.f) ? 1 : -1;
 
-	// Update x Velocity
+	// Update x velocity
 	int xSteps = static_cast<int>(std::abs(cell.velocity.x));
 
 	for (int i = 0; i < xSteps; ++i)
 	{
+		// Update the x-coordinate to reflect the attempted move down
 		if (tryMove(x, y, x + xDir, y))
-		{
-			// Update the y-coordinate to reflect the attempted move down
 			x += xDir;
-		}
 
+		// Reset velocity if the cell can't move down
 		else
 		{
-			// Reset velocity if the cell can't move down
 			cell.velocity.x = 0.f;
 			break;
 		}
 	}
 
 	// Velocity damping for particles
-	cell.velocity *= 0.92f;
+	cell.velocity *= 0.96f;
 
 	// Paticle behaviours
 	switch (properties.behaviour)
@@ -356,7 +350,7 @@ void World::updateFire(int x, int y)
 
 			auto& neighborProps = g_materials[static_cast<int>(neighborMat)];
 
-			if (neighborProps.flammable && rand() % 100 < 10) // 10% chance to ignite nearby materials (for natural look)
+			if (neighborProps.flammable && rand() % 100 < 8) // 8% chance to ignite nearby materials (for natural look)
 			{
 				setCell(nx, ny, MaterialType::Fire);
 				getCellRef(nx, ny).lifeTime = 5; // Fire lasts for 5 frames
@@ -484,11 +478,11 @@ void World::explodeParticles(int cx, int cy, int radius)
 			auto& props = g_materials[static_cast<int>(cell.material)];
 
 			// Add fire property to projectile
-			if (props.flammable && rand() % 100 < 40)
+			if (props.flammable && rand() % 100 < 40)	// Higher flammability chance
 			{
 				setCell(x, y, MaterialType::Fire);
 
-				getCellRef(x, y).lifeTime = 10;
+				getCellRef(x, y).lifeTime = 10;			// Greater lifetime
 			}
 
 			// Apply velocity strength to particles based on the material's explosion resistance

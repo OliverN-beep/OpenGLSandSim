@@ -5,10 +5,8 @@ Room::Room(
 	int height,
 	int cellSize,
 	int tileSize,
-	sf::Vector2i roomGridPosition,
-	const std::string& roomName):
-	
-	m_world(width, height, cellSize),
+	sf::Vector2i roomGridPosition)
+	: m_world(width, height, cellSize),
 	m_tileMap((width * cellSize) / tileSize, (height * cellSize) / tileSize, tileSize),
 	m_gridPosition(roomGridPosition)
 {

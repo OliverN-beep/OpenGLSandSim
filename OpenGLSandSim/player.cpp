@@ -55,9 +55,7 @@ void Player::updateAnimation(float dt)
 	if (facingRight)
 	{
 		m_sprite.setScale({ 1.f, 1.f });
-
-		// Apply an offset to the origin of the player (for collision detection)
-		m_sprite.setOrigin({ 8.f, 0.f });
+		m_sprite.setOrigin({ static_cast<float>(FRAME_WIDTH * 0.5), 0.f });
 	}
 	else
 	{
