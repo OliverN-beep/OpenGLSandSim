@@ -582,8 +582,11 @@ void Game::fireProjectile()
 		dir.x = 1.f;
 
 	// Default direction if no input
-	if (dir == sf::Vector2f(0.f, 0.f))
+	if (dir == sf::Vector2f(0.f, 0.f) && m_player.facingRight)
 		dir.x = 1.f;
+
+	if (dir == sf::Vector2f(0.f, 0.f) && !m_player.facingRight)
+		dir.x = -1.f;
 
 	// Normalise diagonal movement
 	float length = std::sqrt((dir.x * dir.x) + (dir.y * dir.y));

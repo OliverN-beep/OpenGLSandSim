@@ -1,9 +1,9 @@
 #include "player_controller.h"
 
 // ----------Tunable parameters----------
-const float MOVE_SPEED = 160.f;					// Horizontal movement speed
-const float GROUND_ACCELERATION = 1240.f;		// Acceleration when on the ground
-const float AIR_ACCELERATION = 120.f;			// Acceleration when in the air
+const float MOVE_SPEED = 180.f;					// Horizontal movement speed
+const float GROUND_ACCELERATION = 1800.f;		// Acceleration when on the ground
+const float AIR_ACCELERATION = 600.f;			// Acceleration when in the air
 const float FRICTION = 1600.f;					// Friction applied when grounded
 
 const float GRAVITY = 1200.f;					// Gravity force applied to the player
