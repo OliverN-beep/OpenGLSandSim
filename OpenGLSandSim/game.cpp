@@ -215,7 +215,6 @@ void Game::update(float dt)
 			// Check projectile collision with tiles
 			if (currentRoom().getTileMap().isSolid(tileX, tileY))
 			{
-				currentRoom().getWorld().explodeParticles(tileX, tileY, static_cast<int>(projectile.explosionRadius) / TILE_SIZE);
 				applyPlayerExplosionKnockback(projectile.position, projectile.explosionRadius, projectile.playerKnockback);
 
 				projectile.isAlive = false;
@@ -231,6 +230,7 @@ void Game::update(float dt)
 			if (currentRoom().getWorld().getCell(cellX, cellY) != MaterialType::Empty)
 			{
 				currentRoom().getWorld().explodeParticles(cellX, cellY, static_cast<int>(projectile.explosionRadius) / CELL_SIZE);
+				applyPlayerExplosionKnockback(projectile.position, projectile.explosionRadius, projectile.playerKnockback);
 
 				projectile.isAlive = false;
 
