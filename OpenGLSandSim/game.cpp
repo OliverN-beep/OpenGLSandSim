@@ -521,7 +521,7 @@ void Game::switchRoom(sf::Vector2i direction)
 
 	sf::Vector2f pos = m_player.position;
 
-	// Set player spawns
+	// Set player spawns when entering a new room
 	if (direction.x > 0)
 		pos.x = 50.f;
 
