@@ -4,6 +4,10 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 
+#include <json/json.hpp>
+
+using json = nlohmann::json;
+
 enum class TileType
 {
 	Solid,
@@ -36,6 +40,10 @@ public:
 	void updateTileMesh();							// Updates the tileset atlas mesh (simplifies draw call)
 
 	const sf::Texture& getTileset() const { return m_tileset; }	// Gets our tileset
+
+	// JSON stuff
+	json serialise() const;
+	void deserialise(const json& data);
 
 private:
 	bool inBounds(int x, int y) const;				// Check if the (x, y) tile coordinates are within the bounds of the tile map

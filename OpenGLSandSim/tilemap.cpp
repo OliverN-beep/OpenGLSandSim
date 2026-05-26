@@ -166,3 +166,42 @@ void TileMap::draw(sf::RenderTarget& target, sf::Vector2f offset) const
 
 	target.draw(m_vertices, states);
 }
+
+json TileMap::serialise() const
+{
+	json data;
+
+	data["width"] = m_width;
+	data["height"] = m_height;
+
+	data["tiles"] = json::array();
+
+	for (int y = 0; y < m_height; ++y)
+	{
+		for (int x = 0; x < m_width; ++x)
+		{
+			data["tiles"][y][x] = static_cast<int>(m_tiles[x][y]);
+		}
+	}
+
+	return data;
+}
+
+void TileMap::deserialise(const json& data)
+{
+	if (!data.contains("tiles"))
+	{
+		printf("Missing tile data\n");
+		return;
+	}
+
+	for (int y = 0; y < m_height; ++y)
+	{
+		for (int x = 0; x < m_width; ++x)
+		{
+			m_tiles[x][y] = static_cast<TileType>(data["tiles"][y][x].get<int>());
+		}
+	}
+
+	m_tileMeshDirty = true;
+}

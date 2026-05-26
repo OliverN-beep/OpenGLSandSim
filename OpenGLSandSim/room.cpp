@@ -46,3 +46,23 @@ const std::string& Room::getName() const
 {
 	return m_roomName;
 }
+
+json Room::serialise() const
+{
+	json data;
+
+	data["gridX"] = m_gridPosition.x;
+	data["gridY"] = m_gridPosition.y;
+
+	data["tilemap"] = m_tileMap->serialise();
+
+	return data;
+}
+
+void Room::deserialise(const json& data)
+{
+	m_gridPosition.x = data["gridX"];
+	m_gridPosition.y = data["gridY"];
+
+	m_tileMap->deserialise(data["tilemap"]);
+}

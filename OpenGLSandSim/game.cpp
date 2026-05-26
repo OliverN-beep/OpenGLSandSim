@@ -165,6 +165,18 @@ void Game::processEvents()
 					m_selectedMaterial = MaterialType::Salt;
 					break;
 				}
+
+				if (keyEvent->code == sf::Keyboard::Key::F5)
+				{
+					m_room_manager.saveWorld("world.json");
+					printf("WORLD SAVED\n");
+				}
+
+				if (keyEvent->code == sf::Keyboard::Key::F6)
+				{
+					m_room_manager.loadWorld("world.json");
+					printf("WORLD LOADED\n");
+				}
 			}
 		}
 	}

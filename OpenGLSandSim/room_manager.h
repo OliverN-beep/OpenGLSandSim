@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <utility>
+#include <fstream>
+#include <json/json.hpp>
 
 #include "room.h"
 
@@ -37,6 +39,9 @@ public:
 	const Room& getRoom(int index) const;
 
 	bool hasRoomAt(sf::Vector2i gridPos) const;
+
+	void saveWorld(const std::string& filename);
+	void loadWorld(const std::string& filename);
 
 private:
 	std::vector<Room> m_rooms;

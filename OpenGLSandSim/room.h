@@ -2,6 +2,7 @@
 
 #include "world.h"
 #include "tilemap.h"
+
 #include <memory>
 
 class Room
@@ -29,6 +30,9 @@ public:
 
 	Room(Room&&) noexcept = default;
 	Room& operator=(Room&&) noexcept = default;
+
+	json serialise() const;
+	void deserialise(const json& data);
 
 private:
 	World m_world;

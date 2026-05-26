@@ -11,7 +11,7 @@ RoomManager::RoomManager(
 	m_tileSize(tileSize)
 {
 	// Create initial room
-	createRoom({ 0, 0 }), createRoom({ 1, 0 });
+	createRoom({ 0, 0 });
 }
 
 void RoomManager::createRoom(sf::Vector2i gridPos)
@@ -98,4 +98,43 @@ const Room& RoomManager::getRoom(int index) const
 bool RoomManager::hasRoomAt(sf::Vector2i gridPos) const
 {
 	return findRoomAtGridPosition(gridPos) != -1;
+}
+
+void RoomManager::saveWorld(const std::string& filename)
+{
+	json world;
+
+	world["rooms"] = json::array();
+
+	for (const auto& room : m_rooms)
+	{
+		world["rooms"].push_back(room.serialise());
+	}
+
+	std::ofstream file(filename);
+
+	file << world.dump(4);
+}
+
+void RoomManager::loadWorld(const std::string& filename)
+{
+	std::ifstream file(filename);
+
+	if (!file.is_open())
+		return;
+
+	json world;
+
+	file >> world;
+
+	m_rooms.clear();
+
+	for (const auto& roomData : world["rooms"])
+	{
+		Room room(m_roomWidth, m_roomHeight, m_cellSize, m_tileSize, { 0, 0 });
+
+		room.deserialise(roomData);
+
+		m_rooms.push_back(std::move(room));
+	}
 }
