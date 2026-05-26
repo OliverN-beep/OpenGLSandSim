@@ -1,5 +1,4 @@
 #include "tilemap.h"
-#include <iostream>
 
 TileMap::TileMap(int width, int height, int tileSize) :
 	m_width(width),
@@ -40,7 +39,9 @@ TileType TileMap::getTile(int x, int y) const
 	if (inBounds(x, y))
 	{
 		// Return the tile type from the 2D vector
-		return m_tiles[x][y];
+		// BUG OCCURS WHEN DRAWING A MATERIAL UNDER CERTIAN CONDITIONS
+		// RETURNS EXCEPTION BECAUSE IT DOESN'T UNDERSTAND WHAT A MATERIAL IS?
+		return m_tiles[x][y];	// EXCEPTION HANDLED HERE (RETURNING 0 SAME AS WORLD.CPP LINE 152?)
 	}
 
 	return TileType::Empty; // Return Empty if out of bounds

@@ -2,6 +2,7 @@
 
 #include "world.h"
 #include "tilemap.h"
+#include <memory>
 
 class Room
 {
@@ -31,7 +32,7 @@ public:
 
 private:
 	World m_world;
-	TileMap m_tileMap;
+	std::unique_ptr<TileMap> m_tileMap;
 
 	sf::Vector2i m_gridPosition;
 

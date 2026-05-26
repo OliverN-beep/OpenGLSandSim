@@ -11,7 +11,7 @@ RoomManager::RoomManager(
 	m_tileSize(tileSize)
 {
 	// Create initial room
-	createRoom({ 0, 0 });
+	createRoom({ 0, 0 }), createRoom({ 1, 0 });
 }
 
 void RoomManager::createRoom(sf::Vector2i gridPos)

@@ -137,16 +137,11 @@ bool World::isTileBlocked(int x, int y) const
 	if (!m_tileMap)
 		return false;
 
-	// This occurs because m_tileSize is storing 0 initially for some reason?
-	if (m_tileMap->getTileSize() == 0)
-	{
-		printf("Error: Int div by 0 (tileSize is initialised to 0)\n");
-		return true;	// Return failure (makes sand stop falling)
-	}
-
 	int worldX = x * m_cellSize;
 	int worldY = y * m_cellSize;
 
+	// EXCEPTION IS THROWN HERE (SIMILAR TO TILEMAP.CPP LINE 44)
+	// tileX (and likely tileY) are set to 0 and an integer division by 0 is not possible
 	int tileX = (x * m_cellSize) / m_tileMap->getTileSize();
 	int tileY = (y * m_cellSize) / m_tileMap->getTileSize();
 	

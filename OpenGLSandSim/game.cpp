@@ -11,6 +11,7 @@ Game::Game():
 	m_window.setFramerateLimit( 60 );
 
 	// Set the tile map for the world to enable particle collision detection
+	// ONLY CHECKS CURRENT ROOM (is this why particles fall through the floor?)
 	currentRoom().getWorld().setTileMap(&currentRoom().getTileMap());
 
 	// Load font for displaying text
@@ -27,7 +28,7 @@ Game::Game():
 	// Build simple test room with tile map floor
 	for (int x = 0; x < currentRoom().getTileMap().getWidth(); ++x)
 	{
-		currentRoom().getTileMap().setTile(x, currentRoom().getTileMap().getHeight() - 1, TileType::Solid); // Set the bottom row as solid tiles
+		currentRoom().getTileMap().setTile(x, currentRoom().getTileMap().getHeight() - 1, TileType::Solid); // Set the bottom row as solid tiles initially
 	}
 
 	// Initialise views
@@ -617,9 +618,5 @@ sf::Vector2f Game::getMouseGamePosition() const
 	float scaleX = static_cast<float>(WINDOW_WIDTH) / GAME_WIDTH;
 	float scaleY = static_cast<float>(WINDOW_HEIGHT) / GAME_HEIGHT;
 
-	return
-	{
-		mouse.x / scaleX,
-		mouse.y / scaleY
-	};
+	return { mouse.x / scaleX, mouse.y / scaleY };
 }

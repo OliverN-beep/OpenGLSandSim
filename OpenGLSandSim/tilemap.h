@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <vector>
 #include <SFML/Graphics.hpp>
 
@@ -27,7 +28,7 @@ public:
 
 	int getWidth() const { return m_width; }		// Get the width of the tile map in tiles
 	int getHeight() const { return m_height; }		// Get the height of the tile map in tiles
-	int getTileSize() const { return m_tileSize; }	// Get the size of each tile in pixels
+	int getTileSize() const { return m_tileSize; }	// Get the size of each tile in pixels (CRASHES: READ ACCESS VIOLATION maybe to do with 0 bug from world.cpp?)
 
 	TileType m_selectedTileType = TileType::Solid;	// Currently selected tile type for editing the tile map
 

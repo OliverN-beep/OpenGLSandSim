@@ -7,13 +7,13 @@ Room::Room(
 	int tileSize,
 	sf::Vector2i roomGridPosition)
 	: m_world(width, height, cellSize),
-	m_tileMap((width * cellSize) / tileSize, (height * cellSize) / tileSize, tileSize),
+	m_tileMap(std::make_unique<TileMap>((width * cellSize) / tileSize, (height * cellSize) / tileSize, tileSize)),
 	m_gridPosition(roomGridPosition)
 {
 	// Set the tile map for the world to enable particle collision detection
-	m_world.setTileMap(&m_tileMap);
+	m_world.setTileMap(m_tileMap.get());
 
-	printf("Tile size: %d\n", m_tileMap.getTileSize());
+	printf("Tile size: %d\n", m_tileMap->getTileSize());
 }
 
 void Room::update()
@@ -23,7 +23,7 @@ void Room::update()
 
 void Room::draw(sf::RenderTarget& target, sf::Vector2f offset)
 {
-	m_tileMap.draw(target, offset);
+	m_tileMap->draw(target, offset);
 	m_world.draw(target, offset);
 }
 
@@ -34,7 +34,7 @@ World& Room::getWorld()
 
 TileMap& Room::getTileMap()
 {
-	return m_tileMap;
+	return *m_tileMap;
 }
 
 sf::Vector2i Room::getGridPosition() const
