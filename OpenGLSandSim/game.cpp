@@ -225,14 +225,35 @@ void Game::update(float dt)
 			if (!projectile.isAlive)
 				continue;
 
-			// Check projectile collision with tiles
+			// Check projectile collision with SOLID tiles
 			if (currentRoom().getTileMap().isSolid(tileX, tileY))
 			{
 				applyPlayerExplosionKnockback(projectile.position, projectile.explosionRadius, projectile.playerKnockback);
 
 				projectile.isAlive = false;
 
-				printf("projectile hit tile\n");
+				printf("projectile hit SOLID tile\n");
+			}
+
+			// Check projectile collision with SPIKE tiles
+			if (currentRoom().getTileMap().isSpike(tileX, tileY))
+			{
+				applyPlayerExplosionKnockback(projectile.position, projectile.explosionRadius, projectile.playerKnockback);
+
+				projectile.isAlive = false;
+
+				printf("projectile hit SPIKE tile\n");
+			}
+
+			// Check projectile collision with BOUNCE tiles
+			if (currentRoom().getTileMap().isBounce(tileX, tileY))
+			{
+				// Increased player knockback for bounce tiles
+				applyPlayerExplosionKnockback(projectile.position, projectile.explosionRadius, projectile.playerKnockback * 2);
+
+				projectile.isAlive = false;
+
+				printf("projectile hit BOUNCE tile\n");
 			}
 
 			// Material collision detection with projectiles

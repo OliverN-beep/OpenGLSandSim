@@ -3,7 +3,6 @@
 #include <iostream>
 #include <vector>
 #include <SFML/Graphics.hpp>
-
 #include <json/json.hpp>
 
 using json = nlohmann::json;
@@ -27,6 +26,7 @@ public:
 
 	bool isSolid(int x, int y) const;				// Check if the tile at the specified (x, y) position is solid
 	bool isSpike(int x, int y) const;				// Check if the tile at the specified (x, y) position is a spike
+	bool isBounce(int x, int y) const;				// Check if the tile at the specified (x, y) position is a bounce pad
 
 	void draw(sf::RenderTarget& target, sf::Vector2f offset = { 0.f, 0.f }) const;		// Draw the tile map onto the provided SFML render window
 

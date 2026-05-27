@@ -59,6 +59,12 @@ bool TileMap::isSpike(int x, int y) const
 	return type == TileType::Spike;
 }
 
+bool TileMap::isBounce(int x, int y) const
+{
+	TileType type = getTile(x, y);
+	return type == TileType::Bounce;
+}
+
 int TileMap::getTileAtlasIndex(TileType type)
 {
 	switch (type)

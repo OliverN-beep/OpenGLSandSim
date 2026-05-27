@@ -9,7 +9,7 @@ const float FRICTION = 1600.f;					// Friction applied when grounded
 const float GRAVITY = 1200.f;					// Gravity force applied to the player
 const float FALL_GRAVITY_MULTIPLIER = 1.15f;	// Multiplier for gravity when falling
 
-const float JUMP_SPEED = -280.f;				// Initial jump speed
+const float JUMP_SPEED = -320.f;				// Initial jump speed
 
 const float COYOTE_TIME = 0.15f;				// Time allowed to jump after leaving the ground
 const float JUMP_BUFFER_TIME = 0.1f;			// Time allowed to jump after pressing the jump button
@@ -29,7 +29,7 @@ float PlayerController::moveToward(float current, float target, float amount)
 	return current;
 }
 
-// Collision with tiles
+// Collision with solid tiles
 bool PlayerController::isSolidAt(TileMap& map, float px, float py)
 {
 	int tx = static_cast<int>(std::floor(px / map.getTileSize()));
@@ -45,6 +45,15 @@ bool PlayerController::isSpikeAt(TileMap& map, float px, float py)
 	int ty = static_cast<int>(std::floor(py / map.getTileSize()));
 
 	return map.isSpike(tx, ty);
+}
+
+// Collision with bounce pads
+bool PlayerController::isBounceAt(TileMap& map, float px, float py)
+{
+	int tx = static_cast<int>(std::floor(px / map.getTileSize()));
+	int ty = static_cast<int>(std::floor(py / map.getTileSize()));
+
+	return map.isBounce(tx, ty);
 }
 
 void PlayerController::update(Player& player, TileMap& map, float dt)
@@ -140,6 +149,15 @@ bool PlayerController::isCollidingSpike(TileMap& map, sf::FloatRect bounds)
 		isSpikeAt(map, bounds.position.x + bounds.size.x, bounds.position.y + bounds.size.y);
 }
 
+bool PlayerController::isCollidingBounce(TileMap& map, sf::FloatRect bounds)
+{
+	return
+		isBounceAt(map, bounds.position.x, bounds.position.y) ||
+		isBounceAt(map, bounds.position.x + bounds.size.x, bounds.position.y) ||
+		isBounceAt(map, bounds.position.x, bounds.position.y + bounds.size.y) ||
+		isBounceAt(map, bounds.position.x + bounds.size.x, bounds.position.y + bounds.size.y);
+}
+
 void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 {
 	player.grounded = false;
@@ -152,7 +170,7 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 	sf::FloatRect horizontalBounds(player.position, player.size);
 
 	// Set player velocity to 0 when colliding with a solid tile (x bounds)
-	if (isCollidingSolid(map, horizontalBounds))
+	if (isCollidingSolid(map, horizontalBounds) || isCollidingBounce(map, horizontalBounds))
 	{
 		// Undo movement
 		player.position.x -= player.velocity.x * dt;
@@ -168,7 +186,7 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 	sf::FloatRect verticalBounds(player.position, player.size);
 
 	// Set player velocity to 0 when colliding with a solid tile (y bounds)
-	if (isCollidingSolid(map, verticalBounds))
+	if (isCollidingSolid(map, verticalBounds) || isCollidingBounce(map, verticalBounds))
 	{
 		// Undo movement
 		player.position.y -= player.velocity.y * dt;

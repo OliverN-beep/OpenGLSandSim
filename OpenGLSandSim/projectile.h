@@ -12,7 +12,7 @@ struct Projectile
 	float speed = 280.f;			// Projectile speed
 
 	float explosionRadius = 80.f;	// Explosion radius of the projectile
-	float playerKnockback = 600.f;	// Knockback applied to the player
+	float playerKnockback = 480.f;	// Knockback applied to the player
 	float particleKnockback = 50.f;	// Knockback applied to particles
 
 	bool isAlive = true;	// Check whether the projectile is alive
