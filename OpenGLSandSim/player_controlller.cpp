@@ -1,15 +1,15 @@
 #include "player_controller.h"
 
 // ----------Tunable parameters----------
-const float MOVE_SPEED = 180.f;					// Horizontal movement speed
+const float MOVE_SPEED = 120.f;					// Horizontal movement speed
 const float GROUND_ACCELERATION = 2000.f;		// Acceleration when on the ground
-const float AIR_ACCELERATION = 2000.f;			// Acceleration when in the air
+const float AIR_ACCELERATION = 800.f;			// Acceleration when in the air
 const float FRICTION = 5000.f;					// Friction applied when grounded
 
-const float GRAVITY = 1200.f;					// Gravity force applied to the player
-const float FALL_GRAVITY_MULTIPLIER = 1.15f;	// Multiplier for gravity when falling
+const float GRAVITY = 900.f;					// Gravity force applied to the player
+const float FALL_GRAVITY_MULTIPLIER = 0.5f;		// Multiplier for gravity when falling
 
-const float JUMP_SPEED = -320.f;				// Initial jump speed
+const float JUMP_SPEED = -260.f;				// Initial jump speed
 
 const float COYOTE_TIME = 0.15f;				// Time allowed to jump after leaving the ground
 const float JUMP_BUFFER_TIME = 0.1f;			// Time allowed to jump after pressing the jump button
@@ -201,9 +201,12 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 	}
 
 	// ------------ PLAYER RESPAWN ------------
-	if (isCollidingSpike(map, horizontalBounds))
-		player.position = { 70.f, 70.f };
+	if (isCollidingSpike(map, horizontalBounds) || isCollidingSpike(map, verticalBounds))
+	{
+		printf("player DIED to SPIKE\n");
 
-	if (isCollidingSpike(map, verticalBounds))
+		// Add delay before respawning to prevent instant death from spikes
+
 		player.position = { 70.f, 70.f };
+	}
 }

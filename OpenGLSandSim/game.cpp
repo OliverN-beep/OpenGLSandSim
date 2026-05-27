@@ -11,7 +11,6 @@ Game::Game():
 	m_window.setFramerateLimit( 60 );
 
 	// Set the tile map for the world to enable particle collision detection
-	// ONLY CHECKS CURRENT ROOM (is this why particles fall through the floor?)
 	currentRoom().getWorld().setTileMap(&currentRoom().getTileMap());
 
 	// Load font for displaying text
@@ -24,12 +23,6 @@ Game::Game():
 	m_fpsText.setCharacterSize(CHARACTER_SIZE);
 	m_fpsText.setFillColor(sf::Color::White);
 	m_fpsText.setPosition({ WINDOW_WIDTH - 150, 50 });
-
-	// Build simple test room with tile map floor
-	//for (int x = 0; x < currentRoom().getTileMap().getWidth(); ++x)
-	//{
-	//	currentRoom().getTileMap().setTile(x, currentRoom().getTileMap().getHeight() - 1, TileType::Solid); // Set the bottom row as solid tiles initially
-	//}
 
 	// Load world from JSON on startup (if it exists)
 	m_room_manager.loadWorld("world.json");
@@ -561,7 +554,7 @@ void Game::switchRoom(sf::Vector2i direction)
 	sf::Vector2f pos = m_player.position;
 
 	// Set player spawns when entering a new room
-	float roomSpawnOffset = 10.f;
+	float roomSpawnOffset = 8.f;
 
 	// X bounds of room
 	if (direction.x > 0)

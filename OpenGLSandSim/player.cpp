@@ -5,7 +5,7 @@ Player::Player(float x, float y):
 {
 	position = { x, y };
 	velocity = { 0.f, 0.f };
-	size = { 8.f, 15.f };		// Player collision box size (y = 15 to fit under 16x16 tiles)
+	size = { 8.f, 14.f };		// Player collision box size (y = 15 to fit under 16x16 tiles)
 
 	if (!m_texture.loadFromFile("player/player_d.png"))
 	{
@@ -36,7 +36,7 @@ Player::Player(float x, float y):
 
 void Player::updateAnimation(float dt)
 {
-	if (std::abs(velocity.x) > 5.f)
+	if (std::abs(velocity.x) > 4.f)
 		m_animationPlayer.play("Run");
 	else
 		m_animationPlayer.play("Idle");
@@ -55,12 +55,12 @@ void Player::updateAnimation(float dt)
 	if (facingRight)
 	{
 		m_sprite.setScale({ 1.f, 1.f });
-		m_sprite.setOrigin({ static_cast<float>(FRAME_WIDTH * 0.5), 5.f });	// y offset of 5 to account for player size collision difference
+		m_sprite.setOrigin({ static_cast<float>(FRAME_WIDTH * 0.5), 6.f });	// y offset to account for player size collision difference
 	}
 	else
 	{
 		m_sprite.setScale({ -1.f, 1.f });
-		m_sprite.setOrigin({ static_cast<float>(FRAME_WIDTH), 5.f });		// y offset of 5 to account for player size collision difference
+		m_sprite.setOrigin({ static_cast<float>(FRAME_WIDTH), 6.f });		// y offset to account for player size collision difference
 	}
 }
 

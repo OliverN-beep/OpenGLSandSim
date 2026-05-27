@@ -9,9 +9,9 @@ struct Projectile
 
 	float radius = 6.f;				// Projectile radius
 	float lifetime = 1.f;			// Projectile lifetime
-	float speed = 280.f;			// Projectile speed
+	float speed = 360.f;			// Projectile speed
 
-	float explosionRadius = 80.f;	// Explosion radius of the projectile
+	float explosionRadius = 60.f;	// Explosion radius of the projectile
 	float playerKnockback = 480.f;	// Knockback applied to the player
 	float particleKnockback = 50.f;	// Knockback applied to particles
 
