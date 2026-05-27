@@ -2,9 +2,9 @@
 
 // ----------Tunable parameters----------
 const float MOVE_SPEED = 180.f;					// Horizontal movement speed
-const float GROUND_ACCELERATION = 1800.f;		// Acceleration when on the ground
-const float AIR_ACCELERATION = 600.f;			// Acceleration when in the air
-const float FRICTION = 1600.f;					// Friction applied when grounded
+const float GROUND_ACCELERATION = 2000.f;		// Acceleration when on the ground
+const float AIR_ACCELERATION = 2000.f;			// Acceleration when in the air
+const float FRICTION = 5000.f;					// Friction applied when grounded
 
 const float GRAVITY = 1200.f;					// Gravity force applied to the player
 const float FALL_GRAVITY_MULTIPLIER = 1.15f;	// Multiplier for gravity when falling

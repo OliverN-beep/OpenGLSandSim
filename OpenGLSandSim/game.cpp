@@ -26,10 +26,14 @@ Game::Game():
 	m_fpsText.setPosition({ WINDOW_WIDTH - 150, 50 });
 
 	// Build simple test room with tile map floor
-	for (int x = 0; x < currentRoom().getTileMap().getWidth(); ++x)
-	{
-		currentRoom().getTileMap().setTile(x, currentRoom().getTileMap().getHeight() - 1, TileType::Solid); // Set the bottom row as solid tiles initially
-	}
+	//for (int x = 0; x < currentRoom().getTileMap().getWidth(); ++x)
+	//{
+	//	currentRoom().getTileMap().setTile(x, currentRoom().getTileMap().getHeight() - 1, TileType::Solid); // Set the bottom row as solid tiles initially
+	//}
+
+	// Load world from JSON on startup (if it exists)
+	m_room_manager.loadWorld("world.json");
+	printf("WORLD LOADED ON STARTUP\n");
 
 	// Initialise views
 	m_gameView = m_window.getDefaultView();
@@ -172,7 +176,7 @@ void Game::processEvents()
 					printf("WORLD SAVED\n");
 				}
 
-				if (keyEvent->code == sf::Keyboard::Key::F6)
+				if (keyEvent->code == sf::Keyboard::Key::F9)
 				{
 					m_room_manager.loadWorld("world.json");
 					printf("WORLD LOADED\n");
@@ -249,7 +253,8 @@ void Game::update(float dt)
 			if (currentRoom().getTileMap().isBounce(tileX, tileY))
 			{
 				// Increased player knockback for bounce tiles
-				applyPlayerExplosionKnockback(projectile.position, projectile.explosionRadius, projectile.playerKnockback * 2);
+				float bounceMultiplier = 1.55f;
+				applyPlayerExplosionKnockback(projectile.position, projectile.explosionRadius, projectile.playerKnockback * bounceMultiplier);
 
 				projectile.isAlive = false;
 
