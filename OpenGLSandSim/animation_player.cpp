@@ -10,7 +10,15 @@ void AnimationPlayer::play(const std::string& name)
 	if (m_currentName == name)
 		return;
 
-	m_currentAnimation = &m_animations[name];
+	auto it = m_animations.find(name);
+
+	if (it == m_animations.end())
+	{
+		printf("Animation '%s' not found!\n", name.c_str());
+		return;
+	}
+
+	m_currentAnimation = &it->second;
 
 	m_currentName = name;
 
@@ -48,6 +56,9 @@ void AnimationPlayer::update(float dt)
 int AnimationPlayer::getCurrentFrame() const
 {
 	if (!m_currentAnimation)
+		return 0;
+
+	if (m_currentAnimation->frames.empty())
 		return 0;
 
 	return m_currentAnimation->frames[m_frameIndex];

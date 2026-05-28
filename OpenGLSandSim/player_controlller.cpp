@@ -97,10 +97,16 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 	float acceleration = player.grounded ? GROUND_ACCELERATION : AIR_ACCELERATION;
 
 	if (input != 0.f)
+	{
 		player.velocity.x += input * acceleration * dt;
+		player.m_animationPlayer.play("Walk");
+	}
 
 	if (player.grounded && input == 0.f)
+	{
 		player.velocity.x = moveToward(player.velocity.x, 0.f, FRICTION * dt);
+		player.m_animationPlayer.play("Idle");
+	}
 	
 	// Clamp horizontal move speed
 	if (player.velocity.x > MOVE_SPEED)

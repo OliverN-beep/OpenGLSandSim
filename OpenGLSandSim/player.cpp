@@ -14,42 +14,61 @@ Player::Player(float x, float y):
 
 	m_texture.setSmooth(false);
 
-	// First frame
-	m_sprite.setTextureRect(sf::IntRect({ 0, 0 }, { 20, 20 }));
-
-	// Define animations
-	Animation Idle;
-	Idle.frames = { 2, 3, 4, 5, 6, 7};
-	Idle.frameTime = 0.12f;
-
-	Animation Run;
-	Run.frames = { 14, 15, 16, 17, 18, 19, 20, 21 };
-	Run.frameTime = 0.09f;
-
-	// Add animations
-	m_animationPlayer.addAnimation("Idle", Idle);
-	m_animationPlayer.addAnimation("Run", Run);
+	loadAnimations("player/player.json");
 
 	// Play default animation
 	m_animationPlayer.play("Idle");
 }
 
+void Player::loadAnimations(const std::string& jsonPath)
+{
+	std::ifstream file(jsonPath);
+
+	json data;
+	file >> data;
+
+	// Parse animation tags
+	for (const auto& tag : data["meta"]["frameTags"])
+	{
+		Animation anim;
+
+		int from = tag["from"];
+		int to = tag["to"];
+
+		for (int i = from; i <= to; ++i)
+		{
+			anim.frames.push_back(i);
+		}
+
+		anim.frameTime = 0.1f;
+
+		std::string name = tag["name"];
+		
+		m_animationPlayer.addAnimation(name, anim);
+	}
+
+	// Parse frame data
+	for (auto& [name, frameData] : data["frames"].items())
+	{
+		json frame = frameData["frame"];
+
+		m_frames.push_back(sf::IntRect({ frame["x"], frame["y"] }, { frame["w"], frame["h"] }));
+
+		printf("Loaded animation: %s\n", name.c_str());
+	}
+}
+
 void Player::updateAnimation(float dt)
 {
-	if (std::abs(velocity.x) > 4.f)
-		m_animationPlayer.play("Run");
-	else
-		m_animationPlayer.play("Idle");
-
 	m_animationPlayer.update(dt);
 
 	int frame = m_animationPlayer.getCurrentFrame();
 
+	m_sprite.setTextureRect(m_frames[frame]);
+	m_sprite.setPosition(position);
+
 	const int FRAME_WIDTH = 20;
 	const int FRAME_HEIGHT = 20;
-
-	m_sprite.setTextureRect(sf::IntRect({ frame * FRAME_WIDTH, 0 }, { FRAME_WIDTH, FRAME_HEIGHT }));
-	m_sprite.setPosition(position);
 
 	// Flip sprite
 	if (facingRight)
@@ -62,6 +81,11 @@ void Player::updateAnimation(float dt)
 		m_sprite.setScale({ -1.f, 1.f });
 		m_sprite.setOrigin({ static_cast<float>(FRAME_WIDTH), 6.f });		// y offset to account for player size collision difference
 	}
+}
+
+void Player::playAnimation(const std::string& name)
+{
+	m_animationPlayer.play(name);
 }
 
 void Player::applyKnockback(sf::Vector2f force)
