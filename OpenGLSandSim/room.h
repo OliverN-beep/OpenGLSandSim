@@ -2,6 +2,7 @@
 
 #include "world.h"
 #include "tilemap.h"
+#include "collectable.h"
 
 #include <memory>
 
@@ -34,6 +35,8 @@ public:
 	json serialise() const;
 	void deserialise(const json& data);
 
+	std::vector<Collectable>& getCollectables();
+
 private:
 	World m_world;
 	std::unique_ptr<TileMap> m_tileMap;
@@ -41,4 +44,6 @@ private:
 	sf::Vector2i m_gridPosition;
 
 	std::string m_roomName;
+
+	std::vector<Collectable> m_collectables;
 };

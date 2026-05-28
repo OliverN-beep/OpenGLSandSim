@@ -69,6 +69,9 @@
     <ClCompile Include="animation_player.cpp">
       <Filter>Source Files\animation</Filter>
     </ClCompile>
+    <ClCompile Include="collectable.cpp">
+      <Filter>Source Files\collectables</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="world.h">

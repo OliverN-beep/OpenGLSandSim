@@ -181,9 +181,13 @@ void Game::processEvents()
 
 void Game::update(float dt)
 {
-	// Store player position and switch rooms
+	// Store player position
 	sf::Vector2f playerPos = m_player.position;
 
+	// Store player bounds for collectable collision detection
+	sf::FloatRect playerBounds(playerPos, m_player.size);
+
+	// Handle room switching when player goes out of bounds
 	if (playerPos.x < 0)
 		switchRoom({ -1, 0 });
 
@@ -210,6 +214,7 @@ void Game::update(float dt)
 
 	if (m_editorState == GameState::Gameplay)
 	{
+		// Projectile updates and collision detection
 		for (auto& projectile : m_projectiles)
 		{
 			projectile.update(dt);
@@ -267,6 +272,21 @@ void Game::update(float dt)
 				projectile.isAlive = false;
 
 				printf("projectile hit material\n");
+			}
+		}
+
+		// Collectable updates and collision detection
+		for (auto& collectable : currentRoom().getCollectables())
+		{
+			bool wasCollected = collectable.isCollected();
+			
+			collectable.update(playerBounds);
+
+			collectable.update(playerBounds);
+			if (!wasCollected && collectable.isCollected())
+			{
+				m_totalCollectables++;
+				printf("Total collectables collected %d\n", m_totalCollectables);
 			}
 		}
 
@@ -627,6 +647,7 @@ void Game::fireProjectile()
 	// Initial values of the projectile
 	projectile.position.x = m_player.position.x + projectileOffsetX;
 	projectile.position.y = m_player.position.y + projectileOffsetY;
+	
 	projectile.velocity = dir * projectile.speed;
 
 	m_projectiles.push_back(projectile);

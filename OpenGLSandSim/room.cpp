@@ -13,6 +13,9 @@ Room::Room(
 	// Set the tile map for the world to enable particle collision detection
 	m_world.setTileMap(m_tileMap.get());
 
+	// Initialise collectables
+	m_collectables.emplace_back(sf::Vector2f(200.f, 100.f));
+
 	printf("Tile size: %d\n", m_tileMap->getTileSize());
 }
 
@@ -25,6 +28,12 @@ void Room::draw(sf::RenderTarget& target, sf::Vector2f offset)
 {
 	m_tileMap->draw(target, offset);
 	m_world.draw(target, offset);
+
+	// Draw collectables
+	for (const auto& collectable : m_collectables)
+	{
+		collectable.draw(target);
+	}
 }
 
 World& Room::getWorld()
@@ -65,4 +74,9 @@ void Room::deserialise(const json& data)
 	m_gridPosition.y = data["gridY"];
 
 	m_tileMap->deserialise(data["tilemap"]);
+}
+
+std::vector<Collectable>& Room::getCollectables()
+{
+	return m_collectables;
 }

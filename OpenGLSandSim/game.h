@@ -82,4 +82,6 @@ private:
 	sf::FloatRect m_tilePaletteBounds;
 
 	sf::RenderTexture m_gameTexture;
+
+	int m_totalCollectables = 0;
 };
