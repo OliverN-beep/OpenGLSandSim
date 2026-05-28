@@ -3,7 +3,7 @@
 Collectable::Collectable(sf::Vector2f pos)
 {
 	m_shape.setRadius(5.f);
-	m_shape.setFillColor(sf::Color::Yellow);
+	m_shape.setFillColor(sf::Color::Green);
 	m_shape.setPosition(pos);
 }
 
