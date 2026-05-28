@@ -554,21 +554,17 @@ void Game::switchRoom(sf::Vector2i direction)
 	sf::Vector2f pos = m_player.position;
 
 	// Set player spawns when entering a new room
-	float roomSpawnOffset = 8.f;
-
-	// X bounds of room
 	if (direction.x > 0)
-		pos.x = roomSpawnOffset;
+		pos.x = 0.f;
 
 	else if (direction.x < 0)
-		pos.x = GAME_WIDTH - roomSpawnOffset;
+		pos.x = GAME_WIDTH;
 
-	// Y bounds of room
 	if (direction.y > 0)
-		pos.y = roomSpawnOffset;
+		pos.y = 0.f;
 
 	else if (direction.y < 0)
-		pos.y = GAME_HEIGHT - roomSpawnOffset;
+		pos.y = GAME_HEIGHT;
 
 	m_player.position = pos;
 
@@ -606,28 +602,22 @@ void Game::fireProjectile()
 	sf::Vector2f dir = { 0.f, 0.f };
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
-		dir.y = -1.f;
+		dir = { 0.f, -1.f };
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
-		dir.y = 1.f;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
+		dir = { 0.f, 1.f };
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
-		dir.x = -1.f;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+		dir = { -1.f, 0.f };
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
-		dir.x = 1.f;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+		dir = { 1.f, 0.f };
 
 	// Default direction if no input (also check player facing direction)
-	if (dir == sf::Vector2f(0.f, 0.f) && m_player.facingRight)
-		dir.x = 1.f;
-
-	if (dir == sf::Vector2f(0.f, 0.f) && !m_player.facingRight)
-		dir.x = -1.f;
-
-	// Normalise diagonal movement
-	float length = std::sqrt((dir.x * dir.x) + (dir.y * dir.y));
-
-	dir /= length;
+	else
+	{
+		dir = m_player.facingRight ? sf::Vector2f(1.f, 0.f) : sf::Vector2f(-1.f, 0.f);
+	}
 
 	Projectile projectile;
 

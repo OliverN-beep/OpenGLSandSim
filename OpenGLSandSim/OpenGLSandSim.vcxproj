@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="animation.h" />
     <ClInclude Include="animation_player.h" />
+    <ClInclude Include="collectable.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="materials.h" />
     <ClInclude Include="player.h" />

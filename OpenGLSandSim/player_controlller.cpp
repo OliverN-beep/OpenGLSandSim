@@ -211,7 +211,8 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 	{
 		printf("player DIED to SPIKE\n");
 
-		// Add delay before respawning to prevent instant death from spikes
+		// Add delay/death animation before respawning to prevent instant death from spikes
+		player.m_animationPlayer.play("Death");
 
 		player.position = { 70.f, 70.f };
 	}

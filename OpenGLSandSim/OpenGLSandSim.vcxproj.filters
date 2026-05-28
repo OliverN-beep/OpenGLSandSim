@@ -28,6 +28,9 @@
     <Filter Include="Source Files\animation">
       <UniqueIdentifier>{0e7368ae-4ef6-4c12-8ac5-b96b9e6e25dc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\collectables">
+      <UniqueIdentifier>{3bee0269-c243-447e-8c7d-4ee4616e071a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -97,6 +100,9 @@
     </ClInclude>
     <ClInclude Include="animation_player.h">
       <Filter>Source Files\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="collectable.h">
+      <Filter>Source Files\collectables</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
