@@ -15,8 +15,6 @@ Room::Room(
 
 	// Initialise collectables
 	m_collectables.emplace_back(sf::Vector2f(200.f, 100.f));
-
-	printf("Tile size: %d\n", m_tileMap->getTileSize());
 }
 
 void Room::update()

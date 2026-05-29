@@ -54,8 +54,8 @@ private:
 
 	int m_brushSize = 4;					// Size of the brush for painting materials in the world
 
-	const static int WINDOW_WIDTH = 1280;
-	const static int WINDOW_HEIGHT = 720;
+	const static int WINDOW_WIDTH = 1920;
+	const static int WINDOW_HEIGHT = 1080;
 
 	const static int GAME_WIDTH = 320;
 	const static int GAME_HEIGHT = 180;

@@ -44,7 +44,7 @@ void RoomManager::deleteCurrentRoom()
 		m_currentRoomIndex = static_cast<int>(m_rooms.size()) - 1;
 	}
 
-	printf("room deleted\n");
+	printf("ROOM DELETED\n");
 }
 
 Room& RoomManager::getCurrentRoom()

@@ -26,7 +26,6 @@ Game::Game():
 
 	// Load world from JSON on startup (if it exists)
 	m_room_manager.loadWorld("world.json");
-	printf("WORLD LOADED ON STARTUP\n");
 
 	// Initialise views
 	m_gameView = m_window.getDefaultView();
@@ -233,18 +232,17 @@ void Game::update(float dt)
 				applyPlayerExplosionKnockback(projectile.position, projectile.explosionRadius, projectile.playerKnockback);
 
 				projectile.isAlive = false;
-
-				printf("projectile hit SOLID tile\n");
 			}
 
 			// Check projectile collision with SPIKE tiles
 			if (currentRoom().getTileMap().isSpike(tileX, tileY))
 			{
-				applyPlayerExplosionKnockback(projectile.position, projectile.explosionRadius, projectile.playerKnockback);
+				// Increased player knockback for spike tiles
+				// This is larger due to the player never landing on tiles and thus being further from the explosion radius
+				float spikeMultiplier = 1.45f;
+				applyPlayerExplosionKnockback(projectile.position, projectile.explosionRadius, projectile.playerKnockback * spikeMultiplier);
 
 				projectile.isAlive = false;
-
-				printf("projectile hit SPIKE tile\n");
 			}
 
 			// Check projectile collision with BOUNCE tiles
@@ -255,8 +253,6 @@ void Game::update(float dt)
 				applyPlayerExplosionKnockback(projectile.position, projectile.explosionRadius, projectile.playerKnockback * bounceMultiplier);
 
 				projectile.isAlive = false;
-
-				printf("projectile hit BOUNCE tile\n");
 			}
 
 			// Material collision detection with projectiles
@@ -613,8 +609,7 @@ void Game::applyPlayerExplosionKnockback(sf::Vector2f explosionPos, float radius
 
 	m_player.applyKnockback(dir * strength);
 
-	printf("Explosion knockback triggered\n");
-	printf("Strength: %f\n", strength);
+	printf("Player konckback trength: %f\n", strength);
 }
 
 void Game::fireProjectile()

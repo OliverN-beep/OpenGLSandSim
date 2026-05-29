@@ -15,7 +15,6 @@ void Collectable::update(sf::FloatRect playerBounds)
 	if (m_shape.getGlobalBounds().findIntersection(playerBounds))
 	{
 		m_isCollected = true;
-		printf("Collectable picked up\n");
 	}
 }
 

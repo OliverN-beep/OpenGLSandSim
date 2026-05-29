@@ -5,7 +5,7 @@ Player::Player(float x, float y):
 {
 	position = { x, y };
 	velocity = { 0.f, 0.f };
-	size = { 8.f, 14.f };		// Player collision box size (y = 15 to fit under 16x16 tiles)
+	size = { 8.f, 14.f };		// Player collision box size (y = 14 to fit under 16x16 tiles)
 
 	if (!m_texture.loadFromFile("player/player_d.png"))
 	{
@@ -53,8 +53,6 @@ void Player::loadAnimations(const std::string& jsonPath)
 		json frame = frameData["frame"];
 
 		m_frames.push_back(sf::IntRect({ frame["x"], frame["y"] }, { frame["w"], frame["h"] }));
-
-		printf("Loaded animation: %s\n", name.c_str());
 	}
 }
 
@@ -68,7 +66,6 @@ void Player::updateAnimation(float dt)
 	m_sprite.setPosition(position);
 
 	const int FRAME_WIDTH = 20;
-	const int FRAME_HEIGHT = 20;
 
 	// Flip sprite
 	if (facingRight)
