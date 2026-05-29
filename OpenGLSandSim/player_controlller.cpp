@@ -10,7 +10,7 @@ const float GRAVITY = 900.f;					// Gravity force applied to the player
 const float FALL_GRAVITY_MULTIPLIER = 0.6f;		// Multiplier for gravity when falling
 const float MAX_FALL_SPEED = 500.f;				// Max fall speed
 
-const float JUMP_SPEED = -260.f;				// Initial jump speed
+const float JUMP_SPEED = -250.f;				// Initial jump speed
 
 const float COYOTE_TIME = 0.15f;				// Time allowed to jump after leaving the ground
 const float JUMP_BUFFER_TIME = 0.1f;			// Time allowed to jump after pressing the jump button
@@ -143,8 +143,6 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 		// Clamp fall speed
 		if (player.velocity.y > MAX_FALL_SPEED)
 			player.velocity.y = MAX_FALL_SPEED;
-
-		printf("NOT gr\n");
 	}
 
 	else if (player.grounded)
@@ -153,8 +151,6 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 			player.m_animationPlayer.play("Walk");
 		else
 			player.m_animationPlayer.play("Idle");
-
-		printf("grounder\n");
 	}
 
 	// Choose animations based on final state after movement and collision
