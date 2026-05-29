@@ -143,27 +143,22 @@ void PlayerController::update(Player& player, TileMap& map, float dt)
 		// Clamp fall speed
 		if (player.velocity.y > MAX_FALL_SPEED)
 			player.velocity.y = MAX_FALL_SPEED;
+
+		printf("NOT gr\n");
 	}
 
-	// Choose animations based on final state after movement and collision
-	moveAndCollide(player, map, dt); // Handle movement and collision
-
-	// When grounded, prefer Idle or Walk based on input and velocity to prevent rapid overriding
-	if (player.grounded)
+	else if (player.grounded)
 	{
 		if (std::abs(player.velocity.x) > 0.1f)
 			player.m_animationPlayer.play("Walk");
 		else
 			player.m_animationPlayer.play("Idle");
+
+		printf("grounder\n");
 	}
-	else
-	{
-		// In air, choose Jump/Fall based on vertical velocity
-		if (player.velocity.y < 0.f)
-			player.m_animationPlayer.play("Jump");
-		else
-			player.m_animationPlayer.play("Fall");
-	}
+
+	// Choose animations based on final state after movement and collision
+	moveAndCollide(player, map, dt); // Handle movement and collision
 }
 
 // AABB collision checker
@@ -234,8 +229,6 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 		player.velocity.y = 0.f;
 	}
 
-	player.position.y = std::round(player.position.y);
-
 	// ------------ PLAYER RESPAWN ------------
 	if (isCollidingSpike(map, horizontalBounds) || isCollidingSpike(map, verticalBounds))
 	{
@@ -256,7 +249,10 @@ void PlayerController::moveAndCollide(Player& player, TileMap& map, float dt)
 
 bool PlayerController::checkGrounded(Player& player, TileMap& map)
 {
-	sf::FloatRect playerBounds(player.position, player.size);
+	sf::FloatRect bounds(player.position, player.size);
 
-	return isCollidingSolid(map, playerBounds) || isCollidingBounce(map, playerBounds);
+	// Tiny offset below feet to make sure player touches ground
+	bounds.position.y += 1.f;
+
+	return isCollidingSolid(map, bounds) || isCollidingBounce(map, bounds);
 }
