@@ -27,9 +27,6 @@ Game::Game():
 	// Load world from JSON on startup (if it exists)
 	m_room_manager.loadWorld("world.json");
 
-	// Initialise views
-	m_gameView = m_window.getDefaultView();
-
 	// Initialise low resolution render texture
 	if (!m_gameTexture.resize({ GAME_WIDTH, GAME_HEIGHT }))
 	{
@@ -37,6 +34,9 @@ Game::Game():
 	}
 
 	m_gameTexture.setSmooth(false);
+
+	// Initialise views
+	m_gameView = m_gameTexture.getDefaultView();
 }
 
 Room& Game::currentRoom()

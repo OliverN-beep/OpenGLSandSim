@@ -166,7 +166,7 @@ void TileMap::draw(sf::RenderTarget& target, sf::Vector2f offset) const
 	sf::RenderStates states;
 	states.texture = &m_tileset;
 
-	states.transform.translate(offset);
+	states.transform.translate({ std::floor(offset.x), std::floor(offset.y) });
 
 	target.draw(m_vertices, states);
 }

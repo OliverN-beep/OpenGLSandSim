@@ -24,6 +24,10 @@ void Room::update()
 
 void Room::draw(sf::RenderTarget& target, sf::Vector2f offset)
 {
+	// Snap offset to pixel grid to avoid subpixel rendering issues
+	offset.x = std::round(offset.x);
+	offset.y = std::round(offset.y);
+
 	m_tileMap->draw(target, offset);
 	m_world.draw(target, offset);
 
