@@ -145,7 +145,7 @@ bool World::isTileBlocked(int x, int y) const
 	int tileX = (x * m_cellSize) / m_tileMap->getTileSize();
 	int tileY = (y * m_cellSize) / m_tileMap->getTileSize();
 	
-	return m_tileMap->isSolid(tileX, tileY);
+	return m_tileMap->isSolid(tileX, tileY) || m_tileMap->isSpike(tileX, tileY) || m_tileMap->isBounce(tileX, tileY);
 }
 
 void World::update()
