@@ -33,8 +33,8 @@ private:
 
 	sf::RenderWindow m_window;				// SFML window for rendering
 
-	MaterialType m_selectedMaterial = MaterialType::Sand;		// Currently selected material for painting in the world
-	TileType m_selectedTileType = TileType::Solid;				// Currently selected tile type for editing the tile map
+	MaterialType m_selectedMaterial = MaterialType::Sand;		// Currently selected material for painting in the world (default to sand)
+	TileType m_selectedTileType = TileType::Solid;				// Currently selected tile type for editing the tile map (default to solid)
 
 	sf::Font m_font;						// Font for rendering text
 	sf::Text m_fpsText;						// Text object for displaying FPS
