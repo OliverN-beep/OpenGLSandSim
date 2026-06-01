@@ -540,7 +540,7 @@ void Game::handleTilePaletteClick(sf::Vector2i mousePos)
 		break;
 		
 	case 1:
-		m_selectedTileType = TileType::Spike;
+		m_selectedTileType = TileType	::Spike;
 		break;
 
 	case 2:
@@ -570,7 +570,7 @@ void Game::switchRoom(sf::Vector2i direction)
 	sf::Vector2f pos = m_player.position;
 
 	// Set player spawns when entering a new room
-	if (direction.x > 0)
+	if (direction.x > 0)		
 		pos.x = 0.f;
 
 	else if (direction.x < 0)

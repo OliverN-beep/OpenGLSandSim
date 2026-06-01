@@ -66,7 +66,7 @@ MaterialType World::getCell(int x, int y) const
 {
 	if (!inBounds(x, y))
 	{
-		return MaterialType::Stone;
+		return MaterialType::Empty;
 	}
 
 	return getCellRef(x, y).material;
