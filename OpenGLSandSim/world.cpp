@@ -140,8 +140,6 @@ bool World::isTileBlocked(int x, int y) const
 	int worldX = x * m_cellSize;
 	int worldY = y * m_cellSize;
 
-	// EXCEPTION IS THROWN HERE (SIMILAR TO TILEMAP.CPP LINE 44)
-	// tileX (and likely tileY) are set to 0 and an integer division by 0 is not possible
 	int tileX = (x * m_cellSize) / m_tileMap->getTileSize();
 	int tileY = (y * m_cellSize) / m_tileMap->getTileSize();
 	
@@ -361,7 +359,8 @@ void World::updateFire(int x, int y)
 	// Turn into smoke or empty when lifetime is over
 	if (cell.lifeTime == 0)
 	{
-		setCell(x, y, MaterialType::Smoke);
+		setCell(x, y, MaterialType::Empty);
+
 		getCellRef(x, y).lifeTime = 10; // Smoke lasts for 10 frames
 	}
 

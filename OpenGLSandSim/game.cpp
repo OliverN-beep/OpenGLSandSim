@@ -567,22 +567,22 @@ void Game::switchRoom(sf::Vector2i direction)
 
 	m_room_manager.setCurrentRoom(roomIndex);
 
-	sf::Vector2f pos = m_player.position;
+	sf::Vector2f playerPos = m_player.position;
 
 	// Set player spawns when entering a new room
 	if (direction.x > 0)		
-		pos.x = 0.f;
+		playerPos.x = 0.f;
 
 	else if (direction.x < 0)
-		pos.x = GAME_WIDTH;
+		playerPos.x = GAME_WIDTH;
 
 	if (direction.y > 0)
-		pos.y = 0.f;
+		playerPos.y = 0.f;
 
 	else if (direction.y < 0)
-		pos.y = GAME_HEIGHT;
+		playerPos.y = GAME_HEIGHT;
 
-	m_player.position = pos;
+	m_player.position = playerPos;
 
 	printf("current grid coordinates: %d, %d\n", targetGrid.x, targetGrid.y);
 }

@@ -12,7 +12,7 @@ TileMap::TileMap(int width, int height, int tileSize) :
 	m_tileset.setSmooth(false);
 
 	m_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
-	m_vertices.resize(static_cast<size_t>(m_width) * m_height * 6);
+	m_vertices.resize(static_cast<size_t>(m_width) * static_cast<size_t>(m_height * 6));
 }
 
 bool TileMap::inBounds(int x, int y) const
