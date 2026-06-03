@@ -7,14 +7,14 @@ Player::Player(float x, float y):
 	velocity = { 0.f, 0.f };
 	size = { 8.f, 14.f };		// Player collision box size (y = 14 to fit under 16x16 tiles)
 
-	if (!m_texture.loadFromFile("player/player_d.png"))
+	if (!m_texture.loadFromFile("assets/player/player_d.png"))
 	{
 		printf("failed to load player texture\n");
 	}
 
 	m_texture.setSmooth(false);
 
-	loadAnimations("player/player.json");
+	loadAnimations("assets/player/player.json");
 
 	// Play default animation
 	m_animationPlayer.play("Idle");
@@ -22,10 +22,14 @@ Player::Player(float x, float y):
 
 void Player::loadAnimations(const std::string& jsonPath)
 {
+	printf("Loading player animations from %s\n", jsonPath.c_str());
+
 	std::ifstream file(jsonPath);
 
 	json data;
 	file >> data;
+
+	printf("Finished loading player animations\n");
 
 	// Parse animation tags
 	for (const auto& tag : data["meta"]["frameTags"])

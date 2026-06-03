@@ -1,0 +1,80 @@
+[
+{
+  "directory": "/home/oliver/OpenGLSandSim/build",
+  "command": "/usr/bin/c++ -DSFML_STATIC -I/home/oliver/OpenGLSandSim/src -isystem /home/oliver/vcpkg/installed/x64-linux/include -std=gnu++20 -o CMakeFiles/OpenGLSandSim.dir/src/animation_player.cpp.o -c /home/oliver/OpenGLSandSim/src/animation_player.cpp",
+  "file": "/home/oliver/OpenGLSandSim/src/animation_player.cpp",
+  "output": "CMakeFiles/OpenGLSandSim.dir/src/animation_player.cpp.o"
+},
+{
+  "directory": "/home/oliver/OpenGLSandSim/build",
+  "command": "/usr/bin/c++ -DSFML_STATIC -I/home/oliver/OpenGLSandSim/src -isystem /home/oliver/vcpkg/installed/x64-linux/include -std=gnu++20 -o CMakeFiles/OpenGLSandSim.dir/src/collectable.cpp.o -c /home/oliver/OpenGLSandSim/src/collectable.cpp",
+  "file": "/home/oliver/OpenGLSandSim/src/collectable.cpp",
+  "output": "CMakeFiles/OpenGLSandSim.dir/src/collectable.cpp.o"
+},
+{
+  "directory": "/home/oliver/OpenGLSandSim/build",
+  "command": "/usr/bin/c++ -DSFML_STATIC -I/home/oliver/OpenGLSandSim/src -isystem /home/oliver/vcpkg/installed/x64-linux/include -std=gnu++20 -o CMakeFiles/OpenGLSandSim.dir/src/game.cpp.o -c /home/oliver/OpenGLSandSim/src/game.cpp",
+  "file": "/home/oliver/OpenGLSandSim/src/game.cpp",
+  "output": "CMakeFiles/OpenGLSandSim.dir/src/game.cpp.o"
+},
+{
+  "directory": "/home/oliver/OpenGLSandSim/build",
+  "command": "/usr/bin/c++ -DSFML_STATIC -I/home/oliver/OpenGLSandSim/src -isystem /home/oliver/vcpkg/installed/x64-linux/include -std=gnu++20 -o CMakeFiles/OpenGLSandSim.dir/src/main.cpp.o -c /home/oliver/OpenGLSandSim/src/main.cpp",
+  "file": "/home/oliver/OpenGLSandSim/src/main.cpp",
+  "output": "CMakeFiles/OpenGLSandSim.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/oliver/OpenGLSandSim/build",
+  "command": "/usr/bin/c++ -DSFML_STATIC -I/home/oliver/OpenGLSandSim/src -isystem /home/oliver/vcpkg/installed/x64-linux/include -std=gnu++20 -o CMakeFiles/OpenGLSandSim.dir/src/materials.cpp.o -c /home/oliver/OpenGLSandSim/src/materials.cpp",
+  "file": "/home/oliver/OpenGLSandSim/src/materials.cpp",
+  "output": "CMakeFiles/OpenGLSandSim.dir/src/materials.cpp.o"
+},
+{
+  "directory": "/home/oliver/OpenGLSandSim/build",
+  "command": "/usr/bin/c++ -DSFML_STATIC -I/home/oliver/OpenGLSandSim/src -isystem /home/oliver/vcpkg/installed/x64-linux/include -std=gnu++20 -o CMakeFiles/OpenGLSandSim.dir/src/player.cpp.o -c /home/oliver/OpenGLSandSim/src/player.cpp",
+  "file": "/home/oliver/OpenGLSandSim/src/player.cpp",
+  "output": "CMakeFiles/OpenGLSandSim.dir/src/player.cpp.o"
+},
+{
+  "directory": "/home/oliver/OpenGLSandSim/build",
+  "command": "/usr/bin/c++ -DSFML_STATIC -I/home/oliver/OpenGLSandSim/src -isystem /home/oliver/vcpkg/installed/x64-linux/include -std=gnu++20 -o CMakeFiles/OpenGLSandSim.dir/src/player_controller.cpp.o -c /home/oliver/OpenGLSandSim/src/player_controller.cpp",
+  "file": "/home/oliver/OpenGLSandSim/src/player_controller.cpp",
+  "output": "CMakeFiles/OpenGLSandSim.dir/src/player_controller.cpp.o"
+},
+{
+  "directory": "/home/oliver/OpenGLSandSim/build",
+  "command": "/usr/bin/c++ -DSFML_STATIC -I/home/oliver/OpenGLSandSim/src -isystem /home/oliver/vcpkg/installed/x64-linux/include -std=gnu++20 -o CMakeFiles/OpenGLSandSim.dir/src/projectile.cpp.o -c /home/oliver/OpenGLSandSim/src/projectile.cpp",
+  "file": "/home/oliver/OpenGLSandSim/src/projectile.cpp",
+  "output": "CMakeFiles/OpenGLSandSim.dir/src/projectile.cpp.o"
+},
+{
+  "directory": "/home/oliver/OpenGLSandSim/build",
+  "command": "/usr/bin/c++ -DSFML_STATIC -I/home/oliver/OpenGLSandSim/src -isystem /home/oliver/vcpkg/installed/x64-linux/include -std=gnu++20 -o CMakeFiles/OpenGLSandSim.dir/src/room.cpp.o -c /home/oliver/OpenGLSandSim/src/room.cpp",
+  "file": "/home/oliver/OpenGLSandSim/src/room.cpp",
+  "output": "CMakeFiles/OpenGLSandSim.dir/src/room.cpp.o"
+},
+{
+  "directory": "/home/oliver/OpenGLSandSim/build",
+  "command": "/usr/bin/c++ -DSFML_STATIC -I/home/oliver/OpenGLSandSim/src -isystem /home/oliver/vcpkg/installed/x64-linux/include -std=gnu++20 -o CMakeFiles/OpenGLSandSim.dir/src/room_manager.cpp.o -c /home/oliver/OpenGLSandSim/src/room_manager.cpp",
+  "file": "/home/oliver/OpenGLSandSim/src/room_manager.cpp",
+  "output": "CMakeFiles/OpenGLSandSim.dir/src/room_manager.cpp.o"
+},
+{
+  "directory": "/home/oliver/OpenGLSandSim/build",
+  "command": "/usr/bin/c++ -DSFML_STATIC -I/home/oliver/OpenGLSandSim/src -isystem /home/oliver/vcpkg/installed/x64-linux/include -std=gnu++20 -o CMakeFiles/OpenGLSandSim.dir/src/sand_test.cpp.o -c /home/oliver/OpenGLSandSim/src/sand_test.cpp",
+  "file": "/home/oliver/OpenGLSandSim/src/sand_test.cpp",
+  "output": "CMakeFiles/OpenGLSandSim.dir/src/sand_test.cpp.o"
+},
+{
+  "directory": "/home/oliver/OpenGLSandSim/build",
+  "command": "/usr/bin/c++ -DSFML_STATIC -I/home/oliver/OpenGLSandSim/src -isystem /home/oliver/vcpkg/installed/x64-linux/include -std=gnu++20 -o CMakeFiles/OpenGLSandSim.dir/src/tilemap.cpp.o -c /home/oliver/OpenGLSandSim/src/tilemap.cpp",
+  "file": "/home/oliver/OpenGLSandSim/src/tilemap.cpp",
+  "output": "CMakeFiles/OpenGLSandSim.dir/src/tilemap.cpp.o"
+},
+{
+  "directory": "/home/oliver/OpenGLSandSim/build",
+  "command": "/usr/bin/c++ -DSFML_STATIC -I/home/oliver/OpenGLSandSim/src -isystem /home/oliver/vcpkg/installed/x64-linux/include -std=gnu++20 -o CMakeFiles/OpenGLSandSim.dir/src/world.cpp.o -c /home/oliver/OpenGLSandSim/src/world.cpp",
+  "file": "/home/oliver/OpenGLSandSim/src/world.cpp",
+  "output": "CMakeFiles/OpenGLSandSim.dir/src/world.cpp.o"
+}
+]

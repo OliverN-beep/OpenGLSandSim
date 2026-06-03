@@ -16,7 +16,7 @@ void Projectile::draw(sf::RenderTarget& target) const
 {
 	sf::CircleShape projectileShape(radius);
 
-	projectileShape.setFillColor(sf::Color::Red);
+	projectileShape.setFillColor(sf::Color::Green);
 	projectileShape.setOrigin({ radius, radius });
 	projectileShape.setPosition(position);
 

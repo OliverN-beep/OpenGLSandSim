@@ -450,7 +450,7 @@ void World::explodeParticles(int cx, int cy, int radius)
 				continue;
 			}
 
-			float dist = std::sqrtf(distSq);
+			float dist = std::sqrt(distSq);
 
 			if (dist == 0.f)
 				dist = 0.1f;

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <SFML/Graphics.hpp>
-#include <json/json.hpp>
+#include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
 

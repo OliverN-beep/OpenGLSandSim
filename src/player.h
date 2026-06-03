@@ -2,7 +2,7 @@
 
 #include <fstream>
 #include <SFML/Graphics.hpp>
-#include <json/json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "animation_player.h"
 

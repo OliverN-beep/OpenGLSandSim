@@ -6,7 +6,7 @@ TileMap::TileMap(int width, int height, int tileSize) :
 	m_tileSize(tileSize),
 	m_tiles(width, std::vector<TileType>(height, TileType::Empty))
 {
-	if (!m_tileset.loadFromFile("tilesets/mono_tileset_d.png"))
+	if (!m_tileset.loadFromFile("assets/tilesets/mono_tileset_d.png"))
 		printf("error loading tileset atlas\n");
 
 	m_tileset.setSmooth(false);

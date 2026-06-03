@@ -14,7 +14,7 @@ Game::Game():
 	currentRoom().getWorld().setTileMap(&currentRoom().getTileMap());
 
 	// Load font for displaying text
-	if (!m_font.openFromFile("fonts/monospace_medium.ttf"))
+	if (!m_font.openFromFile("assets/fonts/monospace_medium.ttf"))
 	{
 		std::cerr << "Could not load font" << std::endl;
 	}
@@ -24,8 +24,16 @@ Game::Game():
 	m_fpsText.setFillColor(sf::Color::White);
 	m_fpsText.setPosition({ WINDOW_WIDTH - 150, 50 });
 
+	// Check if JSON file exists
+	std::ifstream jsonFile("assets/world.json");
+
+	if (!jsonFile.is_open())
+	{
+		printf("Failed to open JSON file\n");
+	}
+
 	// Load world from JSON on startup (if it exists)
-	m_room_manager.loadWorld("world.json");
+	m_room_manager.loadWorld("assets/world.json");
 
 	// Initialise low resolution render texture
 	if (!m_gameTexture.resize({ GAME_WIDTH, GAME_HEIGHT }))
@@ -164,13 +172,13 @@ void Game::processEvents()
 
 				if (keyEvent->code == sf::Keyboard::Key::F5)
 				{
-					m_room_manager.saveWorld("world.json");
+					m_room_manager.saveWorld("assets/world.json");
 					printf("WORLD SAVED\n");
 				}
 
 				if (keyEvent->code == sf::Keyboard::Key::F9)
 				{
-					m_room_manager.loadWorld("world.json");
+					m_room_manager.loadWorld("assets/world.json");
 					printf("WORLD LOADED\n");
 				}
 			}

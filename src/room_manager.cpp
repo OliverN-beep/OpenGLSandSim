@@ -102,8 +102,9 @@ bool RoomManager::hasRoomAt(sf::Vector2i gridPos) const
 
 void RoomManager::saveWorld(const std::string& filename)
 {
-	json world;
+	printf("Saving world to %s\n", filename.c_str());
 
+	json world;
 	world["rooms"] = json::array();
 
 	for (const auto& room : m_rooms)
@@ -113,19 +114,46 @@ void RoomManager::saveWorld(const std::string& filename)
 
 	std::ofstream file(filename);
 
+	if (!file.is_open())
+	{
+		printf("Failed to save: %s\n", filename.c_str());
+		return;
+	}
+
 	file << world.dump(4);
+
+	printf("Finished saving world\n");
 }
 
 void RoomManager::loadWorld(const std::string& filename)
 {
+	printf("Loading world from %s\n", filename.c_str());
+
 	std::ifstream file(filename);
 
 	if (!file.is_open())
+	{
+		printf("Failed to open file for loading: %s\n", filename.c_str());
 		return;
+	}
 
 	json world;
 
-	file >> world;
+	try
+    {
+        file >> world;
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "JSON parse error: " << e.what() << "\n";
+        return;
+    }
+
+    if (!world.contains("rooms"))
+    {
+        std::cerr << "Invalid world file: missing rooms\n";
+        return;
+    }
 
 	m_rooms.clear();
 
@@ -137,4 +165,6 @@ void RoomManager::loadWorld(const std::string& filename)
 
 		m_rooms.push_back(std::move(room));
 	}
+
+	printf("Finished loading world\n");
 }
